@@ -1,0 +1,162 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Tag from '../../components/Tag.astro';
+import { getPosts, getProjects } from '../../lib/content';
+import { formatDate, isoDate, readingTime } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+
+// Reading time from the raw markdown body.
+const minutes = readingTime(post.body ?? '');
+
+// Resolve a linked project, if any.
+let related: { id: string; title: string } | null = null;
+if (data.project) {
+  const projects = await getProjects();
+  const p = projects.find((x) => x.id === data.project!.id);
+  if (p) related = { id: p.id, title: p.data.title };
+}
+
+const ogImage = `/og/blog/${post.id}.png`;
+---
+
+<Base
+  title={data.title}
+  description={data.description}
+  type="article"
+  image={ogImage}
+  publishedTime={data.pubDate}
+  updatedTime={data.updatedDate}
+>
+  <article class="container post">
+    <header class="post-head">
+      <p class="post-meta mono">
+        <time datetime={isoDate(data.pubDate)}>{formatDate(data.pubDate)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{minutes}</span>
+        {
+          data.updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>updated {formatDate(data.updatedDate)}</span>
+            </>
+          )
+        }
+      </p>
+      <h1>{data.title}</h1>
+      <p class="post-desc">{data.description}</p>
+
+      {
+        data.tags.length > 0 && (
+          <ul class="head-tags" aria-label="Tags">
+            {data.tags.map((t) => (
+              <li>
+                <Tag tag={t} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      data.hero && (
+        <figure class="post-hero">
+          <Image src={data.hero.src} alt={data.hero.alt} width={1200} height={630} />
+        </figure>
+      )
+    }
+
+    <div class="post-body prose">
+      <Content />
+    </div>
+
+    {
+      related && (
+        <aside class="post-related">
+          <p class="label">RELATED PROJECT</p>
+          <a class="related-link" href={`/projects/${related.id}`}>
+            {related.title} →
+          </a>
+        </aside>
+      )
+    }
+
+    <p class="back mono"><a href="/blog">← All posts</a></p>
+  </article>
+</Base>
+
+<style>
+  .post {
+    padding-block: var(--space-7);
+  }
+  .post-head {
+    max-width: var(--measure);
+  }
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+  }
+  .post-head h1 {
+    margin-top: var(--space-3);
+  }
+  .post-desc {
+    margin-top: var(--space-4);
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .head-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+  .post-hero {
+    margin: var(--space-6) 0;
+    max-width: var(--measure);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .post-hero :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .post-body {
+    margin-top: var(--space-6);
+  }
+  .post-related {
+    max-width: var(--measure);
+    margin-top: var(--space-8);
+    padding: var(--space-4) var(--space-5);
+    border: var(--hairline) solid var(--line);
+    border-left: 2px solid var(--accent);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+  }
+  .related-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-size: var(--step-1);
+  }
+  .back {
+    margin-top: var(--space-8);
+  }
+</style>

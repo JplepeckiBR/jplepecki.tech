@@ -20,22 +20,22 @@
   - [x] 4.3 ThemeToggle (no-FOUC), VideoEmbed facade.
   - _Req: 4.4, 2.6, 5.5_
 
-- [ ] 5. Pages
-  - [ ] 5.1 Home with currently-building strip, featured, latest posts, latest video.
-  - [ ] 5.2 Projects index (tag filter) + project detail (spec table, gallery, videos, related posts).
-  - [ ] 5.3 Blog index + post detail (reading time, Shiki, related project).
-  - [ ] 5.4 Videos, About (TODO draft copy), Now, 404.
+- [x] 5. Pages
+  - [x] 5.1 Home with currently-building strip, featured, latest posts, latest video.
+  - [x] 5.2 Projects index (tag filter) + project detail (spec table, gallery, videos, related posts).
+  - [x] 5.3 Blog index + post detail (reading time, Shiki, related project).
+  - [x] 5.4 Videos, About (TODO draft copy), Now, 404.
   - _Req: 2.1–2.6_
 
-- [ ] 6. SEO & feeds
-  - [ ] 6.1 BaseHead meta/OG/Twitter/canonical; rss.xml; sitemap; per-entry OG image endpoint.
-  - [ ] 6.2 Pagefind in build script + search UI on /blog and /projects.
+- [x] 6. SEO & feeds
+  - [x] 6.1 BaseHead meta/OG/Twitter/canonical; rss.xml; sitemap; per-entry OG image endpoint.
+  - [ ] 6.2 Pagefind in build script (DONE) + search UI on /blog and /projects (TODO).
   - _Req: 3.1–3.4_
 
-- [ ] 7. Seed content
-  - [ ] 7.1 8 project MDX files (StrideSense, card pricer, homelab, RAG, invest platform, PCA,
+- [x] 7. Seed content
+  - [x] 7.1 8 project MDX files (StrideSense, card pricer, homelab, RAG, invest platform, PCA,
         vape teardown, hackathons) — build-log bodies, TODO(JP) for gaps.
-  - [ ] 7.2 2–3 blog posts, a few video entries, about/now copy, placeholder cover art (<2MB, SVG).
+  - [x] 7.2 2 blog posts, 1 video entry (draft), about/now copy, placeholder cover art (SVG).
   - _Req: 1.*, 2.*_
 
 - [ ] 8. Authoring & deploy

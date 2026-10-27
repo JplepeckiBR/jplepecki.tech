@@ -48,16 +48,18 @@ far is in that single WIP commit on `portfolio-v1`.)
 
 ## In progress
 
-Tasks 2, 3, 4 are DONE: design system (tokens.css + global.css + fonts), content model
-(src/content.config.ts — NOTE: Astro 7 requires it at src/content.config.ts, NOT
-src/content/config.ts), and all core components (StatusLight, Tag, SpecTable, ProjectCard,
-PostCard, SensorTrace, ThemeToggle, VideoEmbed, Nav, Footer, BaseHead, Base layout). Seed content
-written: all 8 project MDX files, 2 blog posts, 1 video (draft). `npx astro sync` passes cleanly.
+Tasks 2–7 DONE. The FULL `npm run build` pipeline passes: `astro build` emits 17 pages
+(home, projects index + 8 details, blog index + 2 posts, videos, about, now, 404, rss.xml,
+sitemap-index.xml, og/default.png + 2 blog OG + 8 project OG), then `pagefind --site dist`
+indexes 16 pages. OG images render via satori + resvg using OFL TTFs in src/assets/og-fonts/
+(build-only, not shipped). NOTE: og.ts resolves fonts from process.cwd()/src/assets/og-fonts
+because import.meta.url doesn't survive prerender bundling.
 
-NEXT CONCRETE STEP: create `src/pages/` — start with `index.astro` (home: hero + SensorTrace,
-currently-building strip, 3 featured projects, latest 3 posts, latest video). There is NO
-src/pages dir yet, so the build currently warns "Missing pages directory". Then projects, blog,
-videos, about, now, 404, rss.xml.ts, and the OG image endpoint.
+NEXT CONCRETE STEP (task 6.2): add a Pagefind search UI island to /blog and /projects (a search
+box that loads /pagefind/pagefind.js on focus). Then task 8: `.pages.yml` (Pages CMS mapping the
+3 collections, uploads → src/assets/uploads/) and `.github/workflows/deploy.yml`. Then task 9:
+Playwright screenshots + visual review, link/feed/404 checks, secret + 2MB audit, NOTES_FOR_JP.md,
+final commit + PR instructions.
 
 ## Next (remaining tasks, in order)
 
