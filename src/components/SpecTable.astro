@@ -1,0 +1,69 @@
+---
+// Instrument-style spec table for a project. Every row is guarded: a row only
+// renders if its value exists, so no empty "undefined" cells ever appear.
+import { STATUS_LABEL, type ProjectStatus } from '../consts';
+import { dateRange } from '../lib/format';
+
+interface Props {
+  status: ProjectStatus;
+  startDate: Date;
+  endDate?: Date;
+  mcu?: string;
+  sensors?: string[];
+  stack?: string[];
+}
+const { status, startDate, endDate, mcu, sensors, stack } = Astro.props;
+
+const rows: { k: string; v: string }[] = [
+  { k: 'Status', v: STATUS_LABEL[status] },
+  { k: 'Dates', v: dateRange(startDate, endDate) },
+];
+if (mcu) rows.push({ k: 'MCU', v: mcu });
+if (sensors && sensors.length) rows.push({ k: 'Sensors', v: sensors.join(', ') });
+if (stack && stack.length) rows.push({ k: 'Stack', v: stack.join(', ') });
+---
+
+<dl class="spec" aria-label="Project specifications">
+  {
+    rows.map((row) => (
+      <div class="spec-row">
+        <dt class="label">{row.k.toUpperCase()}</dt>
+        <dd class="mono">{row.v}</dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .spec {
+    margin: 0;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+  }
+  .spec-row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+  .spec-row:last-child {
+    border-bottom: 0;
+  }
+  .spec dt {
+    color: var(--fg-faint);
+    align-self: center;
+  }
+  .spec dd {
+    margin: 0;
+    color: var(--fg);
+    font-size: var(--step--1);
+  }
+  @media (max-width: 28rem) {
+    .spec-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+  }
+</style>

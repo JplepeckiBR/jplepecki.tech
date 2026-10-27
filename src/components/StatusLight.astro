@@ -1,0 +1,47 @@
+---
+import type { ProjectStatus } from '../consts';
+import { STATUS_LABEL } from '../consts';
+
+interface Props {
+  status: ProjectStatus;
+}
+const { status } = Astro.props;
+---
+
+<span class:list={['status', status]} title={`Status: ${STATUS_LABEL[status]}`}>
+  <span class="dot" aria-hidden="true"></span>
+  <span class="label">STATUS: {STATUS_LABEL[status].toUpperCase()}</span>
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--fg-faint);
+    flex: none;
+  }
+  /* active = live signal orange, with a soft ring */
+  .active .dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .shipped .dot {
+    background: #4a9d6b;
+  }
+  .paused .dot {
+    background: #c9a227;
+  }
+  .archived .dot {
+    background: var(--fg-faint);
+    opacity: 0.6;
+  }
+  .label {
+    color: var(--fg-muted);
+  }
+</style>

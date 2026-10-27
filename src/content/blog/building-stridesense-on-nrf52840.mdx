@@ -1,0 +1,31 @@
+---
+title: Moving StrideSense from Arduino to the nRF52840
+description: Why the flagship insole project jumped boards, and what the XIAO nRF52840 Sense buys a wearable.
+pubDate: 2026-10-15
+tags: [embedded, hardware, stridesense]
+project: stridesense
+---
+
+StrideSense started on an Arduino board. It now runs on a
+[Seeed XIAO nRF52840 Sense](https://wiki.seeedstudio.com/XIAO_BLE/). This post is
+the short version of why, written as a build-log note rather than a tutorial.
+
+## The constraint that drove it
+
+A smart insole has to disappear into a shoe. That puts hard limits on size and
+on power, and it means wireless is not optional — you cannot run a cable out of
+someone's shoe.
+
+## What the board buys
+
+- **Size.** The XIAO footprint fits where a larger dev board never could.
+- **Onboard sensing.** The Sense variant brings an IMU along for the ride.
+- **BLE.** The nRF52840 is a Bluetooth Low Energy part, so streaming off the
+  insole is built in rather than bolted on.
+
+## What I'm still working out
+
+TODO(JP): fill in the real engineering notes — sampling rate, how you're
+packing the pressure + IMU data, power budget, and anything that fought back.
+
+> This is a living note. As the firmware settles I'll update it with numbers.

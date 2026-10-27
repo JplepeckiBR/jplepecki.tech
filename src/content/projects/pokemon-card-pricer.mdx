@@ -1,0 +1,43 @@
+---
+title: Pokémon TCG card pricer
+hook: Identify a card from an image or livestream frame and estimate its market price with a confidence range.
+status: active
+startDate: 2026-01-01
+tags: [AI, data]
+stack: [Python, Computer vision]
+cover:
+  src: ../../assets/covers/card-pricer.svg
+  alt: A scanning bracket over a card outline with a highlighted price-confidence band
+featured: true
+order: 2
+# TODO(JP): add repo / demo links if public.
+---
+
+A computer-vision pipeline that recognizes Pokémon trading cards from images or
+Whatnot livestream footage and estimates a market price with a confidence
+range. Paired with a six-episode vertical video series documenting the build.
+
+## Problem
+
+Prices on the secondary market move fast and depend on set, rarity, and
+condition. During a livestream there's no time to look anything up — you want an
+instant read with an honest sense of how sure the estimate is.
+
+## Approach
+
+- Detect and identify the card from a frame (image or livestream capture).
+- Map the identification to a price estimate, reported as a range rather than a
+  single number so the uncertainty is visible.
+- Document the whole thing as a 6-episode vertical video series.
+
+TODO(JP): name the specific models/techniques you used for detection and
+identification, and how you built the price lookup.
+
+## What broke / what I learned
+
+TODO(JP): livestream frames are messy — glare, motion blur, partial cards.
+Add the concrete problems and how you handled them.
+
+## Next
+
+TODO(JP): next milestone (accuracy target, latency, or publishing the series).

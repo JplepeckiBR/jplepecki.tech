@@ -1,0 +1,35 @@
+---
+import { SITE } from '../consts';
+import BaseHead from '../components/BaseHead.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+  canonical?: string;
+  publishedTime?: Date;
+  updatedTime?: Date;
+  /** Add Pagefind data attributes so this page's main content is indexed. */
+  indexable?: boolean;
+}
+
+const { indexable = true, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead {...head} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Nav />
+    <main id="main" data-pagefind-body={indexable ? '' : undefined}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

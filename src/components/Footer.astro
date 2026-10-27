@@ -1,0 +1,145 @@
+---
+import { SOCIAL } from '../consts';
+import { COMMIT_HASH, BUILD_TIME } from '../lib/buildinfo';
+
+const year = new Date().getFullYear();
+
+// Build timestamp in UTC, formatted compactly. Local clocks are rendered
+// client-side by the small script below so they tick without shipping tz data.
+const builtISO = BUILD_TIME.toISOString();
+const builtDisplay = BUILD_TIME.toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+
+const REPO_URL = 'https://github.com/JplepeckiBR/jplepecki.tech';
+const commitUrl = `${REPO_URL}/commit/${COMMIT_HASH}`;
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <hr class="rule" />
+    <div class="footer-grid">
+      <div class="clocks" aria-label="Local times">
+        <div class="clock">
+          <span class="label">Rio de Janeiro</span>
+          <time class="mono clock-val" data-tz="America/Sao_Paulo">--:--</time>
+        </div>
+        <span class="clock-sep" aria-hidden="true">↔</span>
+        <div class="clock">
+          <span class="label">Boston</span>
+          <time class="mono clock-val" data-tz="America/New_York">--:--</time>
+        </div>
+      </div>
+
+      <nav class="footer-links" aria-label="Elsewhere">
+        <a href={SOCIAL.github} rel="me noopener">GitHub</a>
+        <a href={SOCIAL.linkedin} rel="me noopener">LinkedIn</a>
+        {SOCIAL.email && <a href={`mailto:${SOCIAL.email}`}>Email</a>}
+        <a href="/rss.xml">RSS</a>
+      </nav>
+
+      <div class="build">
+        <span class="label">Last built</span>
+        <span class="mono">
+          <time datetime={builtISO}>{builtDisplay}</time>
+          {
+            COMMIT_HASH !== 'dev' ? (
+              <a class="commit" href={commitUrl} rel="noopener" title="View commit">
+                #{COMMIT_HASH}
+              </a>
+            ) : (
+              <span class="commit">#{COMMIT_HASH}</span>
+            )
+          }
+        </span>
+      </div>
+    </div>
+    <p class="colophon mono">© {year} João Pedro Lepecki · Built with Astro · No trackers.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-9);
+    padding-bottom: var(--space-6);
+    flex-shrink: 0;
+  }
+  .footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5) var(--space-6);
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .clocks {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-3);
+  }
+  .clock {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .clock-val {
+    font-size: var(--step-1);
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .clock-sep {
+    color: var(--accent);
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+  .footer-links a {
+    color: var(--fg-muted);
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .footer-links a:hover {
+    color: var(--fg);
+  }
+  .build {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .build .mono {
+    color: var(--fg-muted);
+    display: flex;
+    gap: var(--space-2);
+  }
+  .commit {
+    color: var(--accent-link);
+  }
+  .colophon {
+    margin-top: var(--space-6);
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+  }
+</style>
+
+<script>
+  // Render live local times for Rio and Boston. Pure client-side, no tz data
+  // shipped — uses Intl with IANA zones. Degrades to the static dashes if JS off.
+  function tick() {
+    document.querySelectorAll<HTMLTimeElement>('.clock-val[data-tz]').forEach((el) => {
+      const tz = el.dataset.tz!;
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        timeZone: tz,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+      el.textContent = fmt.format(new Date());
+    });
+  }
+  tick();
+  setInterval(tick, 30_000);
+</script>

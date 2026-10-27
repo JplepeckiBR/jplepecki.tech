@@ -1,0 +1,40 @@
+---
+title: Local RAG for government-document corruption detection
+hook: A fully local retrieval-augmented pipeline for surfacing signals in public documents.
+status: shipped
+startDate: 2025-01-01
+tags: [AI, data]
+stack: [Ollama, ChromaDB, LangChain, Python]
+cover:
+  src: ../../assets/covers/generic-trace.svg
+  alt: An instrument grid with a faint signal trace
+order: 4
+---
+
+A retrieval-augmented-generation pipeline that runs entirely on a local server —
+Ollama for the model, ChromaDB for the vector store, and LangChain to wire it
+together — aimed at surfacing corruption signals in government documents.
+
+## Problem
+
+Public-document corpora are large and dull to read. The interesting patterns
+are buried. Sending sensitive documents to a hosted API is also the wrong move —
+this needed to stay local.
+
+## Approach
+
+- **Local model** via Ollama, so nothing leaves the machine.
+- **ChromaDB** as the vector store for the document chunks.
+- **LangChain** to orchestrate retrieval and querying.
+
+TODO(JP): describe the document set, how you chunked/embedded it, and what a
+"corruption signal" looked like in practice.
+
+## What broke / what I learned
+
+TODO(JP): retrieval quality, chunking, hallucination control — add the real
+lessons.
+
+## Outcome
+
+TODO(JP): what shipped and what it could do by the end.

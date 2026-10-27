@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="An instrument grid with a faint signal trace">
+  <rect width="1200" height="630" fill="#14151a"/>
+  <g stroke="#2b2d36" stroke-width="1">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+  <polyline points="0,420 120,420 150,260 180,420 360,420 390,180 420,420 760,420 790,300 820,420 1200,420"
+    fill="none" stroke="#ff5a1f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="60" y="560" fill="#76726c" font-family="monospace" font-size="22" letter-spacing="2">SIGNAL · ACQUIRE · LOG</text>
+</svg>

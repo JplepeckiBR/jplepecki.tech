@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Abstract gait-pressure waveform over a grid">
+  <rect width="1200" height="630" fill="#14151a"/>
+  <g stroke="#2b2d36" stroke-width="1">
+    <g>
+      <line x1="0" y1="105" x2="1200" y2="105"/>
+      <line x1="0" y1="210" x2="1200" y2="210"/>
+      <line x1="0" y1="315" x2="1200" y2="315"/>
+      <line x1="0" y1="420" x2="1200" y2="420"/>
+      <line x1="0" y1="525" x2="1200" y2="525"/>
+    </g>
+    <g>
+      <line x1="150" y1="0" x2="150" y2="630"/>
+      <line x1="300" y1="0" x2="300" y2="630"/>
+      <line x1="450" y1="0" x2="450" y2="630"/>
+      <line x1="600" y1="0" x2="600" y2="630"/>
+      <line x1="750" y1="0" x2="750" y2="630"/>
+      <line x1="900" y1="0" x2="900" y2="630"/>
+      <line x1="1050" y1="0" x2="1050" y2="630"/>
+    </g>
+  </g>
+  <path d="M0,340 C60,340 90,150 150,150 C200,150 210,330 260,350 C320,374 340,250 400,250
+           C460,250 470,360 540,360 C600,360 620,120 690,120 C740,120 760,350 820,350
+           C890,350 900,200 960,200 C1020,200 1040,345 1110,345 C1160,345 1170,330 1200,330"
+        fill="none" stroke="#ff5a1f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M0,340 C60,340 90,150 150,150 C200,150 210,330 260,350 C320,374 340,250 400,250
+           C460,250 470,360 540,360 C600,360 620,120 690,120 C740,120 760,350 820,350
+           C890,350 900,200 960,200 C1020,200 1040,345 1110,345 C1160,345 1170,330 1200,330
+           L1200,630 L0,630 Z"
+        fill="#ff5a1f" fill-opacity="0.06"/>
+  <text x="60" y="560" fill="#76726c" font-family="monospace" font-size="22" letter-spacing="2">STRIDESENSE · GAIT PRESSURE · CH0</text>
+</svg>

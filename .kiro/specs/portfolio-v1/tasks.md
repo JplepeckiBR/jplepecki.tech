@@ -5,19 +5,19 @@
   - [x] 1.2 `public/CNAME`, `public/robots.txt`, self-hosted fonts in `public/fonts/`.
   - _Req: 6.3, 3.1, 4.3_
 
-- [ ] 2. Design system
-  - [ ] 2.1 `src/styles/tokens.css` (color, type, spacing, dark+light) and `global.css`.
-  - [ ] 2.2 Base + Prose layouts, Nav, Footer (with Rio↔Boston time + last-built/commit), skip link.
+- [x] 2. Design system
+  - [x] 2.1 `src/styles/tokens.css` (color, type, spacing, dark+light) and `global.css`.
+  - [x] 2.2 Base + Prose layouts, Nav, Footer (with Rio↔Boston time + last-built/commit), skip link.
   - _Req: 4.1, 4.2, 4.3, 5.3_
 
-- [ ] 3. Content model
-  - [ ] 3.1 `src/content/config.ts` with zod schemas for projects, blog, videos (alt required).
+- [x] 3. Content model
+  - [x] 3.1 `src/content.config.ts` with zod schemas for projects, blog, videos (alt required).
   - _Req: 1.1–1.6_
 
-- [ ] 4. Core components
-  - [ ] 4.1 StatusLight, Tag, SpecTable, ProjectCard, PostCard.
-  - [ ] 4.2 SensorTrace hero island (reduced-motion safe, pauses off-screen).
-  - [ ] 4.3 ThemeToggle (no-FOUC), VideoEmbed facade.
+- [x] 4. Core components
+  - [x] 4.1 StatusLight, Tag, SpecTable, ProjectCard, PostCard.
+  - [x] 4.2 SensorTrace hero island (reduced-motion safe, pauses off-screen).
+  - [x] 4.3 ThemeToggle (no-FOUC), VideoEmbed facade.
   - _Req: 4.4, 2.6, 5.5_
 
 - [ ] 5. Pages

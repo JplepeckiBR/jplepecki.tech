@@ -48,12 +48,16 @@ far is in that single WIP commit on `portfolio-v1`.)
 
 ## In progress
 
-Just finished copying fonts into `public/fonts/`. Nothing is half-edited — the last step completed
-cleanly. No source `src/` files exist yet.
+Tasks 2, 3, 4 are DONE: design system (tokens.css + global.css + fonts), content model
+(src/content.config.ts — NOTE: Astro 7 requires it at src/content.config.ts, NOT
+src/content/config.ts), and all core components (StatusLight, Tag, SpecTable, ProjectCard,
+PostCard, SensorTrace, ThemeToggle, VideoEmbed, Nav, Footer, BaseHead, Base layout). Seed content
+written: all 8 project MDX files, 2 blog posts, 1 video (draft). `npx astro sync` passes cleanly.
 
-NEXT CONCRETE STEP: create `src/styles/tokens.css` and `src/styles/global.css` (the design-token
-system: graphite/paper palette, Space Grotesk + IBM Plex Mono `@font-face` with font-display:swap,
-fluid type scale, spacing, hairline rules, dark default + `[data-theme="light"]`).
+NEXT CONCRETE STEP: create `src/pages/` — start with `index.astro` (home: hero + SensorTrace,
+currently-building strip, 3 featured projects, latest 3 posts, latest video). There is NO
+src/pages dir yet, so the build currently warns "Missing pages directory". Then projects, blog,
+videos, about, now, 404, rss.xml.ts, and the OG image endpoint.
 
 ## Next (remaining tasks, in order)
 
