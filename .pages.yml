@@ -1,0 +1,111 @@
+# Pages CMS config — https://pagescms.org
+# Lets JP write/edit content from app.pagescms.org (commits to GitHub via JP's
+# own login; NO tokens are stored here). Images upload into src/assets/uploads/.
+
+media:
+  input: src/assets/uploads
+  output: ../../assets/uploads # path prefix content files use to reference uploads
+  extensions: [png, jpg, jpeg, webp, gif, svg, avif]
+
+content:
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    view:
+      fields: [title, status, startDate, featured]
+    filename: '{fields.title}.mdx'
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: hook, label: One-line hook, type: string, required: true }
+      - name: status
+        label: Status
+        type: select
+        required: true
+        options:
+          values: [active, shipped, paused, archived]
+      - { name: startDate, label: Start date, type: date, required: true }
+      - { name: endDate, label: End date (optional), type: date }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: stack, label: Stack, type: string, list: true }
+      - { name: mcu, label: MCU, type: string }
+      - { name: sensors, label: Sensors, type: string, list: true }
+      - name: cover
+        label: Cover image
+        type: object
+        fields:
+          - { name: src, label: Image, type: image }
+          - { name: alt, label: Alt text (required), type: string, required: true }
+      - name: gallery
+        label: Gallery
+        type: object
+        list: true
+        fields:
+          - { name: src, label: Image, type: image }
+          - { name: alt, label: Alt text (required), type: string, required: true }
+      - name: links
+        label: Links
+        type: object
+        fields:
+          - { name: repo, label: Repo URL, type: string }
+          - { name: demo, label: Demo URL, type: string }
+          - { name: video, label: Video URL, type: string }
+      - { name: featured, label: Featured on home, type: boolean, default: false }
+      - { name: order, label: Sort order, type: number, default: 0 }
+      - { name: draft, label: Draft (hidden in prod), type: boolean, default: false }
+      - { name: body, label: Build log, type: rich-text }
+
+  - name: blog
+    label: Blog posts
+    type: collection
+    path: src/content/blog
+    view:
+      fields: [title, pubDate, draft]
+    filename: '{fields.title}.mdx'
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: description, label: Description, type: string, required: true }
+      - { name: pubDate, label: Publish date, type: date, required: true }
+      - { name: updatedDate, label: Updated date, type: date }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: project, label: Related project (slug), type: string }
+      - name: hero
+        label: Hero image
+        type: object
+        fields:
+          - { name: src, label: Image, type: image }
+          - { name: alt, label: Alt text (required), type: string, required: true }
+      - { name: draft, label: Draft (hidden in prod), type: boolean, default: false }
+      - { name: body, label: Body, type: rich-text }
+
+  - name: videos
+    label: Videos
+    type: collection
+    path: src/content/videos
+    view:
+      fields: [title, provider, pubDate, draft]
+    filename: '{fields.title}.mdx'
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - name: provider
+        label: Provider
+        type: select
+        required: true
+        options:
+          values: [youtube, vimeo]
+      - { name: videoId, label: Video ID, type: string }
+      - { name: url, label: Full URL (alternative to ID), type: string }
+      - { name: pubDate, label: Publish date, type: date, required: true }
+      - { name: description, label: Description, type: string }
+      - { name: tags, label: Tags, type: string, list: true }
+      - { name: project, label: Related project (slug), type: string }
+      - { name: draft, label: Draft (hidden in prod), type: boolean, default: false }
+      - { name: body, label: Notes, type: rich-text }
+
+  - name: now
+    label: Now page
+    type: file
+    path: src/now.md
+    fields:
+      - { name: updated, label: Last updated, type: date }
+      - { name: body, label: Body, type: rich-text }

@@ -1,0 +1,103 @@
+---
+import Base from '../../layouts/Base.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { getVideos, getProjects } from '../../lib/content';
+import { formatDate, isoDate } from '../../lib/format';
+
+const videos = await getVideos();
+const projects = await getProjects();
+const projectTitle = (id?: string) =>
+  id ? (projects.find((p) => p.id === id)?.data.title ?? null) : null;
+---
+
+<Base title="Videos" description="Build-log videos and series from JP Lepecki.">
+  <div class="container page">
+    <header class="page-head">
+      <p class="label">INDEX · VIDEOS</p>
+      <h1>Videos</h1>
+      <p class="page-lede">Series and clips documenting the builds. Click to load — nothing third-party runs until you press play.</p>
+    </header>
+
+    {
+      videos.length > 0 ? (
+        <div class="video-grid">
+          {videos.map((v) => {
+            const pt = projectTitle(v.data.project?.id);
+            return (
+              <article class="video-item">
+                <VideoEmbed
+                  provider={v.data.provider}
+                  videoId={v.data.videoId}
+                  url={v.data.url}
+                  title={v.data.title}
+                />
+                <h2 class="video-title">{v.data.title}</h2>
+                <p class="video-meta mono">
+                  <time datetime={isoDate(v.data.pubDate)}>{formatDate(v.data.pubDate)}</time>
+                  {pt && (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <a href={`/projects/${v.data.project!.id}`}>{pt}</a>
+                    </>
+                  )}
+                </p>
+                {v.data.description && <p class="video-desc">{v.data.description}</p>}
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="mono empty">
+          No videos published yet. TODO(JP): add real video ids to the entries in{' '}
+          <code>src/content/videos/</code> and set <code>draft: false</code>.
+        </p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-7);
+  }
+  .page-head {
+    margin-bottom: var(--space-6);
+  }
+  .page-head h1 {
+    margin-top: var(--space-2);
+  }
+  .page-lede {
+    margin-top: var(--space-4);
+    max-width: 54ch;
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .video-grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+  .video-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .video-title {
+    font-size: var(--step-1);
+    margin-top: var(--space-2);
+  }
+  .video-meta {
+    display: flex;
+    gap: var(--space-2);
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+  }
+  .video-desc {
+    color: var(--fg-muted);
+  }
+  .empty {
+    color: var(--fg-muted);
+    max-width: 52ch;
+    line-height: 1.8;
+  }
+</style>

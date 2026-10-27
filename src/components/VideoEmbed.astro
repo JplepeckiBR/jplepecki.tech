@@ -1,0 +1,142 @@
+---
+// Click-to-load video facade: shows a lightweight poster + play button and only
+// swaps in the provider iframe on interaction. No third-party JS until tap.
+interface Props {
+  provider: 'youtube' | 'vimeo';
+  videoId?: string;
+  url?: string;
+  title: string;
+}
+const { provider, videoId, url, title } = Astro.props;
+
+// Resolve a provider id from either videoId or a pasted url.
+function resolveId(): string | null {
+  if (videoId && videoId !== 'TODO') return videoId;
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    if (provider === 'youtube') {
+      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+      return u.searchParams.get('v') ?? u.pathname.split('/').pop() ?? null;
+    }
+    // vimeo
+    return u.pathname.split('/').filter(Boolean).pop() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+const id = resolveId();
+const embedSrc =
+  id && provider === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
+    : id && provider === 'vimeo'
+      ? `https://player.vimeo.com/video/${id}?autoplay=1`
+      : null;
+
+// Poster: YouTube provides thumbnails; Vimeo needs an API call we won't make at
+// build (no tokens), so Vimeo falls back to a neutral instrument-style poster.
+const poster =
+  id && provider === 'youtube' ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : null;
+---
+
+{
+  embedSrc ? (
+    <div class="video" data-video-facade data-src={embedSrc} data-title={title}>
+      <button class="video-play" type="button" aria-label={`Play video: ${title}`}>
+        {poster ? (
+          <img src={poster} alt="" width="480" height="360" loading="lazy" decoding="async" />
+        ) : (
+          <span class="video-poster-fallback" aria-hidden="true" />
+        )}
+        <span class="video-icon" aria-hidden="true">
+          <svg viewBox="0 0 68 48" width="68" height="48">
+            <rect width="68" height="48" rx="10" fill="#14151a" fill-opacity="0.82" />
+            <path d="M28 16l16 8-16 8z" fill="#ff5a1f" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  ) : (
+    <div class="video video-missing">
+      <p class="label">VIDEO UNAVAILABLE</p>
+    </div>
+  )
+}
+
+<style>
+  .video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--bg-inset);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .video-play {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: var(--bg-inset);
+    cursor: pointer;
+  }
+  .video-play img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    transition: opacity var(--dur) var(--ease);
+  }
+  .video-play:hover img {
+    opacity: 1;
+  }
+  .video-poster-fallback {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0,
+        transparent 38px,
+        var(--line) 38px,
+        var(--line) 39px
+      );
+  }
+  .video-icon {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .video-missing {
+    display: grid;
+    place-items: center;
+  }
+  .video :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video-facade]').forEach((el) => {
+    const btn = el.querySelector('button');
+    btn?.addEventListener('click', () => {
+      const src = el.dataset.src;
+      const title = el.dataset.title ?? 'Video';
+      if (!src) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.title = title;
+      iframe.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      el.replaceChildren(iframe);
+    });
+  });
+</script>

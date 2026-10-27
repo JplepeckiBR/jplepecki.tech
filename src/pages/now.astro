@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+import { formatDate } from '../lib/format';
+// The /now page is a single Markdown file you edit often. Edit src/now.md.
+import { Content, frontmatter } from '../now.md';
+
+const updated = frontmatter.updated ? new Date(frontmatter.updated) : null;
+---
+
+<Base
+  title="Now"
+  description="What JP Lepecki is focused on right now."
+>
+  <div class="container page">
+    <header class="page-head">
+      <p class="label">STATUS · NOW</p>
+      <h1>Now</h1>
+      {
+        updated && (
+          <p class="updated mono">
+            Last updated <time datetime={updated.toISOString().slice(0, 10)}>{formatDate(updated)}</time>
+          </p>
+        )
+      }
+    </header>
+
+    <div class="now-body prose">
+      <Content />
+    </div>
+
+    <p class="whatis mono">
+      This is a <a href="https://nownownow.com/about" rel="noopener">/now page</a> — a snapshot of
+      current focus, not a changelog.
+    </p>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-7);
+  }
+  .page-head {
+    margin-bottom: var(--space-6);
+  }
+  .page-head h1 {
+    margin-top: var(--space-2);
+  }
+  .updated {
+    margin-top: var(--space-3);
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+  }
+  .whatis {
+    margin-top: var(--space-8);
+    padding-top: var(--space-4);
+    border-top: var(--hairline) solid var(--line);
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+    max-width: var(--measure);
+  }
+</style>

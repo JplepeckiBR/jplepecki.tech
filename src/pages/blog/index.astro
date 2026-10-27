@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Search from '../../components/Search.astro';
+import { getPosts } from '../../lib/content';
+
+const posts = await getPosts();
+---
+
+<Base title="Blog" description="Writing and build-log notes from JP Lepecki.">
+  <div class="container page">
+    <header class="page-head">
+      <p class="label">INDEX · BLOG</p>
+      <h1>Blog</h1>
+      <p class="page-lede">Notes from the bench — embedded, data, and the pivot in between.</p>
+    </header>
+
+    <Search placeholder="Search posts & projects…" />
+
+    {
+      posts.length > 0 ? (
+        <div class="post-list">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="mono empty">No posts yet.</p>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-7);
+  }
+  .page-head {
+    margin-bottom: var(--space-4);
+  }
+  .page-head h1 {
+    margin-top: var(--space-2);
+  }
+  .page-lede {
+    margin-top: var(--space-4);
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .empty {
+    color: var(--fg-muted);
+  }
+</style>

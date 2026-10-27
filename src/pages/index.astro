@@ -1,0 +1,255 @@
+---
+import Base from '../layouts/Base.astro';
+import SensorTrace from '../components/SensorTrace.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import StatusLight from '../components/StatusLight.astro';
+import { SITE } from '../consts';
+import { getProjects, getPosts, getVideos } from '../lib/content';
+
+const projects = await getProjects();
+const active = projects.filter((p) => p.data.status === 'active');
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+const posts = (await getPosts()).slice(0, 3);
+const latestVideo = (await getVideos())[0];
+---
+
+<Base title={SITE.title} description={SITE.description}>
+  <!-- Hero: asymmetric, left-aligned. Intro on the left, live trace on the right. -->
+  <section class="hero container">
+    <div class="hero-intro">
+      <p class="label hero-kicker">PORTFOLIO · BUILD LOGS · RIO → BOSTON</p>
+      <h1 class="hero-title">
+        Business student who builds <span class="accent">real technical things</span>.
+      </h1>
+      <p class="hero-lede">
+        I'm João Pedro Lepecki — pivoting from finance toward the hardware/software
+        intersection: embedded systems and data science. Sensing, RF, autonomous
+        systems, and agritech, with an eye on making Brazil more competitive.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="/projects">View projects</a>
+        <a class="btn btn-ghost" href="/about">About me</a>
+      </div>
+    </div>
+    <div class="hero-trace">
+      <SensorTrace />
+    </div>
+  </section>
+
+  {
+    active.length > 0 && (
+      <section class="container building">
+        <div class="section-head">
+          <h2 class="label section-label">CURRENTLY BUILDING</h2>
+        </div>
+        <ul class="building-list">
+          {active.map((p) => (
+            <li class="building-item">
+              <a href={`/projects/${p.id}`} class="building-link">
+                <StatusLight status={p.data.status} />
+                <span class="building-title">{p.data.title}</span>
+                <span class="building-hook">{p.data.hook}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    featured.length > 0 && (
+      <section class="container section">
+        <div class="section-head">
+          <h2 class="section-title">Featured projects</h2>
+          <a class="section-more mono" href="/projects">All projects →</a>
+        </div>
+        <div class="card-grid">
+          {featured.map((p) => (
+            <ProjectCard project={p} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="container section">
+        <div class="section-head">
+          <h2 class="section-title">Latest writing</h2>
+          <a class="section-more mono" href="/blog">All posts →</a>
+        </div>
+        <div class="post-list">
+          {posts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    latestVideo && (
+      <section class="container section">
+        <div class="section-head">
+          <h2 class="section-title">Latest video</h2>
+          <a class="section-more mono" href="/videos">All videos →</a>
+        </div>
+        <div class="latest-video">
+          <VideoEmbed
+            provider={latestVideo.data.provider}
+            videoId={latestVideo.data.videoId}
+            url={latestVideo.data.url}
+            title={latestVideo.data.title}
+          />
+          <p class="video-caption label">{latestVideo.data.title}</p>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: var(--space-6);
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-7);
+  }
+  @media (min-width: 60rem) {
+    .hero {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: var(--space-8);
+    }
+  }
+  .hero-kicker {
+    margin-bottom: var(--space-4);
+  }
+  .hero-title {
+    font-size: var(--step-4);
+    max-width: 16ch;
+  }
+  .accent {
+    color: var(--accent);
+  }
+  .hero-lede {
+    margin-top: var(--space-5);
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: var(--hairline) solid var(--accent);
+  }
+  .btn:hover {
+    text-decoration: none;
+    filter: brightness(1.06);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--line-strong);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    filter: none;
+  }
+
+  .building {
+    padding-block: var(--space-6);
+    border-top: var(--hairline) solid var(--line);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+  .building-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+  }
+  @media (min-width: 48rem) {
+    .building-list {
+      grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    }
+  }
+  .building-link {
+    display: grid;
+    gap: var(--space-2);
+    color: inherit;
+    padding: var(--space-3) 0;
+  }
+  .building-link:hover {
+    text-decoration: none;
+  }
+  .building-title {
+    font-size: var(--step-1);
+    font-weight: 500;
+    color: var(--fg);
+  }
+  .building-link:hover .building-title {
+    color: var(--accent-link);
+  }
+  .building-hook {
+    color: var(--fg-muted);
+    font-size: var(--step-0);
+  }
+
+  .section {
+    margin-top: var(--space-8);
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+  .section-title {
+    font-size: var(--step-2);
+  }
+  .section-label {
+    font-size: var(--step--1);
+  }
+  .section-more {
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .section-more:hover {
+    color: var(--accent-link);
+  }
+
+  .card-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+
+  .latest-video {
+    max-width: 48rem;
+  }
+  .video-caption {
+    margin-top: var(--space-3);
+  }
+</style>

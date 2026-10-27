@@ -1,0 +1,140 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Search from '../../components/Search.astro';
+import { getProjects } from '../../lib/content';
+import { PROJECT_TAGS } from '../../consts';
+
+const projects = await getProjects();
+
+// Only show filter chips for tags that actually appear in the content.
+const present = new Set(projects.flatMap((p) => p.data.tags));
+const tags = PROJECT_TAGS.filter((t) => present.has(t));
+---
+
+<Base
+  title="Projects"
+  description="Build logs from JP Lepecki — embedded, data, AI, hardware, finance, and agritech projects."
+>
+  <div class="container page">
+    <header class="page-head">
+      <p class="label">INDEX · PROJECTS</p>
+      <h1>Projects</h1>
+      <p class="page-lede">
+        Build logs, not brochures. Each entry is problem → approach → what broke → what I learned.
+      </p>
+    </header>
+
+    <Search placeholder="Search posts & projects…" />
+
+    {
+      tags.length > 0 && (
+        <div class="filters" role="group" aria-label="Filter projects by tag">
+          <button class="chip mono is-on" type="button" data-filter="*" aria-pressed="true">
+            all
+          </button>
+          {tags.map((t) => (
+            <button class="chip mono" type="button" data-filter={t} aria-pressed="false">
+              {t}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="card-grid" data-grid>
+      {
+        projects.map((p) => (
+          <div class="grid-item" data-tags={p.data.tags.join(' ')}>
+            <ProjectCard project={p} />
+          </div>
+        ))
+      }
+    </div>
+    <p class="empty mono" data-empty hidden>No projects match that filter.</p>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-7);
+  }
+  .page-head {
+    margin-bottom: var(--space-6);
+  }
+  .page-head h1 {
+    margin-top: var(--space-2);
+  }
+  .page-lede {
+    margin-top: var(--space-4);
+    max-width: 52ch;
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-5);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+  .chip {
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--fg-muted);
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+  .chip:hover {
+    color: var(--fg);
+    border-color: var(--line-strong);
+  }
+  .chip.is-on {
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .card-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  }
+  .grid-item[hidden] {
+    display: none;
+  }
+  .empty {
+    margin-top: var(--space-6);
+    color: var(--fg-muted);
+  }
+</style>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.chip');
+  const items = document.querySelectorAll<HTMLElement>('.grid-item');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  function apply(filter: string) {
+    let shown = 0;
+    items.forEach((item) => {
+      const tags = (item.dataset.tags ?? '').split(' ');
+      const match = filter === '*' || tags.includes(filter);
+      item.hidden = !match;
+      if (match) shown++;
+    });
+    if (empty) empty.hidden = shown !== 0;
+  }
+
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      chips.forEach((c) => {
+        c.classList.toggle('is-on', c === chip);
+        c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+      });
+      apply(chip.dataset.filter ?? '*');
+    });
+  });
+</script>

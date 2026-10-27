@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import Tag from '../components/Tag.astro';
+import { SOCIAL } from '../consts';
+
+// Skills JP would defend in an interview (from the source of truth — not invented).
+const skills = ['Python', 'C/C++', 'SQL', 'Git / GitHub', 'Postman', 'DBeaver'];
+---
+
+<Base
+  title="About"
+  description="Rio → London → Boston. Business student moving from finance into embedded systems and data science, with a mission rooted in Brazil."
+>
+  <div class="container page">
+    <header class="page-head">
+      <p class="label">PROFILE</p>
+      <h1>About</h1>
+    </header>
+
+    <div class="about-grid">
+      <div class="about-body prose">
+        <p class="lede">
+          I'm João Pedro "JP" Lepecki — a kid from Rio, full of dreams and questions, now based in
+          Cambridge/Boston.
+        </p>
+
+        <h2>Rio → London → Boston</h2>
+        <p>
+          I started on the business and finance track: a data-science bootcamp with
+          <a href="https://www.lewagon.com/" rel="noopener">Le Wagon</a> in London, then Business
+          Analytics &amp; Finance at
+          <a href="https://www.hult.edu/" rel="noopener">Hult International Business School</a> in
+          Boston. Along the way I took Harvard Extension's DGMD E-14 on wearable devices and
+          computer vision — the course that pulled me toward hardware.
+        </p>
+
+        <h2>Finance → hardware</h2>
+        <p>
+          I'm a business student who builds real technical things. These days that means moving
+          toward the hardware/software intersection: embedded systems and data science. What pulls
+          me is defense tech, RF, sensing, autonomous vehicles, and fusing data from many sources —
+          and agritech, which for me isn't abstract.
+        </p>
+
+        <h2>The Brazil mission</h2>
+        <p>
+          My family runs <strong>Lepecki Family Coffee</strong>, a specialty coffee farm practicing
+          regenerative agriculture. That's the root of the agritech interest. The longer arc is
+          bigger than me: I want to help make Brazil more competitive in agritech and in
+          defense-adjacent technology.
+        </p>
+
+        <h2>What I'm looking for</h2>
+        {/* TODO(JP): this is a conservative DRAFT in a neutral voice — edit it to sound like you.
+            It states only what's on the record; tighten or expand as you like. */}
+        <p>
+          I'm looking for internships at the intersection of embedded systems, defense tech, and
+          agritech — places where I can write firmware and work with real sensors and data. I'm
+          also looking for mentors in those fields: people building hardware who are willing to
+          pull a curious business-to-hardware convert along.
+        </p>
+        <p class="draft-note mono">
+          TODO(JP): confirm or rewrite the paragraph above in your own words.
+        </p>
+      </div>
+
+      <aside class="about-aside">
+        <section class="aside-block">
+          <h2 class="label">TOOLS I'D DEFEND</h2>
+          <ul class="skills">
+            {skills.map((s) => (
+              <li>
+                <Tag tag={s} />
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section class="aside-block">
+          <h2 class="label">ELSEWHERE</h2>
+          <ul class="contact mono">
+            <li><a href={SOCIAL.github} rel="me noopener">GitHub ↗</a></li>
+            <li><a href={SOCIAL.linkedin} rel="me noopener">LinkedIn ↗</a></li>
+            {
+              SOCIAL.email ? (
+                <li><a href={`mailto:${SOCIAL.email}`}>Email ↗</a></li>
+              ) : (
+                <li class="todo">Email — TODO(JP): choose an address to expose</li>
+              )
+            }
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-block: var(--space-7);
+  }
+  .page-head {
+    margin-bottom: var(--space-6);
+  }
+  .page-head h1 {
+    margin-top: var(--space-2);
+  }
+  .about-grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+  @media (min-width: 60rem) {
+    .about-grid {
+      grid-template-columns: 1fr 16rem;
+      align-items: start;
+    }
+    .about-aside {
+      position: sticky;
+      top: 80px;
+    }
+  }
+  .lede {
+    font-size: var(--step-1);
+    color: var(--fg);
+  }
+  .draft-note {
+    color: var(--fg-faint);
+    font-size: var(--step--1);
+    border-left: 2px solid var(--line);
+    padding-left: var(--space-3);
+  }
+  .aside-block + .aside-block {
+    margin-top: var(--space-6);
+  }
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-3);
+  }
+  .contact {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    font-size: var(--step--1);
+  }
+  .contact .todo {
+    color: var(--fg-faint);
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Tag from './Tag.astro';
+import { formatDate, isoDate } from '../lib/format';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+const { post } = Astro.props;
+const { data } = post;
+const href = `/blog/${post.id}`;
+---
+
+<article class="post-row">
+  <a href={href} class="post-link">
+    <time class="post-date mono" datetime={isoDate(data.pubDate)}>{formatDate(data.pubDate)}</time>
+    <h3 class="post-title">{data.title}</h3>
+    <p class="post-desc">{data.description}</p>
+  </a>
+  {
+    data.tags.length > 0 && (
+      <ul class="post-tags" aria-label="Tags">
+        {data.tags.slice(0, 3).map((t) => (
+          <li>
+            <Tag tag={t} />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .post-row {
+    padding-block: var(--space-5);
+    border-bottom: var(--hairline) solid var(--line);
+  }
+  .post-link {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: var(--space-1) var(--space-5);
+    color: inherit;
+  }
+  .post-link:hover {
+    text-decoration: none;
+  }
+  .post-date {
+    color: var(--fg-faint);
+    grid-row: span 2;
+    padding-top: 0.3em;
+  }
+  .post-title {
+    font-size: var(--step-1);
+    color: var(--fg);
+  }
+  .post-link:hover .post-title {
+    color: var(--accent-link);
+  }
+  .post-desc {
+    color: var(--fg-muted);
+  }
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-3);
+    margin-left: calc(7rem + var(--space-5));
+  }
+  @media (max-width: 34rem) {
+    .post-link {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .post-date {
+      grid-row: auto;
+      padding-top: 0;
+    }
+    .post-tags {
+      margin-left: 0;
+    }
+  }
+</style>

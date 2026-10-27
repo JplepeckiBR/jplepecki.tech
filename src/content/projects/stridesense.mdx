@@ -1,0 +1,63 @@
+---
+title: StrideSense — smart insole
+hook: A wearable biomechanical sensor that reads gait from inside the shoe.
+status: active
+startDate: 2026-06-01
+tags: [embedded, hardware, data, sensing]
+stack: [C/C++, Embedded, Pressure sensing, IMU]
+mcu: Seeed XIAO nRF52840 Sense
+sensors: [Pressure (FSR), IMU (accel/gyro)]
+cover:
+  src: ../../assets/covers/stridesense.svg
+  alt: Abstract gait-pressure waveform drawn over an instrument grid
+featured: true
+order: 1
+# TODO(JP): add repo / demo / video links when public.
+---
+
+An embedded wearable that measures pressure and motion from inside a shoe to
+build a picture of how someone walks. It is the flagship of my move from
+finance into the hardware/software intersection: real firmware, real sensors,
+real people to test with.
+
+## Problem
+
+Gait tells you a lot — rehab progress, fatigue, asymmetry, load — but capturing
+it usually means a lab, a force plate, or a motion-capture rig. I wanted the
+signal to live where the foot actually is: in the insole.
+
+## Approach
+
+- **Sensing.** Pressure (force-sensitive resistors) across key contact zones,
+  plus an IMU for orientation and motion.
+- **MCU.** Running on a Seeed XIAO nRF52840 Sense. It started on an Arduino
+  board; I moved to the nRF52840 for its size, onboard sensing, and BLE.
+- **Build space.** Prototyped and tested at the robotics club at
+  [Artisan's Asylum](https://artisansasylum.com/) in Somerville, which gave me a
+  bench, tools, and people to sanity-check ideas against.
+- **Discovery.** Alongside the hardware I ran structured customer-discovery
+  conversations to find who actually needs this.
+
+## Materials grant
+
+Artisan's Asylum provided a materials grant in June 2026 that covered
+components for the build.
+
+## What's still open
+
+I do not yet have a committed beachhead customer. That is the honest state of
+the project — an open question I am actively working, not something to paper
+over. The leading candidates and the discovery notes are:
+
+TODO(JP): summarize the beachhead segments you've talked to (e.g. running
+clinics, PT, footwear) and where each conversation landed.
+
+## What broke / what I learned
+
+TODO(JP): add 2–3 concrete failures and fixes (sensor drift, mounting,
+power, BLE throughput, mechanical durability in the insole, etc.).
+
+## Next
+
+TODO(JP): the next milestone — e.g. "a wearable session that logs a full day"
+or "a pilot with N testers." Keep it specific.

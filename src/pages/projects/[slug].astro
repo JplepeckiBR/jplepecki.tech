@@ -1,0 +1,248 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SpecTable from '../../components/SpecTable.astro';
+import Tag from '../../components/Tag.astro';
+import PostCard from '../../components/PostCard.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { getProjects, getRelatedPosts, getProjectVideos } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const relatedPosts = await getRelatedPosts(project.id);
+const projectVideos = await getProjectVideos(project.id);
+
+const ogImage = `/og/projects/${project.id}.png`;
+---
+
+<Base
+  title={data.title}
+  description={data.hook}
+  type="article"
+  image={ogImage}
+  publishedTime={data.startDate}
+>
+  <article class="container project">
+    <header class="project-head">
+      <p class="label">PROJECT</p>
+      <h1>{data.title}</h1>
+      <p class="project-hook">{data.hook}</p>
+
+      {
+        data.tags.length > 0 && (
+          <ul class="head-tags" aria-label="Tags">
+            {data.tags.map((t) => (
+              <li>
+                <Tag tag={t} href={`/projects?tag=${encodeURIComponent(t)}`} />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+
+    {
+      data.cover && (
+        <figure class="project-cover">
+          <Image src={data.cover.src} alt={data.cover.alt} width={1200} height={630} />
+        </figure>
+      )
+    }
+
+    <div class="project-grid">
+      <div class="project-body prose">
+        <Content />
+      </div>
+
+      <aside class="project-aside">
+        <SpecTable
+          status={data.status}
+          startDate={data.startDate}
+          endDate={data.endDate}
+          mcu={data.mcu}
+          sensors={data.sensors}
+          stack={data.stack}
+        />
+
+        {
+          data.links && (data.links.repo || data.links.demo || data.links.video) && (
+            <nav class="links" aria-label="Project links">
+              <p class="label">LINKS</p>
+              <ul>
+                {data.links.repo && (
+                  <li>
+                    <a href={data.links.repo} rel="noopener">
+                      Repository ↗
+                    </a>
+                  </li>
+                )}
+                {data.links.demo && (
+                  <li>
+                    <a href={data.links.demo} rel="noopener">
+                      Live demo ↗
+                    </a>
+                  </li>
+                )}
+                {data.links.video && (
+                  <li>
+                    <a href={data.links.video} rel="noopener">
+                      Video ↗
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+
+    {
+      data.gallery && data.gallery.length > 0 && (
+        <section class="gallery">
+          <h2 class="label">GALLERY</h2>
+          <div class="gallery-grid">
+            {data.gallery.map((img) => (
+              <figure>
+                <Image src={img.src} alt={img.alt} width={800} height={600} loading="lazy" />
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      projectVideos.length > 0 && (
+        <section class="project-videos">
+          <h2 class="label">VIDEOS</h2>
+          <div class="video-grid">
+            {projectVideos.map((v) => (
+              <div>
+                <VideoEmbed
+                  provider={v.data.provider}
+                  videoId={v.data.videoId}
+                  url={v.data.url}
+                  title={v.data.title}
+                />
+                <p class="video-cap label">{v.data.title}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      relatedPosts.length > 0 && (
+        <section class="related">
+          <h2 class="label">RELATED WRITING</h2>
+          <div class="post-list">
+            {relatedPosts.map((post) => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <p class="back mono"><a href="/projects">← All projects</a></p>
+  </article>
+</Base>
+
+<style>
+  .project {
+    padding-block: var(--space-7);
+  }
+  .project-head h1 {
+    margin-top: var(--space-2);
+  }
+  .project-hook {
+    margin-top: var(--space-4);
+    max-width: 54ch;
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+  }
+  .head-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+  }
+  .project-cover {
+    margin: var(--space-6) 0;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .project-cover :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .project-grid {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-5);
+  }
+  @media (min-width: 60rem) {
+    .project-grid {
+      grid-template-columns: 1fr 18rem;
+      align-items: start;
+    }
+    .project-aside {
+      position: sticky;
+      top: 80px;
+    }
+  }
+  .links {
+    margin-top: var(--space-5);
+  }
+  .links ul {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2);
+    display: grid;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+  .gallery,
+  .project-videos,
+  .related {
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: var(--hairline) solid var(--line);
+  }
+  .gallery-grid,
+  .video-grid {
+    display: grid;
+    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    margin-top: var(--space-4);
+  }
+  .gallery figure {
+    margin: 0;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .video-cap {
+    margin-top: var(--space-2);
+  }
+  .back {
+    margin-top: var(--space-8);
+  }
+</style>

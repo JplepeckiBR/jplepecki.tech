@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { NAV } from '../consts';
+---
+
+<Base title="404 — Not found" description="That signal dropped out." indexable={false}>
+  <div class="container nf">
+    <p class="label">ERR · 404 · NO SIGNAL</p>
+    <h1 class="nf-code">404</h1>
+    <p class="nf-msg">
+      That trace flatlined — the page you asked for isn't here. It may have moved, or never existed.
+    </p>
+    <nav class="nf-nav" aria-label="Go somewhere that exists">
+      <a class="btn" href="/">Home</a>
+      {NAV.map((item) => <a class="btn btn-ghost" href={item.href}>{item.label}</a>)}
+    </nav>
+    <svg class="nf-trace" viewBox="0 0 600 80" aria-hidden="true" preserveAspectRatio="none">
+      <polyline
+        points="0,40 120,40 150,12 180,40 300,40 330,68 360,40 600,40"
+        fill="none" stroke="var(--line-strong)" stroke-width="2" />
+      <line x1="360" y1="40" x2="600" y2="40" stroke="var(--accent)" stroke-width="2" />
+    </svg>
+  </div>
+</Base>
+
+<style>
+  .nf {
+    padding-block: var(--space-9);
+    max-width: 48rem;
+  }
+  .nf-code {
+    font-size: clamp(4rem, 2rem + 12vw, 9rem);
+    line-height: 0.9;
+    margin-top: var(--space-3);
+    letter-spacing: -0.04em;
+  }
+  .nf-msg {
+    margin-top: var(--space-4);
+    color: var(--fg-muted);
+    font-size: var(--step-1);
+    max-width: 44ch;
+  }
+  .nf-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: var(--hairline) solid var(--accent);
+  }
+  .btn:hover {
+    text-decoration: none;
+    filter: brightness(1.06);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--fg);
+    border-color: var(--line-strong);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    filter: none;
+  }
+  .nf-trace {
+    width: 100%;
+    height: 80px;
+    margin-top: var(--space-8);
+    opacity: 0.8;
+  }
+</style>

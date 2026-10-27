@@ -1,0 +1,167 @@
+---
+// Static search powered by Pagefind. The index (/pagefind/) only exists after
+// `pagefind --site dist` runs in the build, so this UI is inert in `astro dev`
+// and simply shows nothing until a query is typed against a built site.
+interface Props {
+  placeholder?: string;
+}
+const { placeholder = 'Search the site…' } = Astro.props;
+---
+
+<div class="search" data-search>
+  <label class="search-field">
+    <span class="visually-hidden">Search</span>
+    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+      <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+    </svg>
+    <input
+      type="search"
+      class="search-input mono"
+      placeholder={placeholder}
+      autocomplete="off"
+      data-search-input
+      aria-controls="search-results"
+    />
+  </label>
+  <div id="search-results" class="search-results" data-search-results role="region" aria-live="polite"></div>
+</div>
+
+<style>
+  .search {
+    margin-bottom: var(--space-6);
+  }
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 0 var(--space-4);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    min-height: 48px;
+  }
+  .search-field:focus-within {
+    border-color: var(--accent);
+  }
+  .search-icon {
+    color: var(--fg-faint);
+    flex: none;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: var(--fg);
+    font-size: var(--step-0);
+    padding: var(--space-2) 0;
+  }
+  .search-input:focus {
+    outline: none;
+  }
+  .search-results {
+    margin-top: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+  }
+  .search-results:empty {
+    margin-top: 0;
+  }
+  :global(.search-result) {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius);
+    color: inherit;
+  }
+  :global(.search-result:hover) {
+    border-color: var(--line-strong);
+    text-decoration: none;
+  }
+  :global(.search-result h3) {
+    font-size: var(--step-0);
+    color: var(--fg);
+  }
+  :global(.search-result p) {
+    font-size: var(--step--1);
+    color: var(--fg-muted);
+    margin-top: var(--space-1);
+  }
+  :global(.search-result mark) {
+    background: color-mix(in srgb, var(--accent) 24%, transparent);
+    color: inherit;
+    border-radius: 2px;
+  }
+  :global(.search-empty) {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--fg-faint);
+  }
+</style>
+
+<script>
+  type PagefindResult = {
+    data: () => Promise<{
+      url: string;
+      meta?: { title?: string };
+      excerpt: string;
+    }>;
+  };
+  type Pagefind = { search: (q: string) => Promise<{ results: PagefindResult[] }> };
+
+  const root = document.querySelector<HTMLElement>('[data-search]');
+  const input = root?.querySelector<HTMLInputElement>('[data-search-input]');
+  const out = root?.querySelector<HTMLElement>('[data-search-results]');
+  if (input && out) {
+    let pf: Pagefind | null = null;
+    let loading = false;
+
+    async function ensurePagefind(): Promise<Pagefind | null> {
+      if (pf || loading) return pf;
+      loading = true;
+      try {
+        // Path is only valid on the built site; ignore failures in dev.
+        const mod = (await import(/* @vite-ignore */ '/pagefind/pagefind.js')) as Pagefind;
+        pf = mod;
+      } catch {
+        pf = null;
+      }
+      return pf;
+    }
+
+    let timer = 0;
+    input.addEventListener('input', () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(run, 180);
+    });
+    input.addEventListener('focus', ensurePagefind, { once: true });
+
+    async function run() {
+      const q = input!.value.trim();
+      if (!q) {
+        out!.innerHTML = '';
+        return;
+      }
+      const engine = await ensurePagefind();
+      if (!engine) {
+        out!.innerHTML = '<p class="search-empty">Search is available on the built site.</p>';
+        return;
+      }
+      const search = await engine.search(q);
+      const top = await Promise.all(search.results.slice(0, 6).map((r) => r.data()));
+      if (top.length === 0) {
+        out!.innerHTML = '<p class="search-empty">No matches.</p>';
+        return;
+      }
+      out!.innerHTML = top
+        .map(
+          (d) =>
+            `<a class="search-result" href="${d.url}"><h3>${
+              d.meta?.title ?? d.url
+            }</h3><p>${d.excerpt}</p></a>`
+        )
+        .join('');
+    }
+  }
+</script>

@@ -1,0 +1,22 @@
+# build output
+dist/
+# pagefind generated index inside dist is covered above
+# dependencies
+node_modules/
+# astro
+.astro/
+# generated types
+src/env.d.ts
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+# env — never commit real values
+.env
+.env.*
+!.env.example
+# playwright artifacts (local review only)
+test-results/
+playwright-report/
+.review-screens/
