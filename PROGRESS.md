@@ -48,9 +48,10 @@ far is in that single WIP commit on `portfolio-v1`.)
 
 ## STATUS: COMPLETE
 
-All 9 tasks done. Site is built, self-reviewed, and committed on `portfolio-v1`. The only thing
-left is for JP to push the branch and open the PR into `main` (cannot be done here — no gh CLI or
-git credentials). Full instructions are in NOTES_FOR_JP.md.
+All 9 tasks done. Site is built, self-reviewed, committed, AND pushed to `origin/portfolio-v1`
+(commit 3d49b13). The only thing left is for JP to open the PR into `main` — `gh` CLI is not
+installed here, so use the "Compare & pull request" button on GitHub or the steps in
+NOTES_FOR_JP.md section 5. (main deploys to production, so the PR/merge is left to JP.)
 
 Self-review results: `npm run build` clean (17 pages + Pagefind 16 pages). Playwright screenshots
 of every route × {375×812, 1440×900} × {light, dark} reviewed — no console errors, no HTTP errors
