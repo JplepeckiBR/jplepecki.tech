@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import Search from '../../components/Search.astro';
 import { getProjects } from '../../lib/content';
 import { PROJECT_TAGS } from '../../consts';
 
@@ -23,6 +24,8 @@ const tags = PROJECT_TAGS.filter((t) => present.has(t));
         Build logs, not brochures. Each entry is problem → approach → what broke → what I learned.
       </p>
     </header>
+
+    <Search placeholder="Search posts & projects…" />
 
     {
       tags.length > 0 && (

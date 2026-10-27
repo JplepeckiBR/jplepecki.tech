@@ -55,11 +55,16 @@ indexes 16 pages. OG images render via satori + resvg using OFL TTFs in src/asse
 (build-only, not shipped). NOTE: og.ts resolves fonts from process.cwd()/src/assets/og-fonts
 because import.meta.url doesn't survive prerender bundling.
 
-NEXT CONCRETE STEP (task 6.2): add a Pagefind search UI island to /blog and /projects (a search
-box that loads /pagefind/pagefind.js on focus). Then task 8: `.pages.yml` (Pages CMS mapping the
-3 collections, uploads → src/assets/uploads/) and `.github/workflows/deploy.yml`. Then task 9:
-Playwright screenshots + visual review, link/feed/404 checks, secret + 2MB audit, NOTES_FOR_JP.md,
-final commit + PR instructions.
+Tasks 6.2 and 8 now DONE too: Search.astro island (lazy-loads /pagefind/pagefind.js) is on
+/blog and /projects; `.pages.yml` maps all 3 collections + the now.md file (uploads →
+src/assets/uploads/); `.github/workflows/deploy.yml` builds on PRs (no deploy) and builds+deploys
+on push to main / workflow_dispatch (actions/checkout@v4, setup-node@v4, upload-pages-artifact@v3,
+deploy-pages@v4; perms contents:read/pages:write/id-token:write; no secrets).
+
+NEXT CONCRETE STEP (task 9 — self review): run Playwright to screenshot every route at 375×812 and
+1440×900 in light + dark, review them, fix visual issues. Then link/feed/404 checks, secret + 2MB
+asset audit, write NOTES_FOR_JP.md, final commit, and prepare push + PR instructions (cannot push:
+no gh/credentials).
 
 ## Next (remaining tasks, in order)
 

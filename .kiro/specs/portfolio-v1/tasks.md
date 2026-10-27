@@ -29,7 +29,7 @@
 
 - [x] 6. SEO & feeds
   - [x] 6.1 BaseHead meta/OG/Twitter/canonical; rss.xml; sitemap; per-entry OG image endpoint.
-  - [ ] 6.2 Pagefind in build script (DONE) + search UI on /blog and /projects (TODO).
+  - [x] 6.2 Pagefind in build script + Search UI island on /blog and /projects.
   - _Req: 3.1–3.4_
 
 - [x] 7. Seed content
@@ -38,9 +38,9 @@
   - [x] 7.2 2 blog posts, 1 video entry (draft), about/now copy, placeholder cover art (SVG).
   - _Req: 1.*, 2.*_
 
-- [ ] 8. Authoring & deploy
-  - [ ] 8.1 `.pages.yml` mapping collections + upload path.
-  - [ ] 8.2 `.github/workflows/deploy.yml` (PR build; main deploy; dispatch).
+- [x] 8. Authoring & deploy
+  - [x] 8.1 `.pages.yml` mapping collections + upload path (src/assets/uploads/).
+  - [x] 8.2 `.github/workflows/deploy.yml` (PR build only; main deploy; dispatch).
   - _Req: 6.1, 6.2_
 
 - [ ] 9. Self-review
