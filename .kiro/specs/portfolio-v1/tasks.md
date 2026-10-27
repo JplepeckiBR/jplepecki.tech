@@ -43,8 +43,11 @@
   - [x] 8.2 `.github/workflows/deploy.yml` (PR build only; main deploy; dispatch).
   - _Req: 6.1, 6.2_
 
-- [ ] 9. Self-review
-  - [ ] 9.1 Clean build; Playwright screenshots every route × 2 sizes × 2 themes; fix visual issues.
-  - [ ] 9.2 Link/404/feed checks; secret + 2MB asset audit.
-  - [ ] 9.3 `NOTES_FOR_JP.md`; commit; prepare push + PR instructions.
+- [x] 9. Self-review
+  - [x] 9.1 Clean build; Playwright screenshots every route × 2 sizes × 2 themes; fixed visual
+        issues (hero-trace caption scrim, videos empty-state spacing). No console errors.
+  - [x] 9.2 Link/404/feed checks (rss.xml, sitemap-index.xml, 404, pagefind all present);
+        secret audit (none) + 2 MB asset audit (largest tracked file 169 KB); no leaked undefined.
+  - [x] 9.3 `NOTES_FOR_JP.md` written; README updated; committed. Push + PR instructions in notes
+        (cannot push here — no gh/credentials).
   - _Req: 5.*, all_

@@ -46,6 +46,18 @@ far is in that single WIP commit on `portfolio-v1`.)
   Mono 400/500 + latin-ext), all < 15 KB each.
 - Spec files (requirements/design/tasks) + 3 steering files written.
 
+## STATUS: COMPLETE
+
+All 9 tasks done. Site is built, self-reviewed, and committed on `portfolio-v1`. The only thing
+left is for JP to push the branch and open the PR into `main` (cannot be done here — no gh CLI or
+git credentials). Full instructions are in NOTES_FOR_JP.md.
+
+Self-review results: `npm run build` clean (17 pages + Pagefind 16 pages). Playwright screenshots
+of every route × {375×812, 1440×900} × {light, dark} reviewed — no console errors, no HTTP errors
+(except the intentional 404 test). Fixed: hero-trace caption scrim, videos empty-state word spacing.
+Audits pass: no secrets, no .env, no tracked file > 2 MB (largest 169 KB OG font), no leaked
+"undefined/null/NaN" in rendered HTML.
+
 ## In progress
 
 Tasks 2–7 DONE. The FULL `npm run build` pipeline passes: `astro build` emits 17 pages
