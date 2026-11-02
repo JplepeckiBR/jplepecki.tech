@@ -15,7 +15,16 @@ const config: QuartzConfig = {
     analytics: null,
     locale: "en-US",
     baseUrl: "jplepecki.tech",
-    ignorePatterns: ["private", "templates", ".obsidian", "NOTES.md", "RETRO.md", "KPI.md"],
+    ignorePatterns: [
+      "private",
+      "templates",
+      ".obsidian",
+      "NOTES.md",
+      "RETRO.md",
+      "KPI.md",
+      "About.md",
+      "about.md",
+    ],
     defaultDateType: "modified",
     theme: {
       fontOrigin: "local",
