@@ -1,30 +1,31 @@
 # jplepecki.tech
 
-Personal portfolio + blog for João Pedro "JP" Lepecki. Static [Astro](https://astro.build) site
-deployed to GitHub Pages. "Field instrument / lab notebook" design; near-zero client JS.
+This is a Quartz 4 site published from Obsidian notes.
 
-## Stack
+## Content source
 
-- Astro 7 with content collections (projects, blog, videos) + zod schemas, MDX.
-- Plain CSS with custom properties (`src/styles/tokens.css`). Self-hosted fonts.
-- Pagefind (static search), RSS, sitemap, build-time Open Graph images (satori + resvg).
-- Phone publishing via [Pages CMS](https://pagescms.org) (`.pages.yml`).
+Put publishable Markdown notes in [`obsidian_posts/`](./obsidian_posts/). A note
+is included only when its YAML frontmatter contains:
 
-## Commands
+```yaml
+publish: true
+```
 
-| Command           | Action                                              |
-| ----------------- | --------------------------------------------------- |
-| `npm run dev`     | Start the local dev server                          |
-| `npm run build`   | Build the site, then generate the Pagefind index    |
-| `npm run preview` | Preview the built `dist/` locally                   |
+Keep private notes, including `NOTES.md`, `RETRO.md`, and `KPI.md`, without that
+flag. Quartz's `ExplicitPublish` filter excludes them from the build.
 
-## Content
+## Local development
 
-Add entries under `src/content/{projects,blog,videos}/` (MDX) or edit from your phone via Pages CMS
-(app.pagescms.org). See `NOTES_FOR_JP.md` for details, the content model, and outstanding
-`TODO(JP)` items.
+```bash
+npm ci
+npx quartz build --serve -d obsidian_posts
+```
 
-## Deploy
+The `-d obsidian_posts` argument points Quartz at the Obsidian source folder;
+the notes remain the single source of truth and are not copied into another
+content tree.
 
-`.github/workflows/deploy.yml` builds on pull requests (no deploy) and builds + deploys to GitHub
-Pages on push to `main` and manual dispatch. No secrets required. `public/CNAME` holds the domain.
+## Publishing
+
+Commit and push a note with `publish: true` to `main`. GitHub Actions builds
+Quartz and deploys it to GitHub Pages at `https://jplepecki.tech`.
