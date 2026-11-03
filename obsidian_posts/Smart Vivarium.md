@@ -1,10 +1,16 @@
 ---
 status: planning
+
 enclosure: 60×45×90 cm
 
 title: An Automation Freak's First Vivarium
+
 description: Remotely controled climate system for a crested gecko's vivarium.
+
+thumbnail: https://gocontroll.com/wp-content/uploads/2025/10/20251002-Smart-Reptile-Terrarium-Control-System.png
+
 publish: true
+
 tags:
   - project
   - vivarium
