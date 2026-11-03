@@ -12,14 +12,10 @@ interface Options {
   filter: (f: QuartzPluginData) => boolean
 }
 
-// Thumbnail priority: frontmatter `thumbnail`, then `image`/`cover`, then the post's first image.
+// Thumbnails are opt-in: only the frontmatter `thumbnail` field is used.
 function thumbnailFor(page: QuartzPluginData, currentSlug: FullSlug): string | undefined {
-  const fm = page.frontmatter as Record<string, unknown> | undefined
-  const raw =
-    (typeof fm?.thumbnail === "string" && fm.thumbnail) ||
-    page.frontmatter?.socialImage ||
-    page.firstImage
-  if (!raw) return undefined
+  const raw = page.frontmatter?.thumbnail
+  if (typeof raw !== "string" || !raw.trim()) return undefined
   if (isAbsoluteURL(raw)) return raw
   // local file in the vault, e.g. "Pasted image 2026-11-02.png" or "[[Pasted image.png]]"
   const file = raw.replace(/^!?\[\[|\]\]$/g, "").split("|")[0].trim()
@@ -47,11 +43,7 @@ export default ((userOpts?: Partial<Options>) => {
             return (
               <li>
                 <a href={href} class="internal post-card">
-                  {thumb ? (
-                    <img src={thumb} alt="" loading="lazy" />
-                  ) : (
-                    <div class="placeholder" />
-                  )}
+                  {thumb && <img src={thumb} alt="" loading="lazy" />}
                   <div class="body">
                     <h3>{title}</h3>
                     {page.dates && (
