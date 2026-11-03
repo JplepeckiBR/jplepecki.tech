@@ -1,6 +1,7 @@
 import { QuartzTransformerPlugin } from "../types"
 import { Root, Image } from "mdast"
 import { visit } from "unist-util-visit"
+import { VFile } from "vfile"
 
 // Obsidian lets standard markdown images carry a size in the alt text:
 //   ![alt|250](url)      -> width 250
@@ -13,8 +14,10 @@ export const ObsidianImageSize: QuartzTransformerPlugin = () => {
     name: "ObsidianImageSize",
     markdownPlugins() {
       return [
-        () => (tree: Root) => {
+        () => (tree: Root, file: VFile) => {
           visit(tree, "image", (node: Image) => {
+            // remember the first image so post cards can use it as a thumbnail
+            if (!file.data.firstImage && node.url) file.data.firstImage = node.url
             const match = node.alt?.match(sizeRegex)
             if (!match?.groups) return
             const { alt, width, height } = match.groups
@@ -29,5 +32,11 @@ export const ObsidianImageSize: QuartzTransformerPlugin = () => {
         },
       ]
     },
+  }
+}
+
+declare module "vfile" {
+  interface DataMap {
+    firstImage: string
   }
 }

@@ -7,10 +7,8 @@ export const sharedPageComponents: SharedLayout = {
   header: [],
   afterBody: [
     Component.ConditionalRender({
-      component: Component.RecentNotes({
+      component: Component.PostCards({
         title: "Posts",
-        limit: 10,
-        showTags: true,
         filter: (f) => f.slug !== "index" && !f.slug?.includes("fixture"),
       }),
       condition: (page) => page.fileData.slug === "index",
