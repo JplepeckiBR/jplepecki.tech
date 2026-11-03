@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://jplepecki.tech/sitemap-index.xml
