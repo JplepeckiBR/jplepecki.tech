@@ -1,47 +1,34 @@
 # Style — jplepecki.tech
 
-Concept: **field instrument / lab notebook.** The readout of a piece of test equipment crossed
-with an engineer's notebook. Bespoke, restrained, editorial. Never generic-AI.
+Concept: **a maker's desk seen from above.** A worn green cutting mat with real objects on it. A black
+circuit board is the main navigation; an ASCII portrait of JP is printed and taped down; posts are a
+black lab notebook; booking a call is a business card. Credibility comes from authentic engineering
+detail (part designators U1/BT1/D1, "DNP" for unpopulated parts, copper traces, soldering burns, tool
+outlines, pencil notes with real numbers), never from generic "tech" styling.
+
+The approved mockups are in `design/` (see its README). They are the visual source of truth.
 
 ## Explicitly avoid
 
-Purple/blue gradients, glassmorphism, floating blobs, emoji bullets, "Hi, I'm JP 👋" heroes, three
-identical icon cards, stock illustrations, generic Inter-everything, centered-everything layouts,
-gratuitous scroll animations, bouncing hover effects.
+The previous "field instrument / lab notebook" look: `// 01` section codes, `STATUS: ACTIVE` mono
+labels everywhere, reference numbers like "FN-2025-0042", title blocks on every page. Also: gradients
+(except burn marks, stains and object shadows), glassmorphism, emoji, identical card grids, centred
+hero sections, bouncing hover effects.
 
-## Palette
+## Rules
 
-- One accent only: signal orange ≈ `#FF5A1F`, used sparingly for status, links, live data.
-- Dark (default): graphite background (not pure #000, ~`#14151a`), warm off-white text.
-- Light: paper-white background, same accent. Follow `prefers-color-scheme` + a manual toggle that
-  persists and does not flash (set theme in an inline head script).
-- Contrast must meet WCAG AA in both themes.
+- Long text never sits directly on the mat. Body copy lives on a solid page or paper object.
+- Object rotation never exceeds 3°.
+- One accent colour only: `#F5B841`, for current state (today, current stage, LED, book a call).
+- Fonts: JetBrains Mono for labels, metadata, navigation and ASCII. Source Serif 4 for headings and
+  body. Self-hosted. Article body 19px, line-height 1.75.
+- Desktop home (≥1100px) is the desk. Below 1100px it is the callout map + parts list.
+- WCAG AA contrast, every object a real link or button, `prefers-reduced-motion` respected.
 
-## Type
+## Tokens
 
-- Headings/body: a characterful grotesk (Space Grotesk). Self-hosted woff2, `font-display: swap`.
-- Monospace (IBM Plex Mono) for metadata, labels, dates, spec tables, tags. Uppercase mono labels
-  like `STATUS: ACTIVE`, `MCU: nRF52840`.
-
-## Layout
-
-- Left-aligned editorial grid, generous whitespace, visible hairline rules, small uppercase mono
-  labels. Asymmetric home layout — not a stack of centered sections.
-- Project cards: status light, dates, stack in mono, one strong image. Hover is subtle.
-- Blog: ~68ch measure, excellent Shiki code blocks matched to the palette, figures with captions,
-  footnotes.
-
-## Signature element
-
-Hero sensor-trace: a small, live-looking procedural waveform (gait-pressure nod to StrideSense).
-<5 KB JS, pauses off-screen, static frame under `prefers-reduced-motion`, degrades without JS.
-
-## Footer touches
-
-Rio ↔ Boston local time; a "last built" timestamp + short commit hash.
-
-## Quality bar
-
-Mobile-first, excellent at 360–430px: no horizontal scroll, tap targets ≥44px, readable without
-zoom. Semantic HTML, skip link, focus-visible styles, alt text required by schema. No CLS from
-fonts/images. No console errors.
+ink #0D0F0E · mat #2E5C48 · grid major rgba(255,255,255,.30)/100px · grid minor rgba(255,255,255,.13)/20px
+page #151918 · pcb #141817 · chip #0E1110 · copper #C89B5C · paper #F1EEE6 · paper-bright #FBFAF6
+stake #F4F3EE · tape rgba(232,222,190,.88) · sticky #E5C25A · text #ECE8DE · text-body #DADED9
+text-muted #9DA6A1 · text-on-paper #1E2220 · accent #F5B841 · danger #A12A1C
+pencil rgba(255,255,255,.62) · dnp #6E6A61 (dashed)
