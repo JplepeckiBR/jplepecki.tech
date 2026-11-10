@@ -29,3 +29,17 @@
 ## Needs JP · Step 1
 
 - None.
+
+## Step 2 · Remove Quartz and keep reusable work
+
+- **Research archive:** copied `obsidian_posts/Smart Vivarium.md` to `archive/obsidian/` before removal. Its article images are remote URLs; the only local PNG in the Obsidian folder was also preserved with a matching hash.
+- **Local generated output:** moved the ignored Quartz `public/` build and `.quartz-cache/` into ignored `archive/local-build/` instead of deleting uncommitted files.
+- **Quartz removal:** removed the specified Quartz source, docs, declarations, screenshots, Obsidian source folder, container file, package manifest, and lockfile. The `quartz-archive` branch retains the complete previous site.
+- **Approved reuse only:** restored only `og.ts`, the OG font directory, `VideoEmbed.astro`, `BaseHead.astro`, `buildinfo.ts`, and `scripts/screenshots.mjs` from `portfolio-v1`.
+- **Adaptations:** replaced the old typography with licensed Source Serif 4 and JetBrains Mono assets, rebuilt the OG visual as a cutting-mat/notebook object, removed video autoplay and empty states, added Cloudflare commit metadata, and changed screenshots to the new routes, widths, and `review/v1-rebuild/` output.
+- **Workflow:** replaced GitHub Pages deployment with a pull-request-only `npm ci` + `npm run build` check and read-only contents permission.
+- **Result:** Step 2 passed. Runtime validation follows after the new Astro scaffold exists.
+
+## Needs JP · Step 2
+
+- None.
