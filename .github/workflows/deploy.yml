@@ -1,18 +1,36 @@
-name: Build Astro site
+name: Deploy to GitHub Pages
 
 on:
-  pull_request:
+  push:
+    branches: [main]
+  # Rebuild hourly so new Notion content goes live without a commit.
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: build-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_DS_STUDIES: ${{ vars.NOTION_DS_STUDIES }}
+      NOTION_DS_LOOPS: ${{ vars.NOTION_DS_LOOPS }}
+      NOTION_DS_DAILY_TARGETS: ${{ vars.NOTION_DS_DAILY_TARGETS }}
+      NOTION_DS_PROJECTS: ${{ vars.NOTION_DS_PROJECTS }}
+      NOTION_DS_CONTENT: ${{ vars.NOTION_DS_CONTENT }}
+      NOTION_DS_WORK: ${{ vars.NOTION_DS_WORK }}
+      NOTION_PAGE_README: ${{ vars.NOTION_PAGE_README }}
+      CAL_URL: ${{ vars.CAL_URL }}
+      INCLUDE_DRAFTS: 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,5 +44,28 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Refuse to publish sample content
+        run: |
+          if [ -z "${NOTION_TOKEN// }" ]; then
+            echo "::error::NOTION_TOKEN secret is not set. Production would publish fixture sample content, so the deploy stops here."
+            exit 1
+          fi
+
       - name: Build site
         run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
