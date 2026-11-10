@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="João Pedro Lepecki">
+  <header class="site-header">
+    <div>
+      <strong>João Pedro Lepecki</strong>
+      <span>Proudly a maker.</span>
+    </div>
+  </header>
+  <main id="main" class="desk-mat scaffold-mat">
+    <div class="ruler" aria-hidden="true">
+      {Array.from({ length: 13 }, (_, index) => <span>{index}</span>)}
+    </div>
+    <section class="nameplate" aria-labelledby="site-name">
+      <span class="nameplate__ref">JPLEPECKI.TECH · REV 01</span>
+      <h1 id="site-name">João Pedro Lepecki</h1>
+      <p>Proudly a maker.</p>
+      <span class="nameplate__state">ASTRO SCAFFOLD · READY</span>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .site-header {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 22px 24px;
+  }
+
+  .site-header div {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .site-header strong {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .site-header span {
+    color: #b9b3a6;
+    font: 0.8125rem var(--font-mono);
+  }
+
+  .scaffold-mat {
+    display: grid;
+    min-height: calc(100svh - 88px);
+    margin: 0 auto;
+    overflow: hidden;
+    place-items: center;
+  }
+
+  .ruler {
+    position: absolute;
+    inset: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px 0;
+    color: rgba(255, 255, 255, 0.75);
+    font: 0.6875rem var(--font-mono);
+  }
+
+  .nameplate {
+    width: min(90vw, 560px);
+    padding: 36px;
+    border: 2px solid var(--copper);
+    background: var(--pcb);
+    box-shadow: var(--shadow-object);
+  }
+
+  .nameplate__ref,
+  .nameplate__state {
+    color: var(--copper);
+    font: 0.75rem/1.5 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+
+  h1 {
+    margin: 34px 0 6px;
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    line-height: 1;
+  }
+
+  p {
+    margin: 0 0 42px;
+    color: var(--text-muted);
+    font: 0.875rem var(--font-mono);
+  }
+
+  @media (min-width: 1100px) {
+    .scaffold-mat {
+      width: calc(100% - 48px);
+      max-width: var(--page-max);
+      min-height: 760px;
+      border-radius: 6px;
+    }
+  }
+</style>

@@ -43,3 +43,15 @@
 ## Needs JP · Step 2
 
 - None.
+
+## Stage 1 · Astro scaffold
+
+- **Scaffold:** created a strict static Astro 7.4.8 project with `site: https://jplepecki.tech`, Node 24, a reproducible lockfile, and small dev/build/preview/screenshot scripts.
+- **Visual base:** added the complete maker-desk token set, mat grid, self-hosted Source Serif 4 and JetBrains Mono, accessible global defaults, a skip link, and the initial JP nameplate page.
+- **Environment contract:** added `.env.example` with every Appendix variable and blank secret/account values; no real `.env` exists or is tracked.
+- **Acceptance:** `npm run build` passes and emits `/`; `npm audit --omit=dev` reports 0 vulnerabilities after a compatible transitive override.
+- **Result:** Stage 1 passed locally.
+
+## Needs JP · Stage 1
+
+- Connect `JplepeckiBR/jplepecki.tech` to Cloudflare Pages after reviewing this branch; this requires JP's Cloudflare login and is intentionally deferred to SPEC Stage 5.

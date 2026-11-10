@@ -1,0 +1,29 @@
+{
+  "name": "jplepecki-tech",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "dependencies": {
+    "@notionhq/client": "5.31.1",
+    "@resvg/resvg-js": "2.6.2",
+    "astro": "7.4.8",
+    "satori": "0.63.2",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "@types/node": "^24.10.0"
+  },
+  "engines": {
+    "node": ">=24.0.0 <25"
+  },
+  "overrides": {
+    "fflate": "0.8.3"
+  }
+}
