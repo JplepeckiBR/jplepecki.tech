@@ -12,6 +12,7 @@ interface Props {
   canonical?: string;
   publishedTime?: Date;
   updatedTime?: Date;
+  noIndex?: boolean;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   canonical,
   publishedTime,
   updatedTime,
+  noIndex = false,
 } = Astro.props;
 
 const siteURL = Astro.site ?? new URL('https://jplepecki.tech');
@@ -38,6 +40,7 @@ const fullTitle = title === siteTitle ? title : `${title} — ${siteTitle}`;
 {description && <meta name="description" content={description} />}
 <link rel="canonical" href={canonicalURL} />
 <meta name="theme-color" content="#0D0F0E" />
+{noIndex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content={type} />
 <meta property="og:title" content={fullTitle} />

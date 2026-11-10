@@ -1,0 +1,83 @@
+---
+import { cleanText } from './_shared';
+
+interface Props {
+  inProgress: boolean;
+  loopLabel?: string;
+  day?: number;
+  totalDays?: number;
+}
+
+const { inProgress, loopLabel, day, totalDays } = Astro.props;
+const safeLoopLabel = cleanText(loopLabel);
+const hasValidDay =
+  typeof day === 'number' &&
+  Number.isInteger(day) &&
+  day > 0 &&
+  typeof totalDays === 'number' &&
+  Number.isInteger(totalDays) &&
+  totalDays >= day;
+
+const context = [safeLoopLabel, hasValidDay ? `DAY ${day}/${totalDays}` : undefined].filter(
+  (part): part is string => Boolean(part),
+);
+const fullLabel = ['IN PROGRESS', ...context].join(' · ');
+const compactLabel = ['IN PROGRESS', hasValidDay ? `DAY ${day}/${totalDays}` : undefined]
+  .filter((part): part is string => Boolean(part))
+  .join(' · ');
+---
+
+{
+  inProgress && (
+    <p class="status-tape">
+      <span class="status-tape__full">{fullLabel}</span>
+      <span class="status-tape__compact">{compactLabel}</span>
+    </p>
+  )
+}
+
+<style>
+  .status-tape {
+    position: absolute;
+    z-index: 2;
+    top: 26px;
+    left: -14px;
+    max-width: calc(100% + 14px);
+    margin: 0;
+    padding: 7px 14px;
+    transform: rotate(-3deg);
+    background: var(--tape);
+    color: var(--text-on-paper);
+    font: 600 12px/1.35 var(--font-mono);
+    letter-spacing: 0.015em;
+    white-space: nowrap;
+  }
+
+  .status-tape__compact {
+    display: none;
+  }
+
+  @media (max-width: 1099px) {
+    .status-tape {
+      top: 14px;
+      left: -8px;
+      max-width: calc(100% + 8px);
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    .status-tape__full {
+      display: none;
+    }
+
+    .status-tape__compact {
+      display: inline;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-tape {
+      transition: none;
+    }
+  }
+</style>

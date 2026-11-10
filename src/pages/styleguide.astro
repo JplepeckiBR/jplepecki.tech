@@ -1,0 +1,429 @@
+---
+import sampleBench from '../../archive/obsidian/Pasted image 2026-11-02.png';
+import BurnMark from '../components/desk/BurnMark.astro';
+import Clutter from '../components/desk/Clutter.astro';
+import KnifeScores from '../components/desk/KnifeScores.astro';
+import Mat from '../components/desk/Mat.astro';
+import PencilNote from '../components/desk/PencilNote.astro';
+import Stain from '../components/desk/Stain.astro';
+import ToolOutline from '../components/desk/ToolOutline.astro';
+import AsciiPortrait from '../components/objects/AsciiPortrait.astro';
+import BusinessCard from '../components/objects/BusinessCard.astro';
+import CalloutMap from '../components/objects/CalloutMap.astro';
+import LoopCard from '../components/objects/LoopCard.astro';
+import Notebook from '../components/objects/Notebook.astro';
+import PartsList from '../components/objects/PartsList.astro';
+import PcbNav from '../components/objects/PcbNav.astro';
+import Polaroid from '../components/objects/Polaroid.astro';
+import ShadowSlot from '../components/objects/ShadowSlot.astro';
+import SketchCard from '../components/objects/SketchCard.astro';
+import BuildLog from '../components/paper/BuildLog.astro';
+import ContentsCard from '../components/paper/ContentsCard.astro';
+import MarginNote from '../components/paper/MarginNote.astro';
+import PlantStake from '../components/paper/PlantStake.astro';
+import Receipt from '../components/paper/Receipt.astro';
+import StatusTape from '../components/paper/StatusTape.astro';
+import TapedSheet from '../components/paper/TapedSheet.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const asciiSample = `################################
+##..::==++**##%%@@%%##**++::..##
+##..  STYLEGUIDE SAMPLE ART  ..##
+##..  not a portrait of JP   ..##
+##..::==++**##%%@@%%##**++::..##
+################################`;
+
+const mobileParts = [
+  { number: 1, name: 'Portrait object', hint: 'paper', href: '/styleguide#objects' },
+  { number: 2, name: 'Projects', hint: 'the board', href: '/projects' },
+  { number: 3, name: 'Current loop', hint: 'sample data', href: '/loop' },
+  { number: 4, name: 'Posts', hint: 'notebook', href: '/posts' },
+  { number: 5, name: 'How I work', hint: 'the loop', href: '/loop' },
+  { number: 6, name: 'Book a call', hint: 'card', href: '/call' },
+  { number: 7, name: 'Future object', hint: 'coming later', dnp: true },
+];
+---
+
+<BaseLayout title="Component styleguide" noIndex>
+  <header class="guide-header">
+    <a href="/">← jplepecki.tech</a>
+    <span>INTERNAL · NOINDEX</span>
+  </header>
+
+  <main id="main">
+    <section class="guide-intro">
+      <p>V1 REBUILD · COMPONENT BENCH</p>
+      <h1>Maker’s desk styleguide</h1>
+      <p>Neutral sample data for visual and keyboard checks. This route is not linked publicly.</p>
+    </section>
+
+    <section id="surface" class="guide-section" aria-labelledby="surface-title">
+      <h2 id="surface-title">Desk surface</h2>
+      <Mat height={500} label="Styleguide cutting mat with wear components">
+        <BurnMark x={12} y={25} width={34} height={26} />
+        <BurnMark variant="drag" x={48} y={42} />
+        <Stain x={27} y={61} />
+        <Stain variant="mug" x={82} y={18} />
+        <ToolOutline />
+        <Clutter />
+        <KnifeScores />
+        <PencilNote text={'threshold > sample\ncheck R2'} x={49} y={27} rotation={-3} />
+        <div class="surface-label">MAT · BURNS · FLUX · TOOLS · CLUTTER · NOTES · KNIFE SCORES</div>
+      </Mat>
+    </section>
+
+    <section id="objects" class="guide-section" aria-labelledby="objects-title">
+      <h2 id="objects-title">Desk objects</h2>
+      <div class="desk-mat object-bench">
+        <div class="object-cell object-cell--wide">
+          <span class="component-label">PCB NAV</span>
+          <PcbNav currentProjectHref="/styleguide" loopNumber={0} loopDay={1} loopLength={4} />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">ASCII PORTRAIT</span>
+          <AsciiPortrait
+            href="/styleguide#objects"
+            photo={sampleBench}
+            ascii={asciiSample}
+            alt="Neutral styleguide bench drawing"
+            linkLabel="Styleguide sample portrait object"
+          />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">POLAROID + STICKY</span>
+          <Polaroid
+            href="/styleguide#objects"
+            image={sampleBench}
+            alt="Neutral styleguide bench drawing"
+            linkLabel="Styleguide sample polaroid"
+            actionLabel="sample object →"
+            sticky={{ loop: 'SAMPLE', day: 1, length: 4, stage: 'test' }}
+          />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">NOTEBOOK</span>
+          <Notebook postCount={0} />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">BUSINESS CARD</span>
+          <BusinessCard />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">LOOP CARD</span>
+          <LoopCard />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">SKETCH CARD</span>
+          <SketchCard
+            href="/styleguide#objects"
+            image={sampleBench}
+            alt="Neutral line sketch for component testing"
+            linkLabel="Styleguide sample sketch card"
+          />
+        </div>
+        <div class="object-cell">
+          <span class="component-label">SHADOW SLOT</span>
+          <ShadowSlot />
+        </div>
+      </div>
+    </section>
+
+    <section id="mobile" class="guide-section" aria-labelledby="mobile-title">
+      <h2 id="mobile-title">Phone map + parts list</h2>
+      <div class="phone-sample">
+        <CalloutMap items={mobileParts} />
+        <PartsList items={mobileParts} />
+      </div>
+    </section>
+
+    <section id="paper" class="guide-section" aria-labelledby="paper-title">
+      <h2 id="paper-title">Article paper objects</h2>
+      <div class="paper-bench">
+        <article class="article-sample">
+          <StatusTape inProgress loopLabel="STYLEGUIDE" day={1} totalDays={4} />
+          <p class="article-meta">COMPONENT TEST · SAMPLE DATA</p>
+          <h3>Paper components in context</h3>
+          <p class="article-copy">This short neutral paragraph checks the Source Serif reading texture on a solid notebook page.</p>
+
+          <div class="two-up">
+            <Receipt
+              store="COMPONENT TEST"
+              date="SAMPLE"
+              items={[{ label: 'paper object', value: '01' }, { label: 'mono labels', value: '02' }]}
+              total={{ label: 'TOTAL', value: '03' }}
+            />
+            <VideoEmbed
+              provider="youtube"
+              videoId="00000000000"
+              title="Styleguide video facade"
+              poster="/styleguide-note.svg"
+            />
+          </div>
+
+          <div class="stakes" aria-label="Styleguide plant stake samples">
+            <PlantStake name="Specimen alpha" role="styleguide only" note="paper shape" />
+            <PlantStake name="Specimen beta" role="styleguide only" note="responsive label" />
+            <PlantStake name="Specimen gamma" role="styleguide only" note="longer text wraps" />
+            <PlantStake name="Specimen delta" role="styleguide only" note="final sample" />
+          </div>
+
+          <TapedSheet
+            caption="Component measurement sample"
+            columns={[{ label: 'PARAMETER' }, { label: 'MIN', align: 'right' }, { label: 'MAX', align: 'right' }, { label: 'UNIT' }]}
+            rows={[
+              { cells: ['Sample range', 1, 4, 'unit'] },
+              { cells: ['MAX sample', '—', 5, 'unit'], isMaximum: true },
+            ]}
+          />
+
+          <BuildLog
+            liveToday={false}
+            entries={[
+              { date: 'DAY 01', status: 'done', title: 'Component assembled' },
+              { date: 'DAY 02', status: 'today', title: 'Visual check' },
+              { date: 'DAY 03', status: 'planned', title: 'Responsive check' },
+            ]}
+            sourceNote="styleguide sample · not published content"
+          />
+        </article>
+
+        <aside class="paper-side">
+          <ContentsCard
+            items={[
+              { href: '#surface', label: 'Desk surface' },
+              { href: '#objects', label: 'Desk objects' },
+              { href: '#paper', label: 'Paper objects' },
+            ]}
+          />
+          <MarginNote
+            src="/styleguide-note.svg"
+            alt="Handwritten styleguide arrow saying check clearance"
+            width={220}
+            height={110}
+            caption="sample margin note"
+          />
+        </aside>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .guide-header {
+    display: flex;
+    min-height: 64px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--line-subtle);
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .guide-header a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .guide-header span,
+  .component-label,
+  .surface-label {
+    color: var(--text-muted);
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .guide-intro,
+  .guide-section {
+    width: min(100% - 32px, 1240px);
+    margin-inline: auto;
+  }
+
+  .guide-intro {
+    padding: 56px 0 40px;
+  }
+
+  .guide-intro p {
+    max-width: 62ch;
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font: 12px/1.6 var(--font-mono);
+  }
+
+  .guide-intro h1 {
+    margin: 0 0 16px;
+    font-size: clamp(2.2rem, 7vw, 4rem);
+    line-height: 1;
+  }
+
+  .guide-section {
+    margin-bottom: 72px;
+  }
+
+  .guide-section > h2 {
+    margin: 0;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+    color: var(--text-muted);
+    font: 12px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .surface-label {
+    position: absolute;
+    z-index: 3;
+    left: 32px;
+    bottom: 28px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: var(--pcb);
+  }
+
+  .object-bench {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px 32px;
+    align-items: start;
+    padding: 56px 4%;
+    overflow: hidden;
+  }
+
+  .object-cell {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-width: 0;
+    justify-items: center;
+    gap: 12px;
+  }
+
+  .object-cell--wide {
+    grid-column: span 2;
+  }
+
+  .phone-sample {
+    width: min(100%, 390px);
+    margin-inline: auto;
+    box-shadow: var(--shadow-page);
+  }
+
+  .paper-bench {
+    display: grid;
+    grid-template-columns: minmax(0, 720px) minmax(220px, 280px);
+    gap: 28px;
+    justify-content: center;
+    align-items: start;
+    padding: 56px 24px 80px;
+    background-color: var(--mat);
+    background-image:
+      linear-gradient(var(--mat-line-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mat-line-major) 1px, transparent 1px),
+      linear-gradient(var(--mat-line-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mat-line-minor) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  }
+
+  .article-sample {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding: 64px 56px;
+    background: var(--page);
+    box-shadow: var(--shadow-page);
+  }
+
+  .article-meta {
+    margin: 0;
+    color: var(--text-muted);
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .article-sample h3 {
+    margin: 0;
+    font-size: 38px;
+    line-height: 1.1;
+  }
+
+  .article-copy {
+    margin: 0;
+    color: var(--text-body);
+    font-size: 19px;
+    line-height: 1.75;
+  }
+
+  .two-up {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 26px;
+    align-items: start;
+  }
+
+  .stakes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .paper-side {
+    display: grid;
+    gap: 80px;
+  }
+
+  @media (max-width: 1099px) {
+    .guide-header {
+      padding-inline: 16px;
+    }
+
+    .guide-intro,
+    .guide-section {
+      width: 100%;
+    }
+
+    .guide-intro,
+    .guide-section > h2 {
+      padding-inline: 16px;
+    }
+
+    .object-bench {
+      grid-template-columns: 1fr;
+      padding-inline: 16px;
+    }
+
+    .object-cell--wide {
+      grid-column: auto;
+    }
+
+    .paper-bench {
+      display: block;
+      padding: 14px 12px;
+    }
+
+    .article-sample {
+      gap: 20px;
+      padding: 56px 18px 34px;
+    }
+
+    .two-up {
+      grid-template-columns: 1fr;
+    }
+
+    .stakes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .paper-side {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      margin-top: 28px;
+      padding: 18px;
+      background: var(--page);
+    }
+  }
+</style>

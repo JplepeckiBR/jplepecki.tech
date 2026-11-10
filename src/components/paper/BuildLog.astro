@@ -1,0 +1,179 @@
+---
+import { cleanText, isIsoDate } from './_shared';
+
+type BuildLogStatus = 'done' | 'today' | 'planned';
+type BuildLogFallbackStatus = Exclude<BuildLogStatus, 'today'>;
+
+interface BuildLogEntry {
+  date: string;
+  dateTime?: string;
+  status: BuildLogStatus;
+  fallbackStatus?: BuildLogFallbackStatus;
+  title: string;
+}
+
+interface Props {
+  entries: BuildLogEntry[];
+  sourceNote?: string;
+  liveToday?: boolean;
+}
+
+const { entries = [], sourceNote, liveToday = true } = Astro.props;
+const statuses = new Set<BuildLogStatus>(['done', 'today', 'planned']);
+const safeEntries = entries
+  .map((entry) => ({
+    date: cleanText(entry?.date),
+    dateTime: isIsoDate(entry?.dateTime) ? entry.dateTime : undefined,
+    status: statuses.has(entry?.status) ? entry.status : undefined,
+    fallbackStatus:
+      entry?.fallbackStatus === 'done' || entry?.fallbackStatus === 'planned'
+        ? entry.fallbackStatus
+        : undefined,
+    title: cleanText(entry?.title),
+  }))
+  .filter(
+    (
+      entry,
+    ): entry is {
+      date: string;
+      dateTime: string | undefined;
+      status: BuildLogStatus;
+      fallbackStatus: BuildLogFallbackStatus | undefined;
+      title: string;
+    } => Boolean(entry.date && entry.status && entry.title),
+  );
+const safeSourceNote = cleanText(sourceNote);
+---
+
+{
+  safeEntries.length > 0 && (
+    <section class="build-log" aria-label="Build log" data-live-today={liveToday ? 'true' : undefined}>
+      <ol class="build-log__entries">
+        {safeEntries.map((entry) => (
+          <li
+            class="build-log__entry"
+            data-build-log-entry
+            data-date={entry.dateTime}
+            data-status={entry.status}
+            data-base-status={entry.status}
+            data-fallback-status={entry.fallbackStatus}
+            aria-current={entry.status === 'today' ? 'date' : undefined}
+          >
+            <p class="build-log__meta">
+              {entry.dateTime ? <time datetime={entry.dateTime}>{entry.date}</time> : <span>{entry.date}</span>}
+              <span aria-hidden="true"> · </span>
+              <span class="build-log__status">{entry.status}</span>
+            </p>
+            <p class="build-log__title">{entry.title}</p>
+          </li>
+        ))}
+      </ol>
+      {safeSourceNote && <p class="build-log__source">{safeSourceNote}</p>}
+    </section>
+  )
+}
+
+<style>
+  .build-log {
+    min-width: 0;
+  }
+
+  .build-log__entries {
+    display: grid;
+    gap: 22px;
+    margin: 0 0 0 6px;
+    padding: 0 0 0 22px;
+    border-left: 2px solid #3a433e;
+    list-style: none;
+  }
+
+  .build-log__meta,
+  .build-log__title,
+  .build-log__source {
+    margin: 0;
+  }
+
+  .build-log__meta {
+    color: var(--text-muted);
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .build-log__title {
+    margin-top: 4px;
+    color: var(--text-body);
+    font: 400 19px/1.45 var(--font-serif);
+  }
+
+  .build-log__entry[data-status='today'] .build-log__meta {
+    color: var(--accent);
+  }
+
+  .build-log__entry[data-status='planned'] .build-log__meta,
+  .build-log__entry[data-status='planned'] .build-log__title {
+    color: var(--text-muted);
+  }
+
+  .build-log__source {
+    margin-top: 18px;
+    color: var(--text-muted);
+    font: 12px/1.5 var(--font-mono);
+  }
+
+  @media (max-width: 1099px) {
+    .build-log__entries {
+      gap: 16px;
+      margin-left: 0;
+      padding-left: 16px;
+    }
+
+    .build-log__meta {
+      font-size: 11px;
+    }
+
+    .build-log__title {
+      margin-top: 2px;
+      font-size: 17px;
+    }
+
+    .build-log__source {
+      margin-top: 14px;
+      font-size: 11px;
+    }
+  }
+</style>
+
+<script>
+  const getNewYorkDate = () => {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+    return `${values.year}-${values.month}-${values.day}`;
+  };
+
+  const today = getNewYorkDate();
+  document.querySelectorAll<HTMLElement>('[data-live-today="true"]').forEach((log) => {
+    log.querySelectorAll<HTMLElement>('[data-build-log-entry][data-date]').forEach((entry) => {
+      const baseStatus = entry.dataset.baseStatus;
+      if (!baseStatus) return;
+
+      const fallbackStatus = entry.dataset.fallbackStatus;
+      const nextStatus =
+        entry.dataset.date === today
+          ? 'today'
+          : baseStatus === 'today' && fallbackStatus
+            ? fallbackStatus
+            : baseStatus;
+
+      entry.dataset.status = nextStatus;
+      if (nextStatus === 'today') entry.setAttribute('aria-current', 'date');
+      else entry.removeAttribute('aria-current');
+
+      const status = entry.querySelector<HTMLElement>('.build-log__status');
+      if (status) status.textContent = nextStatus;
+    });
+  });
+</script>

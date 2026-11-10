@@ -1,0 +1,45 @@
+---
+interface Props {
+  variant?: 'normal' | 'mug';
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+const { variant = 'normal', x = 50, y = 50 } = Astro.props;
+const clamp = (value: number, min: number, max: number, fallback: number) =>
+  Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const safeX = clamp(x, -10, 100, 50);
+const safeY = clamp(y, -10, 100, 50);
+const safeWidth = clamp(Astro.props.width ?? (variant === 'mug' ? 96 : 90), 20, 220, 90);
+const safeHeight = clamp(Astro.props.height ?? (variant === 'mug' ? 96 : 64), 20, 220, 64);
+---
+
+<span
+  class:list={['stain', { 'stain--mug': variant === 'mug' }]}
+  style={`--stain-x:${safeX}%;--stain-y:${safeY}%;--stain-width:${safeWidth}px;--stain-height:${safeHeight}px`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .stain {
+    position: absolute;
+    z-index: 0;
+    left: var(--stain-x);
+    top: var(--stain-y);
+    width: var(--stain-width);
+    height: var(--stain-height);
+    border-radius: 48% 52% 40% 60% / 55% 42% 58% 45%;
+    background: rgba(214, 170, 70, 0.2);
+    transform: rotate(-2deg);
+    pointer-events: none;
+  }
+
+  .stain--mug {
+    border: 5px solid rgba(70, 42, 20, 0.28);
+    border-radius: 50%;
+    background: transparent;
+    transform: rotate(0);
+  }
+</style>

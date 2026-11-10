@@ -1,0 +1,52 @@
+---
+interface Props {
+  variant?: 'normal' | 'drag';
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+const { variant = 'normal', x = 50, y = 50 } = Astro.props;
+const clamp = (value: number, min: number, max: number, fallback: number) =>
+  Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const safeX = clamp(x, -10, 100, 50);
+const safeY = clamp(y, -10, 100, 50);
+const safeWidth = clamp(Astro.props.width ?? (variant === 'drag' ? 120 : 30), 8, 260, 30);
+const safeHeight = clamp(Astro.props.height ?? (variant === 'drag' ? 14 : 24), 6, 100, 24);
+---
+
+<span
+  class:list={['burn-mark', { 'burn-mark--drag': variant === 'drag' }]}
+  style={`--burn-x:${safeX}%;--burn-y:${safeY}%;--burn-width:${safeWidth}px;--burn-height:${safeHeight}px`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .burn-mark {
+    position: absolute;
+    z-index: 0;
+    left: var(--burn-x);
+    top: var(--burn-y);
+    width: var(--burn-width);
+    height: var(--burn-height);
+    border-radius: 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(30, 16, 8, 0.85) 0,
+      rgba(70, 40, 18, 0.48) 45%,
+      transparent 72%
+    );
+    pointer-events: none;
+  }
+
+  .burn-mark--drag {
+    transform: rotate(-18deg);
+    background: radial-gradient(
+      ellipse at center,
+      rgba(28, 15, 7, 0.7) 0,
+      rgba(70, 40, 18, 0.35) 50%,
+      transparent 75%
+    );
+  }
+</style>

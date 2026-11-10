@@ -55,3 +55,17 @@
 ## Needs JP · Stage 1
 
 - Connect `JplepeckiBR/jplepecki.tech` to Cloudflare Pages after reviewing this branch; this requires JP's Cloudflare login and is intentionally deferred to SPEC Stage 5.
+
+## Stage 2 · Components and styleguide
+
+- **Desk surface:** built the cutting mat/ruler/angle guides, radial burns, drag scorch, flux stains, mug ring, tool-outline layer, knife scores, authentic resistor/screw/wire/solder clutter, and JSON-positioned pencil notes.
+- **Desk objects:** built the linked PCB navigation, guarded ASCII portrait, polaroid/sticky, notebook, business card, loop card, sketch card, Talaria shadow slot, phone callout map, and synchronized parts list. Interactive objects use real links, 44px targets, restrained lift, and reduced-motion fallbacks.
+- **Article objects:** built StatusTape, semantic receipt, PlantStake, taped accessible tables, live New York BuildLog, desktop/mobile ContentsCard, MarginNote, and the no-autoplay video facade.
+- **Styleguide:** `/styleguide` renders the component bench with neutral sample data, is omitted from public navigation, and carries `noindex, nofollow`.
+- **Acceptance:** `npm run build` passes; all components compile; placeholder scans found no rendered mockup/TODO text; Lighthouse accessibility for `/styleguide` is **100** (target ≥95).
+- **Result:** Stage 2 passed. Final 1440px and 390px screenshots will be regenerated after all routes exist.
+
+## Needs JP · Stage 2
+
+- Add `src/assets/portrait.jpg` later if the taped ASCII portrait should appear; the component intentionally stays hidden without a real JP photo.
+- Export any handwritten reMarkable notes as SVG files into `src/assets/notes/`; mono pencil text is the current graceful fallback.

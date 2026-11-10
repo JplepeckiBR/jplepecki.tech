@@ -1,0 +1,333 @@
+---
+import { BUILD_MONTH } from '../../lib/buildinfo';
+import { clampNumber, clampRotation, cleanHref, cleanText } from './_shared';
+
+interface Props {
+  currentProjectHref?: string;
+  loopNumber?: string | number;
+  loopDay?: number;
+  loopLength?: number;
+  nowHref?: string;
+  rotation?: number;
+  width?: number;
+}
+
+const {
+  currentProjectHref,
+  loopNumber,
+  loopDay,
+  loopLength,
+  nowHref,
+  rotation = 0,
+  width = 460,
+} = Astro.props;
+const safeProjectHref = cleanHref(currentProjectHref);
+const safeNowHref = cleanHref(nowHref);
+const rawLoopNumber = cleanText(loopNumber);
+const safeLoopNumber =
+  typeof loopNumber === 'number' && Number.isFinite(loopNumber) && loopNumber >= 0
+    ? Math.floor(loopNumber).toString().padStart(2, '0')
+    : rawLoopNumber && /^\d+$/.test(rawLoopNumber)
+      ? rawLoopNumber.padStart(2, '0')
+      : undefined;
+const safeDay =
+  typeof loopDay === 'number' && Number.isFinite(loopDay) && loopDay >= 0
+    ? Math.floor(loopDay)
+    : undefined;
+const safeLength =
+  typeof loopLength === 'number' && Number.isFinite(loopLength) && loopLength > 0
+    ? Math.floor(loopLength)
+    : undefined;
+const hasLoop = Boolean(
+  safeProjectHref && safeLoopNumber && safeDay !== undefined && safeLength !== undefined,
+);
+const batteryRatio = hasLoop ? Math.min(1, Math.max(0, safeDay! / safeLength!)) : 0;
+const batteryWidth = Math.round(batteryRatio * 146);
+const safeRotation = clampRotation(rotation);
+const safeWidth = clampNumber(width, 320, 760, 460);
+---
+
+<div
+  class="pcb-nav"
+  style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
+>
+  <svg viewBox="0 0 760 560" role="img" aria-label="Circuit board navigation">
+    <rect class="pcb-nav__board" x="6" y="6" width="748" height="548" rx="18" />
+
+    <g class="pcb-nav__holes" aria-hidden="true">
+      <circle cx="34" cy="34" r="9" />
+      <circle cx="726" cy="34" r="9" />
+      <circle cx="34" cy="526" r="9" />
+      <circle cx="726" cy="526" r="9" />
+    </g>
+
+    <g class="pcb-nav__traces" aria-hidden="true">
+      <path d="M210 140h40v90h40M470 230h50V115h20M470 260h90v-45M290 330H180v90h-10M380 370v70" />
+      <path d="M470 310h48v46h42M210 116h30v-34h120M170 420h34v70h146" />
+      <circle cx="250" cy="230" r="5" /><circle cx="520" cy="115" r="5" />
+      <circle cx="560" cy="260" r="5" /><circle cx="180" cy="420" r="5" />
+    </g>
+
+    <a class="pcb-nav__link" href="/projects">
+      <g data-part>
+        <rect class="pcb-nav__chip" x="290" y="200" width="180" height="170" rx="6" />
+        <g class="pcb-nav__pins" aria-hidden="true">
+          <path d="M310 200v-12M335 200v-12M360 200v-12M385 200v-12M410 200v-12M435 200v-12M460 200v-12M310 370v12M335 370v12M360 370v12M385 370v12M410 370v12M435 370v12M460 370v12" />
+        </g>
+        <circle cx="306" cy="216" r="4" class="pcb-nav__pin-one" />
+        <text x="380" y="280" text-anchor="middle">U1</text>
+        <text class="pcb-nav__part-name" x="380" y="306" text-anchor="middle">PROJECTS</text>
+      </g>
+    </a>
+
+    <a class="pcb-nav__link" href="/posts">
+      <g data-part>
+        <rect class="pcb-nav__chip" x="60" y="90" width="150" height="86" rx="4" />
+        <text x="135" y="126" text-anchor="middle">U2</text>
+        <text x="135" y="150" text-anchor="middle">POSTS</text>
+      </g>
+    </a>
+
+    {
+      hasLoop && (
+        <a
+          class="pcb-nav__link"
+          href={safeProjectHref}
+        >
+          <g data-part>
+            <rect class="pcb-nav__chip" x="540" y="60" width="180" height="100" rx="10" />
+            <rect class="pcb-nav__battery-tip" x="720" y="96" width="10" height="28" />
+            <rect class="pcb-nav__battery-case" x="556" y="108" width="148" height="20" />
+            <rect class="pcb-nav__battery-fill" x="558" y="110" width={batteryWidth} height="16" />
+            <text x="556" y="94">BT1 · LOOP {safeLoopNumber}</text>
+            <text class="pcb-nav__muted" x="556" y="150">day {safeDay}/{safeLength}</text>
+          </g>
+        </a>
+      )
+    }
+
+    {
+      safeNowHref ? (
+        <a class="pcb-nav__link" href={safeNowHref} aria-label="Now">
+          <g data-part>
+            <rect class="pcb-nav__hit-area" x="530" y="187" width="174" height="56" rx="8" />
+            <circle class="pcb-nav__led-halo" cx="560" cy="215" r="24" />
+            <circle class="pcb-nav__led" cx="560" cy="215" r="13" />
+            <text x="596" y="221">D1 · NOW</text>
+          </g>
+        </a>
+      ) : (
+        <g role="img" aria-label="D1 now indicator">
+          <circle class="pcb-nav__led-halo" cx="560" cy="215" r="24" />
+          <circle class="pcb-nav__led" cx="560" cy="215" r="13" />
+          <text x="596" y="221">D1 · NOW</text>
+        </g>
+      )
+    }
+
+    <a class="pcb-nav__link" href="/loop">
+      <g data-part>
+        <rect class="pcb-nav__chip" x="60" y="390" width="150" height="70" rx="4" />
+        <text x="135" y="420" text-anchor="middle">U4</text>
+        <text x="135" y="443" text-anchor="middle">HOW I WORK</text>
+      </g>
+    </a>
+
+    <g class="pcb-nav__dnp" role="img" aria-label="Talaria, not populated">
+      <title>Talaria · coming later</title>
+      <rect x="560" y="300" width="150" height="110" rx="4" />
+      <path d="M578 288v12m22-12v12m22-12v12m22-12v12m22-12v12M578 410v12m22-12v12m22-12v12m22-12v12m22-12v12" />
+      <text x="635" y="352" text-anchor="middle">U3</text>
+      <text x="635" y="374" text-anchor="middle">DNP</text>
+    </g>
+
+    <g class="pcb-nav__dnp" role="img" aria-label="Music, not populated">
+      <title>music · coming later</title>
+      <circle cx="380" cy="480" r="28" />
+      <circle cx="380" cy="480" r="18" />
+      <path d="M380 440v12m0 56v12m-40-40h12m56 0h12" />
+      <text x="426" y="485">LS1 · DNP</text>
+    </g>
+
+    <g class="pcb-nav__silkscreen" aria-hidden="true">
+      <text x="40" y="540">JPLEPECKI.TECH · REV {BUILD_MONTH}</text>
+      <text x="610" y="522">GND</text>
+      <path d="M650 506v16m-10 0h20m-16 5h12m-8 5h4" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .pcb-nav {
+    width: min(var(--object-width), 100%);
+    min-height: 44px;
+    filter: drop-shadow(var(--shadow-object));
+    transform: rotate(var(--object-rotation));
+    transform-origin: center;
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  .pcb-nav:hover,
+  .pcb-nav:focus-within {
+    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .pcb-nav svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: var(--font-mono);
+  }
+
+  .pcb-nav__board {
+    fill: var(--pcb);
+    stroke: var(--line);
+    stroke-width: 2;
+  }
+
+  .pcb-nav__holes circle {
+    fill: var(--mat);
+    stroke: var(--copper);
+    stroke-width: 2;
+  }
+
+  .pcb-nav__traces {
+    fill: none;
+    stroke: var(--copper);
+    stroke-width: 3;
+    opacity: 0.75;
+  }
+
+  .pcb-nav__traces circle {
+    fill: var(--pcb);
+  }
+
+  .pcb-nav__link {
+    color: var(--text);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .pcb-nav__link [data-part] {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: filter 140ms ease, transform 140ms ease;
+  }
+
+  .pcb-nav__link:hover [data-part],
+  .pcb-nav__link:focus-visible [data-part] {
+    filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.48));
+    transform: translateY(-4px);
+  }
+
+  .pcb-nav__link:focus-visible .pcb-nav__chip,
+  .pcb-nav__link:focus-visible .pcb-nav__battery-case,
+  .pcb-nav__link:focus-visible .pcb-nav__hit-area {
+    stroke: var(--accent);
+    stroke-width: 4;
+  }
+
+  .pcb-nav__chip {
+    fill: var(--chip);
+    stroke: var(--text);
+    stroke-width: 1.5;
+  }
+
+  .pcb-nav__pins {
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 3;
+  }
+
+  .pcb-nav__pin-one,
+  .pcb-nav__battery-tip {
+    fill: var(--text);
+  }
+
+  .pcb-nav text {
+    fill: currentColor;
+    font-size: 15px;
+  }
+
+  .pcb-nav__part-name {
+    font-size: 17px;
+    font-weight: 600;
+  }
+
+  .pcb-nav__muted {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .pcb-nav__battery-case {
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1.5;
+  }
+
+  .pcb-nav__battery-fill,
+  .pcb-nav__led {
+    fill: var(--accent);
+  }
+
+  .pcb-nav__hit-area {
+    fill: transparent;
+    stroke: transparent;
+  }
+
+  .pcb-nav__led-halo {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 6;
+    opacity: 0.35;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pcb-led 2s ease-in-out infinite;
+  }
+
+  .pcb-nav__dnp {
+    color: var(--text-muted);
+  }
+
+  .pcb-nav__dnp rect,
+  .pcb-nav__dnp circle,
+  .pcb-nav__dnp path {
+    fill: none;
+    stroke: var(--dnp);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 4;
+  }
+
+  .pcb-nav__dnp text {
+    fill: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .pcb-nav__silkscreen {
+    color: var(--dnp);
+  }
+
+  .pcb-nav__silkscreen text {
+    font-size: 11px;
+  }
+
+  .pcb-nav__silkscreen path {
+    fill: none;
+    stroke: var(--dnp);
+    stroke-width: 1.5;
+  }
+
+  @keyframes pcb-led {
+    0%, 100% { opacity: 0.18; transform: scale(0.9); }
+    50% { opacity: 0.5; transform: scale(1.08); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pcb-nav__led-halo {
+      animation: none;
+      opacity: 0.35;
+      transform: none;
+    }
+  }
+</style>

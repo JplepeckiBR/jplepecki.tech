@@ -1,0 +1,56 @@
+<svg
+  class="tool-outline"
+  viewBox="0 0 1200 860"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+>
+  <g class="tool-outline__tools">
+    <!-- Soldering iron and stand -->
+    <g transform="translate(700 785)">
+      <rect x="0" y="0" width="270" height="36" rx="18" />
+      <path d="M270 10h80l90 8-90 8h-80" />
+      <path d="M18 9h76m-76 18h76" />
+    </g>
+
+    <!-- Combination pliers -->
+    <g transform="translate(60 738)">
+      <path d="M0 32h54l48-30 26 18-42 34h144v24H84L58 122H24l24-56H0Z" />
+      <circle cx="70" cy="54" r="10" />
+    </g>
+
+    <!-- Tweezers -->
+    <g transform="translate(1038 430)">
+      <path d="M0 40l142-40M0 56l142-34" />
+      <path d="M0 40v16" />
+    </g>
+
+    <!-- Multimeter -->
+    <g transform="translate(470 730)">
+      <rect width="130" height="96" rx="10" />
+      <rect x="18" y="14" width="94" height="28" rx="3" />
+      <circle cx="65" cy="68" r="20" />
+      <path d="M65 68l9-10M22 88h18m50 0h18" />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .tool-outline {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--text);
+    pointer-events: none;
+  }
+
+  .tool-outline__tools {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-dasharray: 7 6;
+    opacity: 0.32;
+    vector-effect: non-scaling-stroke;
+  }
+</style>

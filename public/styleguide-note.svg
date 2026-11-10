@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 110">
+  <g fill="none" stroke="#daded9" stroke-linecap="round">
+    <path d="M8 72c42-44 84-35 131-11" stroke-width="2"/>
+    <path d="m132 52 15 11-18 4" stroke-width="2"/>
+    <ellipse cx="178" cy="58" rx="32" ry="22" stroke-width="1.5"/>
+  </g>
+  <text x="16" y="96" fill="#daded9" font-family="monospace" font-size="13">check clearance</text>
+</svg>

@@ -1,0 +1,71 @@
+---
+import { clampNumber, clampRotation, cleanHref } from './_shared';
+
+interface Props {
+  href?: string;
+  rotation?: number;
+  width?: number;
+}
+
+const { href = '/call', rotation = 1.5, width = 220 } = Astro.props;
+const safeHref = cleanHref(href);
+const safeRotation = clampRotation(rotation, 1.5);
+const safeWidth = clampNumber(width, 180, 380, 220);
+---
+
+{
+  safeHref && (
+    <a
+      class="business-card"
+      href={safeHref}
+      style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
+    >
+      <span class="business-card__name">JP LEPECKI</span>
+      <span class="business-card__tagline">proudly a maker</span>
+      <span class="business-card__action">book a call →</span>
+    </a>
+  )
+}
+
+<style>
+  .business-card {
+    display: block;
+    width: min(var(--object-width), 100%);
+    min-height: 108px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    background: var(--pcb);
+    box-shadow: var(--shadow-object);
+    font-family: var(--font-mono);
+    text-decoration: none;
+    transform: rotate(var(--object-rotation));
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .business-card:hover,
+  .business-card:focus-visible {
+    box-shadow: 0 16px 20px rgba(0, 0, 0, 0.48);
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .business-card span {
+    display: block;
+  }
+
+  .business-card__name {
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .business-card__tagline {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .business-card__action {
+    margin-top: 18px;
+    color: var(--accent);
+    font-size: 12px;
+  }
+</style>

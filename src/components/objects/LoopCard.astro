@@ -1,0 +1,64 @@
+---
+import { clampNumber, clampRotation, cleanHref } from './_shared';
+
+interface Props {
+  href?: string;
+  rotation?: number;
+  width?: number;
+}
+
+const { href = '/loop', rotation = -1, width = 230 } = Astro.props;
+const safeHref = cleanHref(href);
+const safeRotation = clampRotation(rotation, -1);
+const safeWidth = clampNumber(width, 190, 420, 230);
+---
+
+{
+  safeHref && (
+    <a
+      class="loop-card"
+      href={safeHref}
+      style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
+    >
+      <span class="loop-card__paper">
+        <span aria-hidden="true">  ask ──▶ study<br />   ▲        │<br />   │        ▼<br /> ship ◀── build</span>
+        <span class="sr-only">Ask, study, build, ship, then repeat.</span>
+      </span>
+      <span class="loop-card__action">how I work →</span>
+    </a>
+  )
+}
+
+<style>
+  .loop-card {
+    display: block;
+    width: min(var(--object-width), 100%);
+    min-height: 44px;
+    text-decoration: none;
+    transform: rotate(var(--object-rotation));
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  .loop-card:hover,
+  .loop-card:focus-visible {
+    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .loop-card__paper {
+    display: block;
+    padding: 14px 16px;
+    background: var(--paper);
+    box-shadow: var(--shadow-object);
+    color: var(--text-on-paper);
+    font: 12px/1.35 var(--font-mono);
+    white-space: pre;
+  }
+
+  .loop-card__action {
+    display: block;
+    margin-top: 8px;
+    color: var(--text);
+    font: 12px/1.4 var(--font-mono);
+  }
+</style>

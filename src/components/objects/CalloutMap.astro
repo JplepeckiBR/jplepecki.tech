@@ -1,0 +1,193 @@
+---
+import { cleanHref, cleanText } from './_shared';
+
+interface Callout {
+  number: number;
+  name: string;
+  href?: string;
+  x?: number;
+  y?: number;
+  dnp?: boolean;
+}
+
+interface Props {
+  items: Callout[];
+  label?: string;
+}
+
+const { items, label = 'The whole desk, with numbered callouts' } = Astro.props;
+const positions = [
+  { x: 18, y: 9 },
+  { x: 49, y: 7 },
+  { x: 92, y: 7 },
+  { x: 92, y: 61 },
+  { x: 42, y: 65 },
+  { x: 8, y: 63 },
+];
+const clampPercent = (value: unknown, fallback: number) =>
+  typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(96, Math.max(4, value))
+    : fallback;
+const safeItems = Array.isArray(items)
+  ? items
+      .map((item, index) => {
+        const position = positions[index] ?? { x: 50, y: 50 };
+        const number =
+          typeof item.number === 'number' && Number.isFinite(item.number) && item.number > 0
+            ? Math.floor(item.number)
+            : undefined;
+        return {
+          number,
+          name: cleanText(item.name),
+          href: cleanHref(item.href),
+          dnp: item.dnp === true,
+          x: clampPercent(item.x, position.x),
+          y: clampPercent(item.y, position.y),
+        };
+      })
+      .filter((item) => item.number !== undefined && item.name && (item.href || item.dnp))
+  : [];
+const safeLabel = cleanText(label);
+---
+
+{
+  safeItems.length > 0 && safeLabel && (
+    <section class="callout-map" aria-label={safeLabel}>
+      <span class="callout-map__burn" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__portrait" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__pcb" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__polaroid" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__notebook" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__business-card" aria-hidden="true"></span>
+      <span class="callout-map__object callout-map__loop-card" aria-hidden="true"></span>
+      <span class="callout-map__slot" aria-hidden="true"></span>
+
+      {safeItems.map((item) =>
+        item.href ? (
+          <a
+            class="callout-map__target"
+            href={item.href}
+            aria-label={`${item.number}. ${item.name}`}
+            style={`--callout-x:${item.x}%;--callout-y:${item.y}%`}
+          >
+            <span>{item.number}</span>
+          </a>
+        ) : (
+          <span
+            class="callout-map__target callout-map__target--dnp"
+            role="img"
+            aria-label={`${item.number}. ${item.name}, not populated`}
+            title={`${item.name} · DNP`}
+            style={`--callout-x:${item.x}%;--callout-y:${item.y}%`}
+          >
+            <span>{item.number}</span>
+          </span>
+        ),
+      )}
+    </section>
+  )
+}
+
+<style>
+  .callout-map {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    background-color: var(--mat);
+    background-image:
+      linear-gradient(var(--mat-line-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mat-line-major) 1px, transparent 1px),
+      linear-gradient(var(--mat-line-minor) 1px, transparent 1px),
+      linear-gradient(90deg, var(--mat-line-minor) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  }
+
+  .callout-map__burn {
+    position: absolute;
+    left: 60%;
+    top: 62%;
+    width: 22px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(30, 16, 8, 0.85), transparent 72%);
+  }
+
+  .callout-map__object,
+  .callout-map__slot {
+    position: absolute;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.25);
+  }
+
+  .callout-map__portrait {
+    top: 8%; left: 4%; width: 18%; height: 40%;
+    background: var(--paper); transform: rotate(-3deg);
+  }
+
+  .callout-map__pcb {
+    top: 8%; left: 28%; width: 40%; height: 52%;
+    border: 1px solid var(--line); border-radius: 6px; background: var(--pcb);
+  }
+
+  .callout-map__polaroid {
+    top: 6%; right: 4%; width: 20%; height: 44%;
+    background: var(--paper); transform: rotate(3deg);
+  }
+
+  .callout-map__notebook {
+    top: 58%; right: 6%; width: 17%; height: 34%;
+    border: 1px solid var(--line); border-radius: 3px 8px 8px 3px; background: var(--page);
+  }
+
+  .callout-map__business-card {
+    top: 64%; left: 5%; width: 18%; height: 24%;
+    border: 1px solid var(--line); background: var(--pcb);
+  }
+
+  .callout-map__loop-card {
+    top: 68%; left: 34%; width: 20%; height: 22%;
+    background: var(--paper);
+  }
+
+  .callout-map__slot {
+    top: 66%; left: 58%; width: 9%; height: 30%;
+    border: 1.5px dashed var(--text); border-radius: 50% 50% 42% 42%;
+    box-shadow: none; opacity: 0.6;
+  }
+
+  .callout-map__target {
+    position: absolute;
+    z-index: 2;
+    left: var(--callout-x);
+    top: var(--callout-y);
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    color: var(--ink);
+    font: 600 12px/1 var(--font-mono);
+    text-decoration: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .callout-map__target > span {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.28);
+  }
+
+  .callout-map__target:not(.callout-map__target--dnp):hover > span,
+  .callout-map__target:not(.callout-map__target--dnp):focus-visible > span {
+    transform: translateY(-4px);
+    box-shadow: 0 7px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .callout-map__target--dnp > span {
+    border: 1px dashed var(--dnp);
+    background: var(--ink);
+    color: var(--text-muted);
+  }
+</style>

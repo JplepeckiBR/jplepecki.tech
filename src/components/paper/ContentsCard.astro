@@ -1,0 +1,183 @@
+---
+import { cleanText, isSafeFragment } from './_shared';
+
+interface ContentsItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  items: ContentsItem[];
+  heading?: string;
+  initiallyOpen?: boolean;
+}
+
+const { items = [], heading = 'Contents', initiallyOpen = false } = Astro.props;
+const safeHeading = cleanText(heading);
+const safeItems = items
+  .map((item) => ({ href: item?.href, label: cleanText(item?.label) }))
+  .filter((item): item is { href: string; label: string } =>
+    Boolean(isSafeFragment(item.href) && item.label),
+  );
+const sectionCount = safeItems.length;
+const sectionLabel = `${sectionCount} ${sectionCount === 1 ? 'section' : 'sections'}`;
+---
+
+{
+  safeHeading && sectionCount > 0 && (
+    <aside class="contents-card">
+      <nav class="contents-card__desktop" aria-label={safeHeading}>
+        <p class="contents-card__heading">{safeHeading}</p>
+        <ol class="contents-card__list">
+          {safeItems.map((item, index) => (
+            <li>
+              <a class="contents-card__link" href={item.href}>
+                <span aria-hidden="true">{index + 1} · </span>{item.label}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      <details class="contents-card__mobile" open={initiallyOpen}>
+        <summary>
+          <span>{safeHeading} · {sectionLabel}</span>
+          <span class="contents-card__chevron" aria-hidden="true">
+            <svg viewBox="0 0 12 8" width="12" height="8" focusable="false">
+              <path d="M1 1.25 6 6.25l5-5" fill="none" stroke="currentColor" stroke-width="2" />
+            </svg>
+          </span>
+        </summary>
+        <nav aria-label={safeHeading}>
+          <ol class="contents-card__list">
+            {safeItems.map((item, index) => (
+              <li>
+                <a class="contents-card__link" href={item.href}>
+                  <span aria-hidden="true">{index + 1} · </span>{item.label}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </details>
+    </aside>
+  )
+}
+
+<style>
+  .contents-card {
+    position: sticky;
+    top: 24px;
+    min-width: 0;
+  }
+
+  .contents-card__desktop,
+  .contents-card__mobile {
+    background: var(--stake);
+    box-shadow: var(--shadow-object);
+    color: var(--text-on-paper);
+  }
+
+  .contents-card__desktop {
+    padding: 18px;
+    transform: rotate(1.5deg);
+  }
+
+  .contents-card__heading {
+    min-height: 28px;
+    margin: 0;
+    border-bottom: 1px solid #cfd8e3;
+    font: 600 11px/28px var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .contents-card__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contents-card__link {
+    display: block;
+    min-height: 28px;
+    border-bottom: 1px solid #cfd8e3;
+    color: var(--text-on-paper);
+    font: 15px/28px var(--font-serif);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .contents-card__link:hover {
+    text-decoration: underline;
+  }
+
+  .contents-card__link:focus-visible,
+  .contents-card__mobile summary:focus-visible {
+    outline: 3px solid var(--text-on-paper);
+    outline-offset: 3px;
+  }
+
+  .contents-card__mobile {
+    display: none;
+  }
+
+  @media (max-width: 1099px) {
+    .contents-card {
+      position: static;
+      width: 100%;
+    }
+
+    .contents-card__desktop {
+      display: none;
+    }
+
+    .contents-card__mobile {
+      display: block;
+      box-shadow: none;
+    }
+
+    .contents-card__mobile summary {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font: 600 12px/1.4 var(--font-mono);
+      text-transform: uppercase;
+      list-style: none;
+    }
+
+    .contents-card__mobile summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .contents-card__mobile nav {
+      padding: 0 14px 12px;
+    }
+
+    .contents-card__chevron {
+      width: 12px;
+      height: 8px;
+      flex: 0 0 auto;
+      transform-origin: center;
+    }
+
+    .contents-card__chevron svg {
+      display: block;
+    }
+
+    .contents-card__mobile[open] .contents-card__chevron {
+      transform: scaleY(-1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contents-card__desktop,
+    .contents-card__chevron {
+      transition: none;
+    }
+  }
+</style>

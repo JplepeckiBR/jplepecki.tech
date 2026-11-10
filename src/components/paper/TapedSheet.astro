@@ -1,0 +1,215 @@
+---
+import { cleanText } from './_shared';
+
+type CellValue = string | number;
+type ColumnAlignment = 'left' | 'center' | 'right';
+
+interface TapedSheetColumn {
+  label: string;
+  align?: ColumnAlignment;
+}
+
+interface TapedSheetRow {
+  cells: CellValue[];
+  isMaximum?: boolean;
+}
+
+interface Props {
+  caption: string;
+  columns: TapedSheetColumn[];
+  rows: TapedSheetRow[];
+  captionVisible?: boolean;
+  firstColumnIsRowHeader?: boolean;
+}
+
+const {
+  caption,
+  columns = [],
+  rows = [],
+  captionVisible = false,
+  firstColumnIsRowHeader = true,
+} = Astro.props;
+const safeCaption = cleanText(caption);
+const safeColumns = columns.map((column) => ({
+  label: cleanText(column?.label),
+  align:
+    column?.align === 'center' || column?.align === 'right' ? column.align : ('left' as const),
+}));
+const hasValidColumns = safeColumns.length > 0 && safeColumns.every((column) => column.label);
+const safeRows = rows
+  .map((row) => ({
+    cells: row?.cells?.slice(0, safeColumns.length).map((cell) => cleanText(cell)) ?? [],
+    isMaximum: row?.isMaximum === true,
+  }))
+  .filter(
+    (row): row is { cells: string[]; isMaximum: boolean } =>
+      row.cells.length === safeColumns.length && row.cells.every(Boolean),
+  );
+const canRender = Boolean(safeCaption && hasValidColumns && safeRows.length);
+---
+
+{
+  canRender && safeCaption && (
+    <div class="taped-sheet">
+      <div class="taped-sheet__scroll" tabindex="0" role="region" aria-label={safeCaption}>
+        <table>
+          <caption class:list={[!captionVisible && 'taped-sheet__caption--hidden']}>
+            {safeCaption}
+          </caption>
+          <thead>
+            <tr>
+              {safeColumns.map((column) => (
+                <th scope="col" data-align={column.align}>{column.label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {safeRows.map((row) => (
+              <tr class:list={[row.isMaximum && 'taped-sheet__row--maximum']}>
+                {row.cells.map((cell, index) =>
+                  index === 0 && firstColumnIsRowHeader ? (
+                    <th scope="row" data-align={safeColumns[index]?.align}>{cell}</th>
+                  ) : (
+                    <td data-align={safeColumns[index]?.align}>{cell}</td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .taped-sheet {
+    position: relative;
+    width: 100%;
+    padding: 20px 22px;
+    transform: rotate(-0.6deg);
+    background: var(--paper-bright);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    color: var(--text-on-paper);
+  }
+
+  .taped-sheet::before,
+  .taped-sheet::after {
+    position: absolute;
+    z-index: 1;
+    top: -9px;
+    width: 72px;
+    height: 18px;
+    background: var(--tape);
+    content: '';
+    pointer-events: none;
+  }
+
+  .taped-sheet::before {
+    left: 10%;
+    transform: rotate(-1.8deg);
+  }
+
+  .taped-sheet::after {
+    right: 10%;
+    transform: rotate(1.4deg);
+  }
+
+  .taped-sheet__scroll {
+    overflow-x: auto;
+    scrollbar-color: var(--text-muted) transparent;
+  }
+
+  .taped-sheet__scroll:focus-visible {
+    outline: 3px solid var(--text-on-paper);
+    outline-offset: 4px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 420px;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  caption {
+    padding: 0 8px 10px;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .taped-sheet__caption--hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  thead th {
+    padding: 6px 8px;
+    border-bottom: 2px solid var(--text-on-paper);
+    color: #4a504c;
+    font: 600 11px/1.35 var(--font-mono);
+    letter-spacing: 0.025em;
+  }
+
+  tbody th,
+  tbody td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #dad8d0;
+    font-weight: 400;
+  }
+
+  tbody th {
+    text-align: left;
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  [data-align='left'] {
+    text-align: left;
+  }
+
+  [data-align='center'] {
+    text-align: center;
+  }
+
+  [data-align='right'] {
+    text-align: right;
+  }
+
+  .taped-sheet__row--maximum th,
+  .taped-sheet__row--maximum td {
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1099px) {
+    .taped-sheet {
+      padding: 16px 14px;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .taped-sheet::before,
+    .taped-sheet::after {
+      width: 58px;
+      height: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .taped-sheet {
+      transition: none;
+    }
+  }
+</style>

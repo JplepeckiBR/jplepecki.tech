@@ -1,0 +1,109 @@
+---
+import { cleanText } from './_shared';
+
+interface Props {
+  name: string;
+  role?: string;
+  note?: string;
+  price?: string;
+}
+
+const { name, role, note, price } = Astro.props;
+const safeName = cleanText(name);
+const safeRole = cleanText(role);
+const safeNote = cleanText(note);
+const safePrice = cleanText(price);
+---
+
+{
+  safeName && (
+    <article class="plant-stake">
+      <h3 class="plant-stake__name">{safeName}</h3>
+      {(safeRole || safeNote || safePrice) && (
+        <dl class="plant-stake__details">
+          {safeRole && (
+            <div class="plant-stake__detail">
+              <dt class="sr-only">Role</dt>
+              <dd>{safeRole}</dd>
+            </div>
+          )}
+          {safeNote && (
+            <div class="plant-stake__detail">
+              <dt class="sr-only">Note</dt>
+              <dd>{safeNote}</dd>
+            </div>
+          )}
+          {safePrice && (
+            <div class="plant-stake__detail plant-stake__detail--price">
+              <dt class="sr-only">Price</dt>
+              <dd>{safePrice}</dd>
+            </div>
+          )}
+        </dl>
+      )}
+    </article>
+  )
+}
+
+<style>
+  .plant-stake {
+    min-width: 0;
+    min-height: 142px;
+    padding: 14px 12px 34px;
+    clip-path: polygon(0 0, 100% 0, 100% 84%, 50% 100%, 0 84%);
+    background: var(--stake);
+    color: var(--text-on-paper);
+  }
+
+  .plant-stake__name {
+    margin: 0;
+    font: italic 400 16px/1.25 var(--font-serif);
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .plant-stake__details {
+    margin: 6px 0 0;
+    font: 11px/1.45 var(--font-mono);
+  }
+
+  .plant-stake__detail {
+    color: #4a504c;
+  }
+
+  .plant-stake__detail + .plant-stake__detail:not(.plant-stake__detail--price) {
+    margin-top: 2px;
+  }
+
+  .plant-stake__detail dt,
+  .plant-stake__detail dd {
+    margin: 0;
+  }
+
+  .plant-stake__detail dd {
+    overflow-wrap: anywhere;
+  }
+
+  .plant-stake__detail--price {
+    margin-top: 8px;
+    color: var(--text-on-paper);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 1099px) {
+    .plant-stake {
+      min-height: 126px;
+      padding: 12px 10px 28px;
+    }
+
+    .plant-stake__name {
+      font-size: 15px;
+    }
+
+    .plant-stake__detail--price {
+      margin-top: 6px;
+      font-size: 12px;
+    }
+  }
+</style>
