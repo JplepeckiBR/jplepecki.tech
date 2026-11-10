@@ -26,6 +26,9 @@
   --font-mono: 'JetBrains Mono', Consolas, monospace;
   --shadow-object: 0 10px 16px rgba(0, 0, 0, 0.35);
   --shadow-page: 0 18px 30px rgba(0, 0, 0, 0.45);
+  --texture-mat: url('../assets/textures/mat-patina.svg');
+  --texture-paper: url('../assets/textures/paper-grain.svg');
+  --texture-dark: url('../assets/textures/dark-grain.svg');
   --focus: 3px solid var(--accent);
   --page-max: 1240px;
 }

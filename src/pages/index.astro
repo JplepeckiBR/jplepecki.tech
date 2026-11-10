@@ -1,12 +1,11 @@
 ---
 import type { ImageMetadata } from 'astro';
+import BenchEquipment from '../components/desk/BenchEquipment.astro';
 import BurnMark from '../components/desk/BurnMark.astro';
-import Clutter from '../components/desk/Clutter.astro';
 import KnifeScores from '../components/desk/KnifeScores.astro';
 import Mat from '../components/desk/Mat.astro';
 import PencilNote from '../components/desk/PencilNote.astro';
 import Stain from '../components/desk/Stain.astro';
-import ToolOutline from '../components/desk/ToolOutline.astro';
 import HomeHeader from '../components/layout/HomeHeader.astro';
 import BusinessCard from '../components/objects/BusinessCard.astro';
 import CalloutMap from '../components/objects/CalloutMap.astro';
@@ -76,12 +75,11 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         <Stain x={24} y={47} width={90} height={64} />
         <Stain x={70} y={80} width={60} height={44} />
         <Stain variant="mug" x={87} y={41} />
-        <ToolOutline />
-        <Clutter />
+        <BenchEquipment />
         <KnifeScores />
         <PencilNote text={'fan ON > 85 %RH\nfan OFF < 70'} x={51} y={49} rotation={-3} width={185} />
-        <PencilNote text="R2 = 10k ?" x={4} y={39} rotation={3} width={110} />
-        <PencilNote text="28 °C MAX" x={76} y={86} rotation={3} width={120} />
+        <PencilNote text="R2 = 10k ?" x={33} y={56} rotation={3} width={110} />
+        <PencilNote text="28 °C MAX" x={63} y={58} rotation={3} width={120} />
 
         <div class="desk-object home-pcb" style={positionStyle(deskPositions.pcb)}>
           <PcbNav
@@ -134,7 +132,7 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
 
       <div class="desk-controls">
         <div>
-          <span>dashed outlines are tool spots and things not built yet</span>
+          <span>dashed footprints mark parts not built yet</span>
           {(loopDescription || metrics || Number.isFinite(postTarget)) && (
             <p class="desk-readout">
               {loopDescription && <strong>{loopDescription}</strong>}
@@ -154,6 +152,10 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
     </section>
 
     <section class="compact-desk" aria-label="Desk navigation">
+      <div class="organized-toolbar" data-organized-toolbar>
+        <span><strong>DESK ORGANIZED</strong><small>List view is active.</small></span>
+        <button type="button" data-restore-button>restore messy desk</button>
+      </div>
       <CalloutMap items={parts} />
       <PartsList items={parts} />
       {(loopDescription || Number.isFinite(postTarget) || targets.length > 0) && (
@@ -177,6 +179,7 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
       if (!(root instanceof HTMLElement)) return;
 
       const tidyButton = root.querySelector('[data-tidy-button]');
+      const restoreButton = root.querySelector('[data-restore-button]');
       const setTidy = (tidy) => {
         root.dataset.tidy = tidy ? 'true' : 'false';
         if (tidyButton instanceof HTMLButtonElement) {
@@ -190,6 +193,11 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         const next = root.dataset.tidy !== 'true';
         setTidy(next);
         try { localStorage.setItem('jpl-desk-tidy', String(next)); } catch {}
+      });
+      restoreButton?.addEventListener('click', () => {
+        setTidy(false);
+        try { localStorage.setItem('jpl-desk-tidy', 'false'); } catch {}
+        if (tidyButton instanceof HTMLButtonElement) tidyButton.focus();
       });
 
       const start = root.dataset.loopStart;
@@ -291,10 +299,57 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
     list-style-position: inside;
   }
 
+  .organized-toolbar {
+    display: none;
+    min-height: 72px;
+    padding: 12px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    background-color: var(--pcb);
+    background-image: var(--texture-dark);
+  }
+
+  .organized-toolbar > span,
+  .organized-toolbar small {
+    display: block;
+  }
+
+  .organized-toolbar strong {
+    color: var(--accent);
+    font: 600 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .organized-toolbar small {
+    margin-top: 3px;
+    color: var(--text-muted);
+    font: 11px/1.4 var(--font-mono);
+  }
+
+  .organized-toolbar button {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--ink);
+    cursor: pointer;
+    font: 600 12px/1.2 var(--font-mono);
+  }
+
+  .organized-toolbar button:hover,
+  .organized-toolbar button:focus-visible {
+    background: transparent;
+    color: var(--accent);
+  }
+
   .compact-readout {
     padding: 18px 16px 20px;
     border-top: 1px solid var(--line);
-    background: var(--page);
+    background-color: var(--page);
+    background-image: var(--texture-dark);
   }
 
   .compact-readout strong { display: block; font-size: 18px; font-weight: 600; }
@@ -336,5 +391,6 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
       margin: 0 auto;
       padding: 24px;
     }
+    .home[data-tidy='true'] .organized-toolbar { display: flex; }
   }
 </style>

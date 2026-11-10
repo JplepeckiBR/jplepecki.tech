@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="mat-speckle" x="-4%" y="-4%" width="108%" height="108%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08 0.16" numOctaves="3" seed="31" result="noise" />
+      <feColorMatrix in="noise" values="0 0 0 0 .64  0 0 0 0 .73  0 0 0 0 .67  .2 .22 .18 0 -.61" />
+    </filter>
+    <filter id="mat-warp" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025 0.08" numOctaves="2" seed="17" result="warp" />
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.1" xChannelSelector="R" yChannelSelector="B" />
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="#dce6de" opacity="0.12" filter="url(#mat-speckle)" />
+
+  <g fill="none" stroke-linecap="round" filter="url(#mat-warp)">
+    <path d="M34 86l51-9m8-1 19-3M174 54l37 6m12 2 18 3M349 101l62-8m10-1 22-4" stroke="#dce5df" stroke-width="0.7" opacity="0.15" />
+    <path d="M67 238l77 11m9 2 24 4M281 209l48-13m11-3 35-9M402 276l55 7" stroke="#10291f" stroke-width="0.9" opacity="0.13" />
+    <path d="M42 403l58-12m11-3 31-6M213 447l83-9m14-2 19-2M378 397l62-17" stroke="#e5ebe7" stroke-width="0.65" opacity="0.16" />
+    <path d="M121 126l-5 37m112 115 7-52m98 116-5 31m127-222-8 43" stroke="#e0e7e2" stroke-width="0.55" opacity="0.12" />
+    <path d="M27 331l29-4m163 24 41-6m9 3 18-2m145 111 31-5" stroke="#0e251c" stroke-width="1" opacity="0.14" />
+  </g>
+
+  <g fill="#0d281f" opacity="0.09">
+    <ellipse cx="78" cy="63" rx="24" ry="7" transform="rotate(-8 78 63)" />
+    <ellipse cx="275" cy="301" rx="18" ry="5" transform="rotate(13 275 301)" />
+    <ellipse cx="454" cy="164" rx="31" ry="8" transform="rotate(-4 454 164)" />
+    <ellipse cx="166" cy="379" rx="12" ry="3" transform="rotate(7 166 379)" />
+  </g>
+  <g fill="#e8eee9" opacity="0.12">
+    <circle cx="46" cy="329" r="1.1"/><circle cx="49" cy="335" r="0.8"/><circle cx="331" cy="76" r="1.2"/>
+    <circle cx="339" cy="82" r="0.7"/><circle cx="470" cy="402" r="1"/><circle cx="474" cy="397" r="0.7"/>
+    <circle cx="198" cy="189" r="0.8"/><circle cx="202" cy="185" r="0.45"/>
+  </g>
+</svg>

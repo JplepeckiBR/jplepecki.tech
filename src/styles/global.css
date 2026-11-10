@@ -117,11 +117,13 @@ a {
   position: relative;
   background-color: var(--mat);
   background-image:
+    var(--texture-mat),
     linear-gradient(var(--mat-line-major) 1px, transparent 1px),
     linear-gradient(90deg, var(--mat-line-major) 1px, transparent 1px),
     linear-gradient(var(--mat-line-minor) 1px, transparent 1px),
     linear-gradient(90deg, var(--mat-line-minor) 1px, transparent 1px);
-  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  background-position: 37px 19px, 0 0, 0 0, 0 0, 0 0;
+  background-size: 512px 512px, 100px 100px, 100px 100px, 20px 20px, 20px 20px;
 }
 
 .sr-only {

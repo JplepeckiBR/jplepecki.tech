@@ -25,28 +25,63 @@ const safeHeight = clamp(Astro.props.height ?? (variant === 'drag' ? 14 : 24), 6
 <style>
   .burn-mark {
     position: absolute;
-    z-index: 0;
+    z-index: 1;
     left: var(--burn-x);
     top: var(--burn-y);
     width: var(--burn-width);
     height: var(--burn-height);
-    border-radius: 50%;
+    border-radius: 43% 57% 52% 48% / 56% 42% 58% 44%;
     background: radial-gradient(
-      ellipse at center,
-      rgba(30, 16, 8, 0.85) 0,
-      rgba(70, 40, 18, 0.48) 45%,
-      transparent 72%
+      ellipse at 46% 52%,
+      rgba(20, 12, 7, 0.9) 0 12%,
+      rgba(44, 25, 12, 0.76) 24%,
+      rgba(88, 53, 24, 0.38) 52%,
+      transparent 76%
     );
+    filter: blur(0.25px);
+    transform: rotate(-7deg);
     pointer-events: none;
   }
 
+  .burn-mark::before {
+    position: absolute;
+    inset: 22% 27% 28% 18%;
+    border-radius: 62% 38% 46% 54%;
+    background: radial-gradient(circle at 38% 45%, rgba(5, 5, 4, 0.94) 0 9%, transparent 12%),
+      radial-gradient(circle at 68% 64%, rgba(7, 6, 4, 0.82) 0 7%, transparent 10%),
+      radial-gradient(ellipse at center, rgba(24, 14, 7, 0.7), transparent 68%);
+    content: '';
+  }
+
+  .burn-mark::after {
+    position: absolute;
+    inset: -16% -12%;
+    border: 1px solid rgba(91, 55, 28, 0.16);
+    border-radius: 48% 52% 39% 61%;
+    content: '';
+    transform: rotate(11deg);
+  }
+
   .burn-mark--drag {
-    transform: rotate(-18deg);
+    border-radius: 58% 42% 47% 53% / 42% 58% 43% 57%;
     background: radial-gradient(
-      ellipse at center,
-      rgba(28, 15, 7, 0.7) 0,
-      rgba(70, 40, 18, 0.35) 50%,
-      transparent 75%
+      ellipse at 48% 53%,
+      rgba(24, 13, 7, 0.76) 0,
+      rgba(64, 38, 18, 0.38) 47%,
+      transparent 77%
     );
+    filter: blur(0.45px);
+    transform: rotate(-18deg);
+  }
+
+  .burn-mark--drag::before {
+    inset: 33% 15% 31% 9%;
+    border-radius: 60% 40%;
+    background: rgba(11, 8, 5, 0.48);
+  }
+
+  .burn-mark--drag::after {
+    inset: 4% -4%;
+    border-color: rgba(111, 69, 31, 0.12);
   }
 </style>

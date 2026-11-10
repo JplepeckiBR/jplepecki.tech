@@ -1,4 +1,5 @@
 ---
+import darkGrainUrl from '../../assets/textures/dark-grain.svg?url';
 import { BUILD_MONTH } from '../../lib/buildinfo';
 import { clampNumber, clampRotation, cleanHref, cleanText } from './_shared';
 
@@ -52,13 +53,27 @@ const safeWidth = clampNumber(width, 320, 760, 460);
   style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
 >
   <svg viewBox="0 0 760 560" role="img" aria-label="Circuit board navigation">
+    <defs>
+      <clipPath id="pcb-board-clip"><rect x="6" y="6" width="748" height="548" rx="18" /></clipPath>
+      <filter id="pcb-trace-wear" x="-4%" y="-4%" width="108%" height="108%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.025 0.11" numOctaves="2" seed="19" result="wear" />
+        <feDisplacementMap in="SourceGraphic" in2="wear" scale="0.65" />
+      </filter>
+    </defs>
+    <rect class="pcb-nav__substrate" x="3" y="3" width="754" height="554" rx="20" />
     <rect class="pcb-nav__board" x="6" y="6" width="748" height="548" rx="18" />
+    <image class="pcb-nav__grain" href={darkGrainUrl} x="6" y="6" width="748" height="548" clip-path="url(#pcb-board-clip)" preserveAspectRatio="xMidYMid slice" />
+    <path class="pcb-nav__edge-scuff" d="M34 10h164m344 0h142M10 62v112m0 254v72M89 550h221m262 0h111" aria-hidden="true" />
 
     <g class="pcb-nav__holes" aria-hidden="true">
       <circle cx="34" cy="34" r="9" />
       <circle cx="726" cy="34" r="9" />
       <circle cx="34" cy="526" r="9" />
       <circle cx="726" cy="526" r="9" />
+      <circle class="pcb-nav__hole-core" cx="34" cy="34" r="4.5" />
+      <circle class="pcb-nav__hole-core" cx="726" cy="34" r="4.5" />
+      <circle class="pcb-nav__hole-core" cx="34" cy="526" r="4.5" />
+      <circle class="pcb-nav__hole-core" cx="726" cy="526" r="4.5" />
     </g>
 
     <g class="pcb-nav__traces" aria-hidden="true">
@@ -66,6 +81,31 @@ const safeWidth = clampNumber(width, 320, 760, 460);
       <path d="M470 310h48v46h42M210 116h30v-34h120M170 420h34v70h146" />
       <circle cx="250" cy="230" r="5" /><circle cx="520" cy="115" r="5" />
       <circle cx="560" cy="260" r="5" /><circle cx="180" cy="420" r="5" />
+    </g>
+
+    <g class="pcb-nav__vias" aria-hidden="true">
+      <g transform="translate(246 82)"><circle r="5"/><circle r="2"/></g>
+      <g transform="translate(270 82)"><circle r="5"/><circle r="2"/></g>
+      <g transform="translate(505 454)"><circle r="5"/><circle r="2"/></g>
+      <g transform="translate(528 454)"><circle r="5"/><circle r="2"/></g>
+      <g transform="translate(520 287)"><circle r="4.5"/><circle r="1.8"/></g>
+      <g transform="translate(228 335)"><circle r="4.5"/><circle r="1.8"/></g>
+      <g transform="translate(229 490)"><circle r="4.5"/><circle r="1.8"/></g>
+      <g transform="translate(493 115)"><circle r="4.5"/><circle r="1.8"/></g>
+      <g transform="translate(532 215)"><circle r="4.5"/><circle r="1.8"/></g>
+    </g>
+
+    <g class="pcb-nav__passives" aria-hidden="true">
+      <g transform="translate(253 103)"><rect x="-13" y="-5" width="26" height="10" rx="2"/><path d="M-18 0h5m26 0h5"/><text x="0" y="-10" text-anchor="middle">R1</text></g>
+      <g transform="translate(508 474)"><rect x="-11" y="-6" width="22" height="12" rx="2"/><path d="M-16 0h5m22 0h5"/><text x="0" y="-11" text-anchor="middle">C4</text></g>
+      <g transform="translate(510 332) rotate(90)"><rect x="-10" y="-5" width="20" height="10" rx="2"/><path d="M-15 0h5m20 0h5"/><text x="0" y="-10" text-anchor="middle">R7</text></g>
+      <g class="pcb-nav__crystal" transform="translate(252 458)"><rect x="-17" y="-9" width="34" height="18" rx="7"/><path d="M-23 0h6m34 0h6"/><text x="0" y="-14" text-anchor="middle">Y1</text></g>
+      <g class="pcb-nav__header" transform="translate(490 510)">{[0, 1, 2, 3, 4, 5].map((index) => <g transform={`translate(${index * 15} 0)`}><rect x="0" y="0" width="11" height="11"/><circle cx="5.5" cy="5.5" r="2.2"/></g>)}</g>
+    </g>
+
+    <g class="pcb-nav__mask-wear" aria-hidden="true" filter="url(#pcb-trace-wear)">
+      <path d="M112 53l78-13m278 14 61-9M233 397l42-7m-30 13 67-11M600 444l86-17" />
+      <path d="M84 286l39-5m507-11 43-8M415 92l36-6" />
     </g>
 
     <a class="pcb-nav__link" href="/projects">
@@ -180,27 +220,109 @@ const safeWidth = clampNumber(width, 320, 760, 460);
     font-family: var(--font-mono);
   }
 
+  .pcb-nav__substrate {
+    fill: #080a09;
+    stroke: #373c3a;
+    stroke-width: 1;
+  }
+
   .pcb-nav__board {
     fill: var(--pcb);
-    stroke: var(--line);
+    stroke: #343a37;
     stroke-width: 2;
   }
 
+  .pcb-nav__grain {
+    opacity: 0.58;
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  .pcb-nav__edge-scuff {
+    fill: none;
+    stroke: #747a76;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    opacity: 0.24;
+  }
+
   .pcb-nav__holes circle {
-    fill: var(--mat);
+    fill: #111513;
     stroke: var(--copper);
     stroke-width: 2;
+  }
+
+  .pcb-nav__holes .pcb-nav__hole-core {
+    fill: #050706;
+    stroke: #747a77;
+    stroke-width: 0.8;
   }
 
   .pcb-nav__traces {
     fill: none;
     stroke: var(--copper);
-    stroke-width: 3;
-    opacity: 0.75;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.66;
   }
 
   .pcb-nav__traces circle {
     fill: var(--pcb);
+  }
+
+  .pcb-nav__vias > g > circle:first-child {
+    fill: var(--copper);
+    stroke: #d7b77f;
+    stroke-width: 0.7;
+    opacity: 0.84;
+  }
+
+  .pcb-nav__vias > g > circle:last-child {
+    fill: #080a09;
+    stroke: #5b625e;
+    stroke-width: 0.6;
+  }
+
+  .pcb-nav__passives rect {
+    fill: #c4b9a4;
+    stroke: #7d766b;
+    stroke-width: 0.7;
+  }
+
+  .pcb-nav__passives path {
+    fill: none;
+    stroke: #b9c0bd;
+    stroke-width: 1.5;
+  }
+
+  .pcb-nav__passives text {
+    fill: #737b77;
+    font-size: 8px;
+  }
+
+  .pcb-nav__passives .pcb-nav__crystal rect {
+    fill: #8d9694;
+    stroke: #c1c7c5;
+  }
+
+  .pcb-nav__header rect {
+    fill: #171b19;
+    stroke: #59615d;
+  }
+
+  .pcb-nav__header circle {
+    fill: #080a09;
+    stroke: var(--copper);
+    stroke-width: 0.7;
+  }
+
+  .pcb-nav__mask-wear {
+    fill: none;
+    stroke: #a3aaa6;
+    stroke-width: 0.8;
+    stroke-linecap: round;
+    opacity: 0.17;
   }
 
   .pcb-nav__link {

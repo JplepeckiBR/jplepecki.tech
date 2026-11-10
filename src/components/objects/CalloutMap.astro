@@ -1,4 +1,5 @@
 ---
+import BenchEquipment from '../desk/BenchEquipment.astro';
 import { cleanHref, cleanText } from './_shared';
 
 interface Callout {
@@ -53,6 +54,7 @@ const safeLabel = cleanText(label);
 {
   safeItems.length > 0 && safeLabel && (
     <section class="callout-map" aria-label={safeLabel}>
+      <span class="callout-map__equipment" aria-hidden="true"><BenchEquipment /></span>
       <span class="callout-map__burn" aria-hidden="true"></span>
       <span class="callout-map__object callout-map__portrait" aria-hidden="true"></span>
       <span class="callout-map__object callout-map__pcb" aria-hidden="true"></span>
@@ -95,11 +97,23 @@ const safeLabel = cleanText(label);
     overflow: hidden;
     background-color: var(--mat);
     background-image:
+      var(--texture-mat),
       linear-gradient(var(--mat-line-major) 1px, transparent 1px),
       linear-gradient(90deg, var(--mat-line-major) 1px, transparent 1px),
       linear-gradient(var(--mat-line-minor) 1px, transparent 1px),
       linear-gradient(90deg, var(--mat-line-minor) 1px, transparent 1px);
-    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+    background-position: 19px 11px, 0 0, 0 0, 0 0, 0 0;
+    background-size: 384px 384px, 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+  }
+
+  .callout-map__equipment {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    opacity: 0.74;
+    pointer-events: none;
   }
 
   .callout-map__burn {
@@ -115,37 +129,38 @@ const safeLabel = cleanText(label);
   .callout-map__object,
   .callout-map__slot {
     position: absolute;
+    z-index: 1;
     box-shadow: 0 4px 7px rgba(0, 0, 0, 0.25);
   }
 
   .callout-map__portrait {
     top: 8%; left: 4%; width: 18%; height: 40%;
-    background: var(--paper); transform: rotate(-3deg);
+    background-color: var(--paper); background-image: var(--texture-paper); transform: rotate(-3deg);
   }
 
   .callout-map__pcb {
     top: 8%; left: 28%; width: 40%; height: 52%;
-    border: 1px solid var(--line); border-radius: 6px; background: var(--pcb);
+    border: 1px solid var(--line); border-radius: 6px; background-color: var(--pcb); background-image: var(--texture-dark);
   }
 
   .callout-map__polaroid {
     top: 6%; right: 4%; width: 20%; height: 44%;
-    background: var(--paper); transform: rotate(3deg);
+    background-color: var(--paper); background-image: var(--texture-paper); transform: rotate(3deg);
   }
 
   .callout-map__notebook {
     top: 58%; right: 6%; width: 17%; height: 34%;
-    border: 1px solid var(--line); border-radius: 3px 8px 8px 3px; background: var(--page);
+    border: 1px solid var(--line); border-radius: 3px 8px 8px 3px; background-color: var(--page); background-image: var(--texture-dark);
   }
 
   .callout-map__business-card {
     top: 64%; left: 5%; width: 18%; height: 24%;
-    border: 1px solid var(--line); background: var(--pcb);
+    border: 1px solid var(--line); background-color: var(--pcb); background-image: var(--texture-dark);
   }
 
   .callout-map__loop-card {
     top: 68%; left: 34%; width: 20%; height: 22%;
-    background: var(--paper);
+    background-color: var(--paper); background-image: var(--texture-paper);
   }
 
   .callout-map__slot {
