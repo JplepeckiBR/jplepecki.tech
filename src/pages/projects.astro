@@ -1,0 +1,189 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import BurnMark from '../components/desk/BurnMark.astro';
+import Stain from '../components/desk/Stain.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import { getSiteCollections, optionalVisitorText, projectPostHref } from '../lib/content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const data = await getSiteCollections();
+const projects = data.projects.filter((project) => project.data.cover?.asset && optionalVisitorText(project.data.name));
+const rotations = [-1.5, 1.2, -0.7, 2.1];
+---
+
+<BaseLayout title="Projects" description="Projects documented through build notes.">
+  <SiteHeader current="projects" />
+
+  <main id="main" class="projects-main desk-mat">
+    <BurnMark x={18} y={24} width={34} height={26} />
+    <BurnMark x={82} y={68} width={24} height={18} />
+    <Stain variant="mug" x={88} y={8} width={84} height={84} />
+
+    <div class="projects-stack">
+      <header class="projects-heading">
+        <span>ON THE BENCH</span>
+        <h1>Projects</h1>
+      </header>
+
+      {projects.length > 0 ? (
+        <div class="project-list">
+          {projects.map((project, index) => {
+            const cover = project.data.cover!.asset as ImageMetadata;
+            const status = optionalVisitorText(project.data.status);
+            const description = optionalVisitorText(project.data.whatItIs);
+            const paused = /paused/i.test(status ?? '');
+            return (
+              <article class:list={['project-card', { 'project-card--paused': paused }]} style={`--rotation:${rotations[index % rotations.length]}deg`}>
+                <a href={projectPostHref(project)} aria-label={`Posts about ${project.data.name}`}>
+                  <span class="project-card__photo">
+                    <Image
+                      src={cover}
+                      alt={project.data.cover!.alt}
+                      width={cover.width}
+                      height={cover.height}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                    />
+                  </span>
+                  <span class="project-card__caption">
+                    <span class="project-card__title-row">
+                      <strong>{project.data.name}</strong>
+                      {status && <span>{status}</span>}
+                    </span>
+                    {description && <span class="project-card__description">{description}</span>}
+                    <span class="project-card__action">view build notes →</span>
+                  </span>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <section class="empty-projects" aria-label="Projects">
+          <p>Project pages appear here when they are marked for the site.</p>
+        </section>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .projects-main {
+    position: relative;
+    min-height: calc(100vh - 67px);
+    padding: 48px 24px 88px;
+    overflow: hidden;
+  }
+
+  .projects-stack {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1080px);
+    margin: 0 auto;
+  }
+
+  .projects-heading {
+    width: fit-content;
+    margin-bottom: 36px;
+    padding: 16px 20px;
+    background: var(--page);
+    box-shadow: var(--shadow-object);
+  }
+
+  .projects-heading span { color: var(--copper); font: 11px/1.4 var(--font-mono); letter-spacing: 0.08em; }
+  .projects-heading h1 { margin: 2px 0 0; font-size: 46px; line-height: 1.05; }
+
+  .project-list {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 42px 54px;
+  }
+
+  .project-card {
+    width: min(100%, 330px);
+    transform: rotate(var(--rotation));
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  .project-card:nth-child(3n + 2) { width: min(100%, 360px); margin-top: 38px; }
+  .project-card:nth-child(3n) { width: min(100%, 305px); margin-top: 12px; }
+
+  .project-card:hover,
+  .project-card:focus-within {
+    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.45));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .project-card a {
+    display: block;
+    min-height: 44px;
+    background: var(--paper);
+    box-shadow: var(--shadow-object);
+    color: var(--text-on-paper);
+    text-decoration: none;
+  }
+
+  .project-card__photo { display: block; padding: 12px 12px 0; }
+
+  .project-card__photo :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    background: #33403a;
+    object-fit: cover;
+  }
+
+  .project-card__caption { display: block; padding: 16px 17px 19px; }
+
+  .project-card__title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .project-card__title-row strong { font-size: 23px; line-height: 1.15; }
+  .project-card__title-row > span { color: #4a504c; font: 11px/1.4 var(--font-mono); text-transform: uppercase; }
+
+  .project-card__description {
+    display: block;
+    margin-top: 10px;
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  .project-card__action {
+    display: block;
+    margin-top: 16px;
+    color: #5b3b16;
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .project-card--paused { filter: saturate(0.25); opacity: 0.72; }
+  .project-card--paused:hover,
+  .project-card--paused:focus-within { filter: saturate(0.25) drop-shadow(0 16px 20px rgba(0, 0, 0, 0.45)); opacity: 0.86; }
+
+  .empty-projects {
+    max-width: 620px;
+    padding: 28px 32px;
+    background: var(--page);
+    box-shadow: var(--shadow-object);
+  }
+
+  .empty-projects p { margin: 0; color: var(--text-body); font-size: 19px; }
+
+  @media (max-width: 700px) {
+    .projects-main { padding: 30px 16px 62px; }
+    .projects-heading { margin-bottom: 28px; padding: 13px 16px; }
+    .projects-heading h1 { font-size: 36px; }
+    .project-list { display: grid; gap: 34px; }
+    .project-card,
+    .project-card:nth-child(n) { width: min(100%, 360px); margin: 0 auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-card:hover,
+    .project-card:focus-within { transform: rotate(var(--rotation)); }
+  }
+</style>

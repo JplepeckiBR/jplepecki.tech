@@ -85,3 +85,20 @@
 - Add `NOTION_TOKEN` to a local `.env` and share each listed data source/page with that Notion integration to validate the live workspace; never commit the token.
 - Confirm the exact Notion property that marks a project public; until then, the loader uses the safer rule of exposing only projects linked from an included post or loop.
 - Replace the fixture schematic and sample receipt values by filling the corresponding Notion Hero and callout content before production publishing.
+
+## Stage 4 · Pages
+
+- **Home `/`:** built the full desktop cutting-mat composition and the separate phone callout-map/parts-list layout. Current loop, project, day, stage, targets, post count, and shipped count come from collections; day state refreshes in the browser. “Tidy the desk” persists its alternate layout.
+- **Publishing pages:** built `/posts`, `/posts/planning-the-setup`, and project-query filtering. The post uses the three-column desktop notebook, 12px phone mat frame, responsive contents, hero polaroid, margin notes, paper blocks, BuildLog, reading time, and guarded series navigation.
+- **Loop and projects:** built `/loop` as the taped Ask → Study → Build → Ship schematic with clock, outputs, feedback resistor, current marker, README notes/changelog, and loop history. Built `/projects` as an asymmetric polaroid bench with project-linked post views.
+- **Shared shell:** added semantic desktop/mobile navigation, consistent footer, known LinkedIn/GitHub links, guarded contact controls, robots.txt, and default/per-post 1200×630 OG images. `/call` redirects to `CAL_URL` when configured and safely returns home when it is absent.
+- **Visual review:** generated 12 clean production-preview screenshots at 1440px and 390px in `review/v1-rebuild/`; screenshot navigation produced no HTTP, console, or page errors.
+- **Acceptance:** final `npm run build` passed; built output contains no Notion/signed-file URLs; all main routes returned 200 with JavaScript on and off; 390px checks found no horizontal page overflow. Mobile Lighthouse scores were Home 94/100, Posts 94/100, Post 90/100, Loop 94/100, Projects 98/100 for Performance/Accessibility.
+- **Result:** Stage 4 passed against the fixture. Optional photo, calendar, X, email, and live Notion data stay hidden until JP supplies them.
+
+## Needs JP · Stage 4
+
+- Set `CAL_URL` to an HTTPS booking page so `/call`, the header button, and the business-card object become active.
+- Provide the public X profile URL and contact email if they should appear beside LinkedIn and GitHub.
+- Add a real portrait photo and current-build sketch/cover in the approved sources if those desktop objects should appear.
+- Add the one-paragraph Lab Loop explanation to Notion; the site intentionally does not reuse the current project goal as a description of JP's method.

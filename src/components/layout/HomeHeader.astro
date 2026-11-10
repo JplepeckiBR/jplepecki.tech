@@ -1,0 +1,126 @@
+---
+import { CAL_URL, SITE_NAME, SITE_TAGLINE, SOCIAL_LINKS } from '../../config/site';
+---
+
+<header class="home-header">
+  <div class="home-header__identity">
+    <h1><a href="/" aria-current="page">{SITE_NAME}</a></h1>
+    <span>{SITE_TAGLINE}</span>
+  </div>
+  <nav class="home-header__nav" aria-label="Social links and contact">
+    <span class="home-header__socials">
+      {SOCIAL_LINKS.map((link) => <a href={link.href}>{link.label.toLowerCase()}</a>)}
+    </span>
+    {CAL_URL && <a class="home-header__call" href="/call"><span class="desktop-label">book a call</span><span class="phone-label">call</span></a>}
+  </nav>
+</header>
+
+<style>
+  .home-header {
+    display: flex;
+    width: 100%;
+    max-width: 1240px;
+    min-height: 76px;
+    margin: 0 auto;
+    padding: 18px 16px 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .home-header__identity {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .home-header__identity h1 {
+    margin: 0;
+    font: inherit;
+  }
+
+  .home-header__identity a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .home-header__identity span {
+    margin-top: 3px;
+    color: #b9b3a6;
+    font: 11px/1.35 var(--font-mono);
+  }
+
+  .home-header__nav,
+  .home-header__socials {
+    display: flex;
+    align-items: center;
+  }
+
+  .home-header__nav {
+    gap: 16px;
+    font: 13px/1 var(--font-mono);
+  }
+
+  .home-header__socials {
+    display: none;
+    gap: 16px;
+  }
+
+  .home-header__socials a {
+    min-height: 44px;
+    align-content: center;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .home-header__socials a:hover,
+  .home-header__socials a:focus-visible {
+    color: var(--text);
+  }
+
+  .home-header__call {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 11px 12px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .home-header__call:hover,
+  .home-header__call:focus-visible {
+    background: var(--accent);
+    color: var(--ink);
+  }
+
+  .desktop-label { display: none; }
+
+  @media (min-width: 700px) {
+    .home-header {
+      min-height: 88px;
+      padding: 22px 24px;
+    }
+
+    .home-header__identity {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .home-header__identity a { font-size: 24px; }
+    .home-header__identity span { margin: 0; font-size: 13px; }
+    .home-header__socials { display: flex; }
+    .desktop-label { display: inline; }
+    .phone-label { display: none; }
+    .home-header__call { padding-inline: 14px; }
+  }
+</style>

@@ -25,6 +25,7 @@ import Receipt from '../components/paper/Receipt.astro';
 import StatusTape from '../components/paper/StatusTape.astro';
 import TapedSheet from '../components/paper/TapedSheet.astro';
 import VideoEmbed from '../components/VideoEmbed.astro';
+import { CAL_URL } from '../config/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const asciiSample = `################################
@@ -40,7 +41,7 @@ const mobileParts = [
   { number: 3, name: 'Current loop', hint: 'sample data', href: '/loop' },
   { number: 4, name: 'Posts', hint: 'notebook', href: '/posts' },
   { number: 5, name: 'How I work', hint: 'the loop', href: '/loop' },
-  { number: 6, name: 'Book a call', hint: 'card', href: '/call' },
+  ...(CAL_URL ? [{ number: 6, name: 'Book a call', hint: 'card', href: '/call' }] : []),
   { number: 7, name: 'Future object', hint: 'coming later', dnp: true },
 ];
 ---
@@ -105,10 +106,12 @@ const mobileParts = [
           <span class="component-label">NOTEBOOK</span>
           <Notebook postCount={0} />
         </div>
-        <div class="object-cell">
-          <span class="component-label">BUSINESS CARD</span>
-          <BusinessCard />
-        </div>
+        {CAL_URL && (
+          <div class="object-cell">
+            <span class="component-label">BUSINESS CARD</span>
+            <BusinessCard />
+          </div>
+        )}
         <div class="object-cell">
           <span class="component-label">LOOP CARD</span>
           <LoopCard />

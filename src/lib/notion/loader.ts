@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { Loader } from 'astro/loaders';
 import { deriveBuildLog } from './build-log';
 import { normalizePageBlocks, tableOfContents } from './blocks';
@@ -240,7 +239,7 @@ export function notionCollectionLoader(collection: keyof NotionDataset): Loader 
     async load({ store, parseData, generateDigest, logger }) {
       store.clear();
       const dataset = await getDataset(logger);
-      const filePath = path.resolve('src/content/notion.json');
+      const filePath = 'src/content/notion.json';
       const entries = dataset[collection];
       for (const entry of entries) {
         const id = collection === 'posts' ? (entry as PostEntry).slug : entry.notionId;

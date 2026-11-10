@@ -289,11 +289,11 @@
       "pages": [{
         "id": "fixture-loop-smart-vivarium",
         "properties": {
-          "Name": { "type": "title", "title": [{ "plain_text": "Fixture sample — Smart Vivarium planning" }] },
-          "Dates": { "type": "date", "date": { "start": "2020-01-01", "end": "2020-01-04" } },
+          "Name": { "type": "title", "title": [{ "plain_text": "Smart Vivarium" }] },
+          "Dates": { "type": "date", "date": { "start": "2026-11-09", "end": "2026-11-22" } },
           "Status": { "type": "status", "status": { "name": "In progress" } },
           "Stage": { "type": "select", "select": { "name": "Study" } },
-          "Goal": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture sample: exercise the Stage 3 loop pipeline." }] },
+          "Goal": { "type": "rich_text", "rich_text": [] },
           "Post target": { "type": "number", "number": 1 },
           "Project": { "type": "relation", "relation": [{ "id": "fixture-project-smart-vivarium" }] }
         }

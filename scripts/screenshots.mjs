@@ -8,8 +8,21 @@ const OUT = 'review/v1-rebuild';
 async function fixturePostPath() {
   try {
     const fixture = JSON.parse(await readFile('fixtures/notion.json', 'utf8'));
-    const post = fixture.posts?.find((entry) => entry.slug);
-    return post ? `/posts/${post.slug}` : null;
+    const normalizedPost = fixture.posts?.find?.((entry) => entry.slug);
+    if (normalizedPost?.slug) return `/posts/${normalizedPost.slug}`;
+
+    const pages = fixture.dataSources?.posts?.pages;
+    if (!Array.isArray(pages)) return null;
+    for (const page of pages) {
+      const status = page.properties?.['Site status']?.select?.name;
+      if (status !== 'Published' && status !== 'In progress') continue;
+      const slug = page.properties?.Slug?.rich_text
+        ?.map((item) => item.plain_text ?? item.text?.content ?? '')
+        .join('')
+        .trim();
+      if (slug) return `/posts/${slug}`;
+    }
+    return null;
   } catch {
     return null;
   }

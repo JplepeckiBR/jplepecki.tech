@@ -1,0 +1,143 @@
+---
+interface Props {
+  loopLength?: number;
+  loopNumber?: number;
+  stage?: 'Ask' | 'Study' | 'Build' | 'Ship';
+  day?: number;
+}
+
+const { loopLength, loopNumber, stage, day } = Astro.props;
+const length = Number.isFinite(loopLength) && (loopLength ?? 0) > 0 ? Math.floor(loopLength!) : undefined;
+const number = Number.isFinite(loopNumber) && (loopNumber ?? 0) > 0 ? Math.floor(loopNumber!) : undefined;
+const safeDay = Number.isFinite(day) && (day ?? 0) > 0 ? Math.floor(day!) : undefined;
+const markerPositions = {
+  Ask: { x: 245, y: 112 },
+  Study: { x: 645, y: 112 },
+  Build: { x: 645, y: 342 },
+  Ship: { x: 245, y: 342 },
+};
+const marker = stage ? markerPositions[stage] : undefined;
+const markerText = [
+  number ? `LOOP ${number.toString().padStart(2, '0')}` : undefined,
+  stage?.toUpperCase(),
+  safeDay && length ? `DAY ${safeDay}/${length}` : undefined,
+].filter(Boolean).join(' · ');
+---
+
+<div class="schematic-scroll" tabindex="0" role="region" aria-label="Scrollable Lab Loop schematic">
+  <p class="sr-only">Scroll horizontally to inspect the full schematic on a narrow screen.</p>
+  <svg viewBox="0 0 1000 560" role="img" aria-labelledby="loop-title loop-description">
+    <title id="loop-title">The Lab Loop</title>
+    <desc id="loop-description">A {length ?? 'multi'}-day clock drives Ask, Study, Build, and Ship in a repeating ring. Ship produces posts, video, and tweets. A retrospective changes one thing before the next loop.{markerText ? ` The current position is ${markerText}.` : ''}</desc>
+    <defs>
+      <marker id="loop-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0 0 10 5 0 10Z" />
+      </marker>
+    </defs>
+
+    <g class="schematic-lines" fill="none">
+      <rect x="160" y="90" width="170" height="110" />
+      <rect x="560" y="90" width="170" height="110" />
+      <rect x="560" y="320" width="170" height="110" />
+      <rect x="160" y="320" width="170" height="110" />
+      <path d="M330 145H560" marker-end="url(#loop-arrow)" />
+      <path d="M645 200V320" marker-end="url(#loop-arrow)" />
+      <path d="M560 375H330" marker-end="url(#loop-arrow)" />
+      <path d="M245 320V200" marker-end="url(#loop-arrow)" />
+      <path d="M60 145H160" marker-end="url(#loop-arrow)" />
+      <path d="M245 430V458H860V395" />
+      <path class="feedback" d="M245 430V500H900V60H245V90" marker-end="url(#loop-arrow)" />
+    </g>
+
+    <g class="clock" fill="none">
+      <circle cx="45" cy="145" r="16" />
+      <path d="M35 145q5-10 10 0t10 0" />
+    </g>
+    <text x="20" y="190">CLK</text>
+    {length && <text x="20" y="209">{length} days</text>}
+
+    <g class="stage-labels">
+      <text x="245" y="138" text-anchor="middle">U1</text>
+      <text class="stage-name" x="245" y="164" text-anchor="middle">ASK</text>
+      <text class="stage-detail" x="245" y="185" text-anchor="middle">a real question</text>
+
+      <text x="645" y="138" text-anchor="middle">U2</text>
+      <text class="stage-name" x="645" y="164" text-anchor="middle">STUDY</text>
+      <text class="stage-detail" x="645" y="185" text-anchor="middle">learn just enough</text>
+
+      <text x="645" y="368" text-anchor="middle">U3</text>
+      <text class="stage-name" x="645" y="394" text-anchor="middle">BUILD</text>
+      <text class="stage-detail" x="645" y="415" text-anchor="middle">film while building</text>
+
+      <text x="245" y="368" text-anchor="middle">U4</text>
+      <text class="stage-name" x="245" y="394" text-anchor="middle">SHIP</text>
+      <text class="stage-detail" x="245" y="415" text-anchor="middle">even if it failed</text>
+    </g>
+
+    <g class="outputs" fill="none">
+      <path d="M860 355h40M860 375h40M860 395h40" />
+    </g>
+    <text x="910" y="359">posts</text>
+    <text x="910" y="379">video</text>
+    <text x="910" y="399">tweets</text>
+
+    <g class="resistor" fill="none">
+      <path d="M560 500l10-10 10 20 10-20 10 20 10-20 10 10" />
+    </g>
+    <text x="520" y="532">R_retro · 1 change per loop</text>
+
+    {marker && markerText && (
+      <g class="current-marker">
+        <circle cx={marker.x} cy={marker.y} r="8" />
+        <text x="400" y="50">● YOU ARE HERE: {number ? `LOOP ${number.toString().padStart(2, '0')} · ` : ''}{stage?.toUpperCase()}{safeDay && length ? <tspan> · DAY <tspan data-loop-day>{safeDay}/{length}</tspan></tspan> : ''}</text>
+      </g>
+    )}
+  </svg>
+</div>
+
+<style>
+  .schematic-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--text-on-paper) transparent;
+  }
+
+  .schematic-scroll:focus-visible {
+    outline: 3px solid var(--danger);
+    outline-offset: 4px;
+  }
+
+  svg {
+    width: 100%;
+    min-width: 760px;
+    height: auto;
+    color: var(--text-on-paper);
+    font: 12px var(--font-mono);
+  }
+
+  marker path { fill: currentColor; }
+
+  .schematic-lines,
+  .clock,
+  .outputs,
+  .resistor {
+    stroke: currentColor;
+    stroke-width: 2.5;
+  }
+
+  .schematic-lines .feedback {
+    stroke-dasharray: 8 6;
+  }
+
+  .stage-labels { font-size: 12px; }
+  .stage-name { font-size: 20px; font-weight: 600; }
+  .stage-detail { font-size: 11px; }
+
+  .current-marker { fill: var(--danger); }
+  .current-marker text { font-weight: 600; }
+
+  @media (max-width: 760px) {
+    svg { min-width: 760px; }
+  }
+</style>

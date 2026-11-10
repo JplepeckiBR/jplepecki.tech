@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import StickyNote from './StickyNote.astro';
-import { clampNumber, clampRotation, cleanHref, cleanText, isImageMetadata } from './_shared';
+import { clampNumber, clampRotation, cleanHref, cleanText } from './_shared';
 
 interface StickyData {
   loop?: string | number;
@@ -39,7 +39,7 @@ const safeLinkLabel = cleanText(linkLabel);
 const safeActionLabel = cleanText(actionLabel);
 const safeRotation = clampRotation(rotation, 2.5);
 const safeWidth = clampNumber(width, 180, 480, 250);
-const canRender = Boolean(safeHref && safeAlt && safeLinkLabel) && isImageMetadata(image);
+const canRender = Boolean(safeHref && safeAlt && safeLinkLabel && image);
 ---
 
 {

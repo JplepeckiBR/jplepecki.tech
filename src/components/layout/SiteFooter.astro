@@ -1,0 +1,49 @@
+---
+import { SITE_NAME, SOCIAL_LINKS } from '../../config/site';
+---
+
+<footer class="site-footer">
+  <span>{SITE_NAME}</span>
+  <nav aria-label="Social links">
+    {SOCIAL_LINKS.map((link) => <a href={link.href}>{link.label}</a>)}
+  </nav>
+</footer>
+
+<style>
+  .site-footer {
+    display: flex;
+    width: 100%;
+    max-width: 1240px;
+    min-height: 76px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border-top: 1px solid #222826;
+    color: var(--text-muted);
+    font: 11px/1.5 var(--font-mono);
+  }
+
+  nav { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+
+  a {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus-visible { color: var(--accent); }
+
+  @media (max-width: 500px) {
+    .site-footer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+</style>
