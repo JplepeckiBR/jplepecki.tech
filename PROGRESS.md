@@ -102,3 +102,42 @@
 - Provide the public X profile URL and contact email if they should appear beside LinkedIn and GitHub.
 - Add a real portrait photo and current-build sketch/cover in the approved sources if those desktop objects should appear.
 - Add the one-paragraph Lab Loop explanation to Notion; the site intentionally does not reuse the current project goal as a description of JP's method.
+
+# Step 4 · Morning report
+
+## Five-line summary
+
+- `npm ci` then `npm run dev` starts the complete fixture-backed Astro site at `http://localhost:4321/`.
+- Working routes are `/`, `/posts`, `/posts/planning-the-setup`, `/projects`, `/loop`, `/call`, and the hidden `/styleguide`.
+- The responsive maker’s-desk design, Notion loader, custom post blocks, local images, OG images, keyboard paths, and production build all work locally.
+- The production domain is not changed because the overnight rules forbid `main`, DNS, GitHub Pages, and Cloudflare changes, and no Cloudflare/Notion credentials exist locally.
+- Review images are in `review/v1-rebuild/`; each of the home, posts, post, projects, loop, and styleguide routes has a 1440px and 390px screenshot.
+
+## Needs JP · in order
+
+1. Review `review/v1-rebuild/` and the pushed `v1-rebuild` branch before changing production.
+2. Create or select a Notion integration, share the six data sources and README page with it, and place its token only in local/Cloudflare `NOTION_TOKEN` configuration.
+3. Confirm which Projects property and value explicitly marks a project public so the conservative relation-based visibility rule can be replaced with the real rule.
+4. Add the booking URL, public X URL, contact email, portrait photo, current-build sketch, and Lab Loop explanation only where JP wants those optional elements to appear.
+5. Create the Cloudflare Pages project for `JplepeckiBR/jplepecki.tech` with build command `npm run build`, output directory `dist`, Node 24, and production branch `main`.
+6. Add `NOTION_TOKEN`, the Appendix data-source/page IDs, and `CAL_URL` to Cloudflare Pages, leaving `INCLUDE_DRAFTS` unset in production.
+7. Trigger and inspect a Cloudflare preview build from `v1-rebuild`, checking that the live Notion records replace all fixture-labelled content.
+8. Merge `v1-rebuild` into `main` only after approving the preview; the overnight run did not push or merge production.
+9. Connect `jplepecki.tech` to Cloudflare Pages and make the registrar DNS change while keeping GitHub Pages available until the Cloudflare production URL is verified.
+10. Complete SPEC Stage 5 by adding the hourly deploy hook action, enabling Cloudflare Web Analytics, and writing the Notion publishing guide.
+
+## Screenshot comparison
+
+- **Location:** `review/v1-rebuild/` contains 12 PNGs named `<page>--1440.png` and `<page>--390.png`.
+- **Home differs most:** the real portrait, current-build sketch, booking card, X, and email are intentionally absent; the current project uses a clearly labelled local schematic until Notion supplies a real cover.
+- **Post differs in content, not structure:** fixture research is longer than the mockup and uses a schematic for both Hero and an image block, while the notebook column, paper objects, contents card, and mobile frame follow the references.
+- **Loop phone has no approved reference:** it keeps the desktop schematic readable in a keyboard-accessible horizontal region instead of shrinking its labels below 11px.
+- **Posts and projects have no supplied mockups:** they extend the same physical notebook/polaroid language and passed the same mobile checks.
+
+## Spec risks and corrections
+
+- **Project visibility is underspecified:** Stage 3 lists no public/site property, so exposing only projects linked from an included post or loop is the safest temporary boundary.
+- **Lab Loop introduction has no source field:** the current loop goal describes a project, not JP’s general method, so the introduction stays hidden until Notion contains approved copy.
+- **Live Notion behavior is unverified:** fixture, filter, error, and URL-leak paths pass, but only JP can authorize a build against the real workspace and confirm actual status/property values.
+- **Production cannot be automatic yet:** Step 2 intentionally removed GitHub deployment, while Stage 5 requires JP’s Cloudflare account, DNS decision, deploy hook, and analytics configuration.
+- **Fixture dates are review data:** loop day output is useful for screenshots but must be replaced by live Notion dates before production approval.

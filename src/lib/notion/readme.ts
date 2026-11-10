@@ -56,7 +56,10 @@ export async function normalizeReadme(source: NotionSource, logger: PipelineLogg
     }
   }
 
-  if (loopHeading < 0) logger.warn('README page: heading "The loop" was not found');
-  if (changelogHeading < 0) logger.warn('README page: heading "Framework changelog" was not found');
+  if (loopHeading < 0) throw new Error('Notion content error: README page has no "The loop" heading');
+  if (changelogHeading < 0) throw new Error('Notion content error: README page has no "Framework changelog" heading');
+  if (loopNotes.length === 0) throw new Error('Notion content error: README "The loop" section has no bullet items');
+  if (changelog.length === 0) throw new Error('Notion content error: README "Framework changelog" section has no table rows');
+  logger.info(`Read ${loopNotes.length} loop note(s) and ${changelog.length} framework revision(s)`);
   return { notionId: source.readmeId, loopNotes, changelog };
 }
