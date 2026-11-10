@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && npm run assert:no-notion-urls",
+    "assert:no-notion-urls": "node scripts/assert-no-notion-urls.mjs",
     "preview": "astro preview",
     "screenshots": "node scripts/screenshots.mjs"
   },

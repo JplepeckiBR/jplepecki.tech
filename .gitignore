@@ -7,3 +7,4 @@ dist/
 *.tsbuildinfo
 .DS_Store
 archive/local-build/
+src/assets/notion-cache/

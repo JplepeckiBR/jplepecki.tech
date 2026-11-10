@@ -1,0 +1,264 @@
+---
+import type { ImageMetadata } from 'astro';
+import Polaroid from '../objects/Polaroid.astro';
+import MarginNote from '../paper/MarginNote.astro';
+import PlantStake from '../paper/PlantStake.astro';
+import Receipt from '../paper/Receipt.astro';
+import TapedSheet from '../paper/TapedSheet.astro';
+import VideoEmbed from '../VideoEmbed.astro';
+import RichText from './RichText.astro';
+
+interface Props {
+  block: any;
+}
+
+const { block } = Astro.props;
+const image = block.image?.asset as ImageMetadata | undefined;
+---
+
+{block.type === 'paragraph' && block.richText.length > 0 && <p><RichText spans={block.richText} /></p>}
+
+{block.type === 'heading2' && <h2 id={block.anchor}><RichText spans={block.richText} /></h2>}
+{block.type === 'heading3' && <h3 id={block.anchor}><RichText spans={block.richText} /></h3>}
+
+{block.type === 'bulletedList' && (
+  <ul>
+    {block.items.map((item: any) => (
+      <li>
+        <RichText spans={item.richText} />
+        {item.children.map((child: any) => <Astro.self block={child} />)}
+      </li>
+    ))}
+  </ul>
+)}
+
+{block.type === 'numberedList' && (
+  <ol>
+    {block.items.map((item: any) => (
+      <li>
+        <RichText spans={item.richText} />
+        {item.children.map((child: any) => <Astro.self block={child} />)}
+      </li>
+    ))}
+  </ol>
+)}
+
+{block.type === 'quote' && <blockquote><RichText spans={block.richText} /></blockquote>}
+{block.type === 'divider' && <hr />}
+
+{block.type === 'code' && (
+  <figure class="code-block">
+    <pre><code class={block.language ? `language-${block.language.replace(/[^a-z0-9_-]/gi, '-')}` : undefined}>{block.code}</code></pre>
+    {block.caption && <figcaption>{block.caption}</figcaption>}
+  </figure>
+)}
+
+{block.type === 'image' && image && (
+  <figure class="article-polaroid">
+    <Polaroid
+      href={image.src}
+      image={image}
+      alt={block.image.alt}
+      linkLabel={`Open full-size image: ${block.image.alt}`}
+      actionLabel={block.image.caption}
+      rotation={-0.8}
+      width={480}
+    />
+  </figure>
+)}
+
+{block.type === 'table' && (
+  <div class="paper-object">
+    <TapedSheet
+      caption={block.caption}
+      columns={block.columns}
+      rows={block.rows}
+      captionVisible={false}
+    />
+  </div>
+)}
+
+{block.type === 'receipt' && (
+  <div class="receipt-block">
+    <Receipt
+      store={block.store}
+      items={block.items}
+      total={block.total}
+      ariaLabel="Build receipt"
+    />
+  </div>
+)}
+
+{block.type === 'plantStakes' && (
+  <div class="plant-stakes" aria-label="Plant records">
+    {block.stakes.map((stake: any) => <PlantStake {...stake} />)}
+  </div>
+)}
+
+{block.type === 'marginNote' && image && (
+  <div class="margin-note-block">
+    <MarginNote
+      src={image.src}
+      alt={block.image.alt}
+      width={image.width}
+      height={image.height}
+      caption={block.image.caption}
+    />
+  </div>
+)}
+
+{block.type === 'toggle' && (
+  <details class="notion-toggle">
+    <summary><RichText spans={block.summary} /></summary>
+    <div class="notion-toggle__body">
+      {block.children.map((child: any) => <Astro.self block={child} />)}
+    </div>
+  </details>
+)}
+
+{block.type === 'youtube' && (
+  <div class="video-block">
+    <VideoEmbed provider="youtube" videoId={block.videoId} title={block.title} />
+  </div>
+)}
+
+<style>
+  p,
+  li,
+  blockquote {
+    color: var(--text-body);
+    font: 400 19px/1.75 var(--font-serif);
+  }
+
+  p {
+    margin: 0 0 1.4em;
+  }
+
+  h2,
+  h3 {
+    color: var(--text);
+    font-family: var(--font-serif);
+    text-wrap: balance;
+    scroll-margin-top: 24px;
+  }
+
+  h2 {
+    margin: 2.4em 0 0.65em;
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    line-height: 1.15;
+  }
+
+  h3 {
+    margin: 2em 0 0.6em;
+    font-size: clamp(1.35rem, 3vw, 1.7rem);
+    line-height: 1.2;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 1.5em;
+    padding-left: 1.4em;
+  }
+
+  li + li {
+    margin-top: 0.4em;
+  }
+
+  blockquote {
+    margin: 1.8em 0;
+    padding-left: 1em;
+    border-left: 3px solid var(--copper);
+    font-style: italic;
+  }
+
+  hr {
+    margin: 2.5rem 0;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .code-block {
+    margin: 1.8rem 0;
+  }
+
+  pre {
+    max-width: 100%;
+    margin: 0;
+    padding: 18px;
+    overflow-x: auto;
+    border: 1px solid rgba(200, 155, 92, 0.42);
+    background: var(--chip);
+    color: var(--text-body);
+    font: 13px/1.65 var(--font-mono);
+  }
+
+  .code-block figcaption {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font: 11px/1.5 var(--font-mono);
+  }
+
+  .article-polaroid,
+  .paper-object,
+  .receipt-block,
+  .plant-stakes,
+  .margin-note-block,
+  .video-block,
+  .notion-toggle {
+    margin: 2rem 0;
+  }
+
+  .article-polaroid {
+    display: flex;
+    justify-content: center;
+  }
+
+  .receipt-block {
+    width: min(100%, 360px);
+    margin-inline: auto;
+  }
+
+  .plant-stakes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+  }
+
+  .margin-note-block {
+    width: min(100%, 260px);
+  }
+
+  .notion-toggle {
+    border-block: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .notion-toggle summary {
+    min-height: 48px;
+    padding: 12px 0;
+    color: var(--text);
+    cursor: pointer;
+    font: 600 13px/1.5 var(--font-mono);
+  }
+
+  .notion-toggle summary:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .notion-toggle__body {
+    padding: 4px 0 2px 18px;
+  }
+
+  @media (max-width: 1099px) {
+    p,
+    li,
+    blockquote {
+      font-size: 19px;
+      line-height: 1.75;
+    }
+
+    .plant-stakes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

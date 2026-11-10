@@ -1,0 +1,74 @@
+---
+interface Span {
+  text: string;
+  href?: string;
+  bold?: true;
+  italic?: true;
+  code?: true;
+  strikethrough?: true;
+  underline?: true;
+}
+
+interface Props {
+  spans: Span[];
+}
+
+const { spans = [] } = Astro.props;
+---
+
+{
+  spans.map((span) => {
+    const className = [
+      span.bold && 'rich-text--bold',
+      span.italic && 'rich-text--italic',
+      span.code && 'rich-text--code',
+      span.strikethrough && 'rich-text--strikethrough',
+      span.underline && 'rich-text--underline',
+    ].filter(Boolean);
+    return span.href ? (
+      <a href={span.href} class:list={className}>{span.text}</a>
+    ) : (
+      <span class:list={className}>{span.text}</span>
+    );
+  })
+}
+
+<style>
+  span,
+  a {
+    white-space: pre-wrap;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+  }
+
+  .rich-text--bold {
+    font-weight: 700;
+  }
+
+  .rich-text--italic {
+    font-style: italic;
+  }
+
+  .rich-text--code {
+    padding: 0.08em 0.28em;
+    background: rgba(255, 255, 255, 0.07);
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+  }
+
+  .rich-text--strikethrough {
+    text-decoration-line: line-through;
+  }
+
+  .rich-text--underline {
+    text-decoration-line: underline;
+  }
+
+  .rich-text--strikethrough.rich-text--underline {
+    text-decoration-line: line-through underline;
+  }
+</style>

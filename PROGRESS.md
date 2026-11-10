@@ -69,3 +69,19 @@
 
 - Add `src/assets/portrait.jpg` later if the taped ASCII portrait should appear; the component intentionally stays hidden without a real JP photo.
 - Export any handwritten reMarkable notes as SVG files into `src/assets/notes/`; mono pencil text is the current graceful fallback.
+
+## Stage 3 · Notion pipeline
+
+- **Collections:** added custom Astro loaders and schemas for posts, loops, daily targets, projects, shipped content, and the Lab Loop README.
+- **Source switch:** builds use `fixtures/notion.json` only when `NOTION_TOKEN` is absent; a configured live loader uses Notion API `2025-09-03` data-source queries and never falls back silently after an API/configuration error. Both shell variables and Astro-loaded `.env` values are supported.
+- **Publication boundary:** loaders clear their stores on every sync, exclude Draft posts unless `INCLUDE_DRAFTS=true`, forbid drafts on Cloudflare, reject duplicate slugs, and omit projects not linked from an included post or loop.
+- **Blocks and images:** recursive custom rendering covers typography, lists, quotes, code, local-image polaroids, taped tables/MAX rows, receipts, plant stakes, margin notes, toggles, videos, and Daily-target BuildLogs. Notion images are downloaded, MIME/size checked, SHA-256 named, and served through Astro's image pipeline.
+- **Fixture:** the Smart Vivarium `Planning the setup` fixture exercises an in-progress post, local schematic hero, receipt, plant stakes sourced from archived research, target table, margin note, toggle, video facade, project, loop, targets, content count, and README extraction without presenting unknown prices or photos as facts.
+- **Acceptance:** normal and draft-inclusive fixture builds passed; changing the planning post to Draft removed it in a normal rebuild; Cloudflare draft mode and dummy live configuration failed clearly as intended; the final `npm run build` passed and the output scan found no Notion or signed-file hosts.
+- **Result:** Stage 3 passed against the required fixture path. Real-workspace validation remains a JP-only follow-up because no token exists locally.
+
+## Needs JP · Stage 3
+
+- Add `NOTION_TOKEN` to a local `.env` and share each listed data source/page with that Notion integration to validate the live workspace; never commit the token.
+- Confirm the exact Notion property that marks a project public; until then, the loader uses the safer rule of exposing only projects linked from an included post or loop.
+- Replace the fixture schematic and sample receipt values by filling the corresponding Notion Hero and callout content before production publishing.
