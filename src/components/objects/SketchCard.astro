@@ -73,7 +73,7 @@ const canRender = Boolean(safeHref && safeAlt && safeLinkLabel) && isImageMetada
 
   .sketch-card:hover,
   .sketch-card:focus-visible {
-    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
   }
 
@@ -84,7 +84,7 @@ const canRender = Boolean(safeHref && safeAlt && safeLinkLabel) && isImageMetada
     padding: 12px;
     background-color: var(--paper-bright);
     background-image: var(--texture-paper);
-    box-shadow: var(--shadow-object);
+    box-shadow: var(--shadow-object), var(--wear-paper);
   }
 
   .sketch-card__grid {

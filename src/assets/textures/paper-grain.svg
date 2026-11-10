@@ -1,31 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+  <!-- Uncoated paper: fine tooth, faint stretched fibres, soft cloudy formation. No scratch lines. -->
   <defs>
-    <filter id="paper-grain-noise" x="-6%" y="-6%" width="112%" height="112%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.32 0.58" numOctaves="2" seed="43" result="noise" />
-      <feColorMatrix
-        in="noise"
-        values="0 0 0 0 0.34
-                0 0 0 0 0.29
-                0 0 0 0 0.21
-                0.33 0.34 0.33 0 -0.7"
-      />
+    <filter id="paper-tooth" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="43" stitchTiles="stitch" result="tooth" />
+      <feColorMatrix in="tooth" values="0 0 0 0 0.36  0 0 0 0 0.31  0 0 0 0 0.23  2.4 0 0 0 -1.0" />
     </filter>
-    <filter id="paper-fiber-warp" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
-      <feTurbulence type="turbulence" baseFrequency="0.018 0.11" numOctaves="2" seed="9" result="fiber" />
-      <feDisplacementMap in="SourceGraphic" in2="fiber" scale="1.1" xChannelSelector="R" yChannelSelector="G" />
+    <filter id="paper-fibre" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.09 0.5" numOctaves="2" seed="9" stitchTiles="stitch" result="fibre" />
+      <feColorMatrix in="fibre" values="0 0 0 0 0.42  0 0 0 0 0.37  0 0 0 0 0.28  3 0 0 0 -1.55" />
+    </filter>
+    <filter id="paper-formation" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="21" stitchTiles="stitch" result="cloud" />
+      <feColorMatrix in="cloud" values="0 0 0 0 0.45  0 0 0 0 0.4  0 0 0 0 0.3  2 0 0 0 -0.85" />
     </filter>
   </defs>
-
-  <rect width="256" height="256" fill="#665943" opacity="0.13" filter="url(#paper-grain-noise)" />
-
-  <g fill="none" stroke-linecap="round" filter="url(#paper-fiber-warp)">
-    <path d="M-8 31c47 5 79-7 126-1s89 2 149-3M-10 119c56-7 95 5 142-2s75-3 136 4M-6 214c51 4 79-5 129 0s89-1 143-7" stroke="#766b57" stroke-width="0.55" opacity="0.18" />
-    <path d="M20 71l31 2m12-1 18 1m47 79 42-2m9 1 25-1M41 238l56-2m73-184 48 3" stroke="#fffdf7" stroke-width="0.7" opacity="0.24" />
-    <path d="M35 18l5 22m78 34-3 31m99 42 4 24M79 188l-2 38" stroke="#8c806b" stroke-width="0.45" opacity="0.2" />
-  </g>
-
-  <g fill="#5c5242" opacity="0.13">
-    <circle cx="28" cy="102" r="0.9" /><circle cx="33" cy="98" r="0.55" /><circle cx="111" cy="43" r="0.7" />
-    <circle cx="196" cy="91" r="0.8" /><circle cx="203" cy="94" r="0.45" /><circle cx="149" cy="229" r="0.8" />
-  </g>
+  <rect width="240" height="240" opacity="0.14" filter="url(#paper-tooth)" />
+  <rect width="240" height="240" opacity="0.1" filter="url(#paper-fibre)" />
+  <rect width="240" height="240" opacity="0.05" filter="url(#paper-formation)" />
 </svg>

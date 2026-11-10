@@ -41,7 +41,7 @@ const safeWidth = clampNumber(width, 190, 420, 230);
 
   .loop-card:hover,
   .loop-card:focus-visible {
-    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
   }
 
@@ -50,7 +50,7 @@ const safeWidth = clampNumber(width, 190, 420, 230);
     padding: 14px 16px;
     background-color: var(--paper);
     background-image: var(--texture-paper);
-    box-shadow: var(--shadow-object);
+    box-shadow: var(--shadow-object), var(--wear-paper);
     color: var(--text-on-paper);
     font: 12px/1.35 var(--font-mono);
     white-space: pre;

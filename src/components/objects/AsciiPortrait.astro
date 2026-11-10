@@ -66,7 +66,7 @@ const canRender =
     min-height: 44px;
     color: var(--text-on-paper);
     text-decoration: none;
-    filter: drop-shadow(var(--shadow-object));
+    filter: drop-shadow(var(--shadow-drop));
     transform: rotate(var(--object-rotation));
     transform-origin: center;
     transition: filter 160ms ease, transform 160ms ease;
@@ -74,7 +74,7 @@ const canRender =
 
   .portrait:hover,
   .portrait:focus-visible {
-    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
   }
 

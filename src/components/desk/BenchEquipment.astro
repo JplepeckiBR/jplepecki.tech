@@ -1,5 +1,5 @@
 ---
-import darkGrainUrl from '../../assets/textures/dark-grain.svg?url';
+import boardWearUrl from '../../assets/textures/board-wear.svg?url';
 import matPatinaUrl from '../../assets/textures/mat-patina.svg?url';
 import paperGrainUrl from '../../assets/textures/paper-grain.svg?url';
 
@@ -189,7 +189,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
     <path class="meter__face" d="M30 15h156q12 0 14 13l5 27v150l-7 31q-2 12-15 12H32q-13 0-16-13l-5-30V55l6-29q2-11 13-11Z" />
     <image
       class="meter__grain"
-      href={darkGrainUrl}
+      href={boardWearUrl}
       x="0"
       y="0"
       width="220"
@@ -295,7 +295,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
       <path class="loose-ic__notch" d="M962 367a7 7 0 0 0 14 0" />
       <circle class="loose-ic__pin-one" cx="947" cy="375" r="2" />
       <text x="969" y="386" text-anchor="middle">DIP-8</text>
-      <image href={darkGrainUrl} x="941" y="369" width="56" height="30" preserveAspectRatio="xMidYMid slice" opacity="0.42" />
+      <image href={boardWearUrl} x="941" y="369" width="56" height="30" preserveAspectRatio="xMidYMid slice" opacity="0.42" />
     </g>
 
     <g class="loose-transistor" transform="translate(899 662) rotate(-9)">
@@ -409,7 +409,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   }
 
   .bench-equipment__object {
-    filter: drop-shadow(0 9px 7px rgba(5, 10, 8, 0.36));
+    filter: drop-shadow(0 1.5px 1px rgba(4, 8, 6, 0.42)) drop-shadow(0 7px 9px rgba(4, 8, 6, 0.22));
   }
 
   .bench-equipment__wire-bundle,
@@ -433,10 +433,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .wire--blue { stroke: #426c91; }
   .wire--violet { stroke: #70577b; }
 
-  .wire-bundle__shadow {
-    stroke: rgba(14, 17, 16, 0.35);
-    stroke-width: 31;
-  }
+  .wire-bundle__shadow { display: none; }
 
   .wire-bundle__tie rect,
   .dupont-bank rect {
@@ -468,8 +465,8 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .probe--red .probe__grip { stroke: #b65047; }
 
   .breadboard__underside { fill: #aeb0aa; }
-  .breadboard__body { fill: #e8e7e0; stroke: #c2c3bd; stroke-width: 1.1; }
-  .breadboard__edge-highlight { fill: none; stroke: #fbfaf6; stroke-width: 1; opacity: 0.86; }
+  .breadboard__body { fill: #e8e7e0; stroke: #d2d3cd; stroke-width: 0.7; }
+  .breadboard__edge-highlight { fill: none; stroke: #fbfaf6; stroke-width: 0.8; opacity: 0.5; }
   .breadboard__grain { opacity: 0.76; }
   .breadboard__rail-recess,
   .breadboard__terminal-bed { fill: #ddddd6; stroke: #c7c8c2; stroke-width: 0.7; }
@@ -523,13 +520,13 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .breadboard__mounted-led > path:first-child { fill: none; stroke: #aab1b0; stroke-width: 1; }
   .breadboard__mounted-led .led-dome { fill: #9d342d; stroke: #70241f; stroke-width: 0.8; opacity: 0.9; }
   .breadboard__mounted-led .led-highlight { fill: none; stroke: #e0a49d; stroke-width: 1; opacity: 0.65; }
-  .breadboard__wear { fill: none; stroke: #898b85; stroke-width: 0.75; opacity: 0.34; stroke-linecap: round; }
+  .breadboard__wear { fill: none; stroke: #898b85; stroke-width: 0.6; opacity: 0.14; stroke-linecap: round; }
   .breadboard__wear ellipse { fill: #888a84; stroke: none; }
 
-  .meter__shadow-pad { fill: rgba(3, 6, 5, 0.38); transform: translate(5px, 7px); }
-  .meter__boot { fill: #393e3b; stroke: #171a19; stroke-width: 1.3; }
+  .meter__shadow-pad { display: none; }
+  .meter__boot { fill: #393e3b; stroke: #2b2f2d; stroke-width: 0.8; }
   .meter__side-grip { fill: none; stroke: #252927; stroke-width: 7; stroke-linecap: round; }
-  .meter__face { fill: #252927; stroke: #505653; stroke-width: 1; }
+  .meter__face { fill: #252927; stroke: #343937; stroke-width: 0.8; }
   .meter__grain { opacity: 0.72; }
   .meter__screen-bezel { fill: #111413; stroke: #555c59; stroke-width: 1.2; }
   .meter__screen { fill: #a8b3a6; stroke: #69736c; stroke-width: 0.8; }
@@ -538,14 +535,14 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .meter__lcd-value { fill: #303b35; font-family: var(--font-mono); }
   .meter__lcd-small { font-size: 7px; letter-spacing: 0.5px; }
   .meter__lcd-value { font-size: 26px; letter-spacing: 2px; }
-  .meter__screen-scratch { fill: none; stroke: #e1e5df; stroke-width: 0.55; opacity: 0.36; }
+  .meter__screen-scratch { fill: none; stroke: #e1e5df; stroke-width: 0.45; opacity: 0.14; }
   .meter__dial-ticks line { stroke: #9ca39f; stroke-width: 1; }
   .meter__mode { fill: #b8bfbb; font: 7px/1 var(--font-mono); }
   .meter__dial-well { fill: #171a19; stroke: #5a605d; stroke-width: 1; }
   .meter__dial { fill: #2e3331; stroke: #101312; stroke-width: 1.2; }
   .meter__dial-cap { fill: #1a1e1c; stroke: #464c49; stroke-width: 0.8; }
   .meter__dial-pointer { fill: #c2c7c4; stroke: #e0e3e1; stroke-width: 0.6; }
-  .meter__dial-wear { fill: none; stroke: #737a76; stroke-width: 0.7; opacity: 0.45; }
+  .meter__dial-wear { fill: none; stroke: #737a76; stroke-width: 0.6; opacity: 0.2; }
   .meter__button { fill: #3e4441; stroke: #111413; stroke-width: 0.8; }
   .meter__button-label { fill: #aeb5b1; font: 6px/1 var(--font-mono); }
   .meter__ports text { fill: #9ca39f; font: 6px/1 var(--font-mono); }
@@ -553,7 +550,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .meter__port--red { fill: #7f2c27; stroke: #aa4840; }
   .meter__port--black { fill: #111413; stroke: #555b58; }
   .meter__socket { fill: #060807; stroke: #858b88; stroke-width: 0.6; }
-  .meter__wear { fill: none; stroke: #afb5b1; stroke-width: 1; opacity: 0.28; stroke-linecap: round; }
+  .meter__wear { fill: none; stroke: #afb5b1; stroke-width: 0.7; opacity: 0.11; stroke-linecap: round; }
   .meter__wear ellipse { fill: #0f1211; stroke: none; }
 
   .loose-resistor,
@@ -561,7 +558,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .loose-ic,
   .loose-transistor,
   .loose-hardware {
-    filter: drop-shadow(0 2px 1.6px rgba(4, 8, 6, 0.45));
+    filter: drop-shadow(0 1px 0.8px rgba(4, 8, 6, 0.45)) drop-shadow(0 3px 4px rgba(4, 8, 6, 0.18));
   }
 
   .loose-led > path:first-child,
@@ -572,7 +569,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .loose-led__rim { fill: none; stroke: #abb2af; stroke-width: 1; }
   .loose-led__highlight { fill: none; stroke: #dce3df; stroke-width: 1; opacity: 0.54; }
 
-  .loose-ic__shadow { fill: rgba(0, 0, 0, 0.25); transform: translate(3px, 4px); }
+  .loose-ic__shadow { display: none; }
   .loose-ic__pin { fill: none; stroke: #b8bdbc; stroke-width: 3; }
   .loose-ic__body { fill: #111413; stroke: #4b504e; stroke-width: 1; }
   .loose-ic__notch { fill: none; stroke: #555b58; stroke-width: 1; }
@@ -597,27 +594,27 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .bench-equipment__solder-cable .solder-cable__highlight { stroke: #4b514e; stroke-width: 1; opacity: 0.58; }
   .iron__tip { fill: #8e806c; stroke: #4e4940; stroke-width: 1; }
   .iron__tip-wear { fill: none; stroke: #35302a; stroke-width: 4; opacity: 0.8; }
-  .iron__barrel { fill: #969e9d; stroke: #545b59; stroke-width: 1; }
-  .iron__barrel-highlight { fill: none; stroke: #d0d5d4; stroke-width: 1; opacity: 0.75; }
+  .iron__barrel { fill: #969e9d; stroke: #7a8281; stroke-width: 0.6; }
+  .iron__barrel-highlight { fill: none; stroke: #d0d5d4; stroke-width: 0.8; opacity: 0.38; }
   .iron__collar { fill: #262a28; stroke: #59605d; stroke-width: 1; }
   .iron__handle { fill: #252a28; stroke: #101312; stroke-width: 1.2; }
   .iron__handle-panel { fill: #9a372f; stroke: #67241f; stroke-width: 0.8; }
   .iron__vents { fill: none; stroke: #080a09; stroke-width: 2.4; }
-  .iron__wear { fill: none; stroke: #cf7770; stroke-width: 0.8; opacity: 0.32; }
+  .iron__wear { fill: none; stroke: #cf7770; stroke-width: 0.6; opacity: 0.14; }
   .iron__strain-relief { fill: none; stroke: #343a37; stroke-width: 5; }
 
-  .caliper__shadow { fill: rgba(3, 6, 5, 0.35); transform: translate(4px, 7px); }
+  .caliper__shadow { display: none; }
   .caliper__fixed-jaw,
   .caliper__fixed-inner,
   .caliper__slider-jaw,
-  .caliper__slider-inner { fill: #aeb5b5; stroke: #697170; stroke-width: 1; }
-  .caliper__beam { fill: #a4acad; stroke: #626a69; stroke-width: 1; }
-  .caliper__beam-highlight { fill: none; stroke: #d8dddd; stroke-width: 1.1; opacity: 0.9; }
+  .caliper__slider-inner { fill: #aeb5b5; stroke: #8b9393; stroke-width: 0.6; }
+  .caliper__beam { fill: #a4acad; stroke: #858d8d; stroke-width: 0.6; }
+  .caliper__beam-highlight { fill: none; stroke: #d8dddd; stroke-width: 0.8; opacity: 0.4; }
   .caliper__beam-shadow { fill: none; stroke: #727b79; stroke-width: 1; }
   .caliper__scale path { fill: none; stroke: #4c5553; stroke-width: 0.8; }
   .caliper__scale text { fill: #444d4b; font: 6px/1 var(--font-mono); }
-  .caliper__slider { fill: #919a9a; stroke: #596260; stroke-width: 1.1; }
-  .caliper__slider-highlight { fill: none; stroke: #ced4d3; stroke-width: 0.9; opacity: 0.76; }
+  .caliper__slider { fill: #919a9a; stroke: #7a8282; stroke-width: 0.6; }
+  .caliper__slider-highlight { fill: none; stroke: #ced4d3; stroke-width: 0.7; opacity: 0.38; }
   .caliper__vernier-bed { fill: #bbc1c1; stroke: #68716f; stroke-width: 0.7; }
   .caliper__vernier-scale path { fill: none; stroke: #343d3b; stroke-width: 0.8; }
   .caliper__vernier-scale text { fill: #333b3a; font: 5.5px/1 var(--font-mono); }
@@ -627,7 +624,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   .caliper__wheel circle { fill: #747d7b; stroke: #444c4a; stroke-width: 1; }
   .caliper__wheel .caliper__wheel-inner { fill: #a8afae; }
   .caliper__wheel path { fill: none; stroke: #3f4745; stroke-width: 1.4; }
-  .caliper__wear { fill: none; stroke: #edf0ef; stroke-width: 0.75; opacity: 0.46; stroke-linecap: round; }
+  .caliper__wear { fill: none; stroke: #edf0ef; stroke-width: 0.6; opacity: 0.16; stroke-linecap: round; }
 
   @media (prefers-reduced-motion: reduce) {
     .bench-equipment { transform: none; }

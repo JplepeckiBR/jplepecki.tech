@@ -1,5 +1,5 @@
 ---
-import darkGrainUrl from '../../assets/textures/dark-grain.svg?url';
+import boardWearUrl from '../../assets/textures/board-wear.svg?url';
 import { BUILD_MONTH } from '../../lib/buildinfo';
 import { clampNumber, clampRotation, cleanHref, cleanText } from './_shared';
 
@@ -62,7 +62,7 @@ const safeWidth = clampNumber(width, 320, 760, 460);
     </defs>
     <rect class="pcb-nav__substrate" x="3" y="3" width="754" height="554" rx="20" />
     <rect class="pcb-nav__board" x="6" y="6" width="748" height="548" rx="18" />
-    <image class="pcb-nav__grain" href={darkGrainUrl} x="6" y="6" width="748" height="548" clip-path="url(#pcb-board-clip)" preserveAspectRatio="xMidYMid slice" />
+    <image class="pcb-nav__grain" href={boardWearUrl} x="6" y="6" width="748" height="548" clip-path="url(#pcb-board-clip)" preserveAspectRatio="xMidYMid slice" />
     <path class="pcb-nav__edge-scuff" d="M34 10h164m344 0h142M10 62v112m0 254v72M89 550h221m262 0h111" aria-hidden="true" />
 
     <g class="pcb-nav__holes" aria-hidden="true">
@@ -201,7 +201,7 @@ const safeWidth = clampNumber(width, 320, 760, 460);
   .pcb-nav {
     width: min(var(--object-width), 100%);
     min-height: 44px;
-    filter: drop-shadow(var(--shadow-object));
+    filter: drop-shadow(var(--shadow-drop));
     transform: rotate(var(--object-rotation));
     transform-origin: center;
     transition: filter 160ms ease, transform 160ms ease;
@@ -209,7 +209,7 @@ const safeWidth = clampNumber(width, 320, 760, 460);
 
   .pcb-nav:hover,
   .pcb-nav:focus-within {
-    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
   }
 
@@ -233,17 +233,16 @@ const safeWidth = clampNumber(width, 320, 760, 460);
   }
 
   .pcb-nav__grain {
-    opacity: 0.58;
-    mix-blend-mode: screen;
+    opacity: 1;
     pointer-events: none;
   }
 
   .pcb-nav__edge-scuff {
     fill: none;
     stroke: #747a76;
-    stroke-width: 1.2;
+    stroke-width: 1;
     stroke-linecap: round;
-    opacity: 0.24;
+    opacity: 0.1;
   }
 
   .pcb-nav__holes circle {
@@ -320,9 +319,9 @@ const safeWidth = clampNumber(width, 320, 760, 460);
   .pcb-nav__mask-wear {
     fill: none;
     stroke: #a3aaa6;
-    stroke-width: 0.8;
+    stroke-width: 0.5;
     stroke-linecap: round;
-    opacity: 0.17;
+    opacity: 0.07;
   }
 
   .pcb-nav__link {
@@ -339,7 +338,7 @@ const safeWidth = clampNumber(width, 320, 760, 460);
 
   .pcb-nav__link:hover [data-part],
   .pcb-nav__link:focus-visible [data-part] {
-    filter: drop-shadow(0 6px 4px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.4));
     transform: translateY(-4px);
   }
 

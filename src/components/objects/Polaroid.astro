@@ -82,7 +82,7 @@ const canRender = Boolean(safeHref && safeAlt && safeLinkLabel && image);
 
   .polaroid:hover,
   .polaroid:focus-visible {
-    filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+    filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
   }
 
@@ -91,7 +91,7 @@ const canRender = Boolean(safeHref && safeAlt && safeLinkLabel && image);
     padding: 12px 12px 30px;
     background-color: var(--paper);
     background-image: var(--texture-paper);
-    box-shadow: var(--shadow-object);
+    box-shadow: var(--shadow-object), var(--wear-paper);
   }
 
   .polaroid__frame :global(img) {
