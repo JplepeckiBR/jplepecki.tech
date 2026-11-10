@@ -1,0 +1,114 @@
+<svg
+  class="clutter"
+  viewBox="0 0 1200 860"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+>
+  <!-- 10 kΩ ±5% resistor: brown, black, orange, gold -->
+  <g transform="translate(250 690) rotate(-12)">
+    <path d="M-40 0h26m28 0h26" class="lead" />
+    <rect x="-14" y="-6" width="28" height="12" rx="5" class="resistor resistor--tan" />
+    <path d="M-8-6v12" class="band band--brown" />
+    <path d="M-2-6v12" class="band band--black" />
+    <path d="M4-6v12" class="band band--orange" />
+    <path d="M10-5v10" class="band band--gold" />
+  </g>
+
+  <!-- 2.2 kΩ ±5% resistor: red, red, red, gold -->
+  <g transform="translate(1125 628) rotate(20)">
+    <path d="M-40 0h26m28 0h26" class="lead" />
+    <rect x="-14" y="-6" width="28" height="12" rx="5" class="resistor resistor--blue" />
+    <path d="M-7-6v12M0-6v12M7-6v12" class="band band--red" />
+    <path d="M11-5v10" class="band band--gold" />
+  </g>
+
+  <!-- Phillips-head screws -->
+  <g class="screws">
+    <g transform="translate(560 640)"><circle r="7" /><path d="M-4 0h8M0-4v8" /></g>
+    <g transform="translate(580 654)"><circle r="6" /><path d="M-3.5 0h7M0-3.5v7" /></g>
+    <g transform="translate(1148 420)"><circle r="7" /><path d="M-4 0h8M0-4v8" /></g>
+  </g>
+
+  <!-- Solder wire coil and loose end -->
+  <g class="solder" transform="translate(1110 800)">
+    <circle r="28" /><circle r="19" /><circle r="10" />
+    <path d="M28 0q40 10 50-20" />
+  </g>
+
+  <!-- Heat-shrink offcuts -->
+  <g class="heat-shrink">
+    <rect x="720" y="690" width="30" height="8" rx="3" transform="rotate(6 735 694)" />
+    <rect x="760" y="700" width="22" height="8" rx="3" transform="rotate(-4 771 704)" />
+    <rect x="700" y="706" width="18" height="8" rx="3" transform="rotate(12 709 710)" />
+  </g>
+
+  <!-- Jumper-wire and stripped insulation offcuts -->
+  <g class="wire-offcuts">
+    <path d="M330 640q30-40 70-10" class="wire wire--red" />
+    <path d="M346 652q36-26 62 4" class="wire wire--dark" />
+    <path d="M1010 120q20 30 60 22" class="wire wire--red" />
+    <path d="M90 600q60-6 120 10" class="insulation" />
+  </g>
+
+  <!-- Cooled solder blobs -->
+  <g class="solder-blobs">
+    <circle cx="300" cy="610" r="3.5" />
+    <circle cx="312" cy="618" r="2.5" />
+    <circle cx="820" cy="330" r="3" />
+    <circle cx="833" cy="334" r="1.8" />
+  </g>
+</svg>
+
+<style>
+  .clutter {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .lead,
+  .solder {
+    fill: none;
+    stroke: #c9cdd0;
+    stroke-width: 2;
+  }
+
+  .resistor--tan { fill: #d8c29a; }
+  .resistor--blue { fill: #8fb3d9; }
+  .band { fill: none; stroke-width: 3; }
+  .band--brown { stroke: #6b3e1f; }
+  .band--black { stroke: var(--ink); }
+  .band--orange { stroke: #d8822b; }
+  .band--red { stroke: var(--danger); }
+  .band--gold { stroke: var(--copper); stroke-width: 2; }
+
+  .screws circle {
+    fill: #aeb4b8;
+    stroke: #6d7378;
+    stroke-width: 1;
+  }
+
+  .screws path {
+    fill: none;
+    stroke: #4d5357;
+    stroke-width: 1.5;
+  }
+
+  .heat-shrink rect:nth-child(1) { fill: var(--danger); }
+  .heat-shrink rect:nth-child(2) { fill: var(--ink); }
+  .heat-shrink rect:nth-child(3) { fill: #2f6fb0; }
+
+  .wire-offcuts path {
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .wire { stroke-width: 4; }
+  .wire--red { stroke: var(--danger); }
+  .wire--dark { stroke: var(--ink); }
+  .insulation { stroke: var(--text); stroke-width: 5; opacity: 0.8; }
+  .solder-blobs { fill: #c9cdd0; }
+</style>

@@ -1,27 +1,22 @@
 # Product — jplepecki.tech
 
-Personal portfolio + blog for João Pedro "JP" Lepecki (https://jplepecki.tech). Audience:
-engineers, recruiters, and potential mentors/collaborators in embedded systems, defense tech,
-and agritech. The site should make it obvious that JP is a business student who builds real
-technical things and is moving toward the hardware/software intersection.
+Personal site of João Pedro "JP" Lepecki, a self-taught maker working on embedded systems and hardware.
+The site is the deeper, more technical home behind his posts on X. Visitors: his X followers, people
+arriving from his projects, and later investors.
+
+Visitors should leave thinking he is self-taught, deeply technical, hardworking and good at engineering
+decisions. The site never says this. The work and the details show it.
 
 ## Content rules (hard constraints)
 
-- NEVER invent facts about JP: no made-up metrics, employers, dates, awards, testimonials, quotes.
-- When information is missing, write a visible `TODO(JP): …` placeholder in the content source.
-  Placeholders must never render as empty boxes, "undefined", or broken cards — hide empty fields.
-- Do NOT create pages for private/confidential repos (e.g. talaria, Portfolio-AML, internship or
-  company repos). List them in NOTES_FOR_JP.md for JP to decide.
-- Videos are embedded from external URLs, never committed. Images go through Astro's pipeline.
-- No secrets, no API keys, no committed `.env` values. Max single committed asset: 2 MB.
-
-## Source of truth about JP
-
-Rio de Janeiro → Cambridge/Boston. Business Analytics & Finance at Hult (Boston); Le Wagon data
-bootcamp (London); Harvard Extension DGMD E-14 (wearables + computer vision). Pivoting finance →
-embedded + data science. Interests: defense tech, RF, sensing, autonomous vehicles, multi-source
-data fusion, agritech. Mission: make Brazil more competitive in agritech and defense-adjacent tech.
-Family runs Lepecki Family Coffee (regenerative agriculture). Tools: Python, C/C++, SQL, Git,
-Postman, DBeaver. LinkedIn in/joao-pedro-lepecki-310464271, GitHub JplepeckiBR. Email is TODO(JP).
-
-Do not extend this list from memory. If a fact is not here, it is a TODO(JP).
+- NEVER invent facts, numbers, quotes, dates or opinions about JP, and never write text in his voice.
+  Missing content is a `TODO(JP): …` in code or a `[BRACKETED PLACEHOLDER]` in mockups. Neither may
+  ever render on the live site: empty or placeholder sections are hidden.
+- All published content comes from Notion (Lab Loop HQ). Do not hardcode posts or project write-ups.
+- Do not mention JP's family or family businesses.
+- Do not describe him as a "business student who builds" or a "walking contradiction". His only
+  self-description is "Proudly a maker."
+- Projects shown publicly: only what Notion marks for the site. Talaria (formerly StrideSense) has no
+  page in v1. Never show firmware.
+- Videos are embedded from external URLs, never committed.
+- No secrets in the repo. Real values live in Cloudflare and GitHub secrets only.

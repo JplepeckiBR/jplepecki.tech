@@ -1,0 +1,46 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  canonical?: string;
+  publishedTime?: Date;
+  updatedTime?: Date;
+  noIndex?: boolean;
+  hideFooter?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  type,
+  canonical,
+  publishedTime,
+  updatedTime,
+  noIndex,
+  hideFooter = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead {title} {description} {image} {type} {canonical} {publishedTime} {updatedTime} {noIndex} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+    {!hideFooter && <SiteFooter />}
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    min-height: 44px;
+  }
+</style>

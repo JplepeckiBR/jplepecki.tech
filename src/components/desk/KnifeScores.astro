@@ -1,0 +1,58 @@
+<svg
+  class="knife-scores"
+  viewBox="0 0 1200 860"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+>
+  <g class="knife-scores__deep">
+    <path d="M118 302l141-31" />
+    <path d="M128 309l122-25" />
+    <path d="M641 521l118 78" />
+    <path d="M899 641l113-82" />
+    <path d="M559 61l143 31" />
+  </g>
+  <g class="knife-scores__fine">
+    <path d="M72 214l203 34M78 221l171 27M83 228l113 20" />
+    <path d="M418 590l112-43M424 598l116-45M441 603l87-34" />
+    <path d="M752 121l94 143M761 117l83 126M771 131l64 98" />
+    <path d="M955 313l123-20M963 321l90-15" />
+    <path d="M305 801l74-93M316 804l61-77" />
+  </g>
+  <g class="knife-scores__nicks">
+    <path d="M286 357l18-8m-12 17 24-11m540 179 22-7m-16 17 35-12M529 181l29 8m-20 3 14 4M1061 702l24-13m-16 21 17-9" />
+  </g>
+</svg>
+
+<style>
+  .knife-scores {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--text);
+    pointer-events: none;
+  }
+
+  .knife-scores path {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .knife-scores__deep path {
+    stroke-width: 0.8;
+    opacity: 0.19;
+  }
+
+  .knife-scores__fine path {
+    stroke-width: 0.5;
+    opacity: 0.12;
+  }
+
+  .knife-scores__nicks path {
+    stroke-width: 1;
+    opacity: 0.16;
+  }
+</style>

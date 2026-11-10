@@ -1,0 +1,11 @@
+---
+import NotionBlock from './NotionBlock.astro';
+
+interface Props {
+  blocks: any[];
+}
+
+const { blocks = [] } = Astro.props;
+---
+
+{blocks.map((block) => <NotionBlock block={block} />)}

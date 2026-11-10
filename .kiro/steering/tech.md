@@ -1,35 +1,31 @@
 # Tech — jplepecki.tech
 
-Static Astro site deployed to GitHub Pages. Keep it boring, fast, and dependency-light.
+Static Astro site on Cloudflare Pages. Content from Notion at build time. Keep it boring, fast and
+dependency-light.
 
 ## Stack (do not swap)
 
-- Astro (current stable; repo is on v7) with content collections (glob loader) + zod schemas.
-- `@astrojs/mdx`, `@astrojs/sitemap`, `@astrojs/rss`, `sharp`.
-- Plain CSS with custom properties. Single design-token file `src/styles/tokens.css`. No CSS
-  framework.
-- Pagefind for static search (runs in the `build` script against `dist`).
-- Video via a lightweight click-to-load facade (no full iframe until tap).
-- OG images generated at build time (satori + resvg).
-
-## Commands
-
-- `npm run dev` — local dev server.
-- `npm run build` — Astro build THEN Pagefind index (`astro build && pagefind --site dist`).
-- `npm run preview` — preview the built `dist`.
+- Astro, current stable. Static output.
+- Content: a custom Astro content loader using `@notionhq/client`. Database and page IDs come from
+  env vars (see `.env.example`). No markdown content folders.
+- Images: every Notion-hosted file is downloaded at build time and served through Astro's image
+  pipeline. Notion file URLs expire and must never appear in built HTML.
+- Plain CSS with custom properties in one tokens file. No CSS framework.
+- OG images generated at build time with satori + resvg.
+- Video: click-to-load facade, no iframe until tapped.
+- Analytics: Cloudflare Web Analytics.
 
 ## Conventions
 
-- Ship near-zero client JS. Interactivity is small islands, hydrated on visible/idle only.
-- Every optional field must be guarded in templates so nothing renders empty.
-- Images use Astro `<Image>`/`<Picture>` with explicit dimensions (no CLS). Fonts self-hosted,
-  preloaded, `font-display: swap`.
-- Set `site: 'https://jplepecki.tech'` in astro.config. `public/CNAME` holds the domain.
-- `dist/`, `node_modules/`, `.astro/` are gitignored. Never commit build output or `node_modules`.
+- Near-zero client JS. Small islands only (live "today" marker, "tidy the desk").
+- Every optional field is guarded so nothing renders empty.
+- Images have explicit dimensions (no layout shift). Fonts self-hosted, preloaded, `font-display: swap`.
+- `INCLUDE_DRAFTS=true` renders Notion drafts locally. Never in production.
+- Never commit `dist/`, `node_modules/`, `.astro/`, `.env`.
 
-## Deploy
+## Branches and deploy
 
-- `.github/workflows/deploy.yml`: build on PRs (no deploy); build + deploy to Pages on push to
-  `main` and manual `workflow_dispatch`. Permissions: contents:read, pages:write, id-token:write.
-  No secrets. Work on feature branches; never push straight to `main` without review (main deploys
-  to production).
+- `main` deploys to production. Work on feature branches and open PRs; never push straight to `main`.
+- `quartz-archive` and `portfolio-v1` are history. Never delete or rewrite them.
+- Cloudflare Pages builds every push (previews) and `main` (production). A deploy hook is called
+  hourly by a GitHub Action so Notion changes go live without commits.

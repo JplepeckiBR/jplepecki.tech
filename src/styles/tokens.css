@@ -1,0 +1,40 @@
+:root {
+  --ink: #0d0f0e;
+  --mat: #2e5c48;
+  --mat-line-major: rgba(255, 255, 255, 0.3);
+  --mat-line-minor: rgba(255, 255, 255, 0.13);
+  --page: #151918;
+  --pcb: #141817;
+  --chip: #0e1110;
+  --copper: #c89b5c;
+  --paper: #f1eee6;
+  --paper-bright: #fbfaf6;
+  --stake: #f4f3ee;
+  --tape: rgba(232, 222, 190, 0.88);
+  --sticky: #e5c25a;
+  --text: #ece8de;
+  --text-body: #daded9;
+  --text-muted: #9da6a1;
+  --text-on-paper: #1e2220;
+  --accent: #f5b841;
+  --danger: #a12a1c;
+  --pencil: rgba(255, 255, 255, 0.62);
+  --dnp: #6e6a61;
+  --line: #2c3330;
+  --line-subtle: #23292a;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-mono: 'JetBrains Mono', Consolas, monospace;
+  /* Soft overhead light: tight contact shadow + faint ambient falloff. Kept low so objects sit flat on the mat. */
+  --shadow-object: 0 1px 1.5px rgba(0, 0, 0, 0.42), 0 3px 6px -1px rgba(0, 0, 0, 0.26), 0 10px 20px -8px rgba(0, 0, 0, 0.38);
+  --shadow-page: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 16px -4px rgba(0, 0, 0, 0.35), 0 22px 36px -14px rgba(0, 0, 0, 0.45);
+  --shadow-drop: 0 3px 4px rgba(0, 0, 0, 0.42);
+  --shadow-lift: 0 9px 12px rgba(0, 0, 0, 0.4);
+  /* Edge wear differs by material: paper yellows at the edges, bookcloth rubs lighter. */
+  --wear-paper: inset 0 0 0 1px rgba(90, 70, 40, 0.05), inset 0 0 18px rgba(130, 100, 50, 0.12);
+  --wear-cover: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 0 14px rgba(255, 255, 255, 0.03);
+  --texture-mat: url('../assets/textures/mat-patina.svg');
+  --texture-paper: url('../assets/textures/paper-grain.svg');
+  --texture-dark: url('../assets/textures/dark-grain.svg');
+  --focus: 3px solid var(--accent);
+  --page-max: 1240px;
+}

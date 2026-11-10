@@ -1,0 +1,80 @@
+---
+import { clampNumber, clampRotation, cleanText } from './_shared';
+
+interface Props {
+  label?: string;
+  rotation?: number;
+  width?: number;
+  height?: number;
+}
+
+const {
+  label = 'Talaria · coming later',
+  rotation = 0,
+  width = 110,
+  height = 230,
+} = Astro.props;
+const safeLabel = cleanText(label);
+const safeRotation = clampRotation(rotation);
+const safeWidth = clampNumber(width, 80, 240, 110);
+const safeHeight = clampNumber(height, 150, 420, 230);
+---
+
+{
+  safeLabel && (
+    <figure
+      class="shadow-slot"
+      style={`--slot-rotation:${safeRotation}deg;--slot-width:${safeWidth}px;--slot-height:${safeHeight}px`}
+      role="img"
+      aria-label={safeLabel}
+      title={safeLabel}
+    >
+      <svg viewBox="0 0 110 230" aria-hidden="true">
+        <path d="M55 4C27 4 13 22 14 51c1 20 11 38 7 61-4 25-14 48-9 75 4 24 19 39 43 39s39-15 43-39c5-27-5-50-9-75-4-23 6-41 7-61C97 22 83 4 55 4Z" />
+        <path d="M37 48c10-9 26-9 36 0M31 83h48M27 119h56M23 155h64" />
+      </svg>
+      <figcaption>talaria<br />soon</figcaption>
+    </figure>
+  )
+}
+
+<style>
+  .shadow-slot {
+    position: relative;
+    width: var(--slot-width);
+    height: var(--slot-height);
+    margin: 0;
+    color: var(--text);
+    font: 11px/1.35 var(--font-mono);
+    text-align: center;
+    transform: rotate(var(--slot-rotation));
+  }
+
+  .shadow-slot svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .shadow-slot path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+    opacity: 0.6;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .shadow-slot path + path {
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+    opacity: 0.35;
+  }
+
+  .shadow-slot figcaption {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>

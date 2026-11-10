@@ -1,0 +1,31 @@
+---
+import BuildLog from '../paper/BuildLog.astro';
+import NotionBlocks from './NotionBlocks.astro';
+
+interface Props {
+  blocks: any[];
+  buildLog?: Array<{
+    date: string;
+    dateTime: string;
+    status: 'done' | 'today' | 'planned';
+    fallbackStatus?: 'done' | 'planned';
+    title: string;
+  }>;
+  buildLogSource?: string;
+}
+
+const { blocks = [], buildLog = [], buildLogSource } = Astro.props;
+---
+
+<NotionBlocks blocks={blocks} />
+{buildLog.length > 0 && (
+  <div class="post-build-log">
+    <BuildLog entries={buildLog} sourceNote={buildLogSource} liveToday />
+  </div>
+)}
+
+<style>
+  .post-build-log {
+    margin-top: 3rem;
+  }
+</style>

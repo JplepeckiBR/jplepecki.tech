@@ -1,31 +1,21 @@
 # jplepecki.tech
 
-This is a Quartz 4 site published from Obsidian notes.
-
-## Content source
-
-Put publishable Markdown notes in [`obsidian_posts/`](./obsidian_posts/). A note
-is included only when its YAML frontmatter contains:
-
-```yaml
-publish: true
-```
-
-Keep private notes, including `NOTES.md`, `RETRO.md`, and `KPI.md`, without that
-flag. Quartz's `ExplicitPublish` filter excludes them from the build.
+JP Lepecki's static Astro site. Published posts, loops, and projects are loaded from Notion at build time. Without a `NOTION_TOKEN`, local and pull-request builds use `fixtures/notion.json`.
 
 ## Local development
 
-```bash
+```powershell
 npm ci
-npx quartz build --serve -d obsidian_posts
+npm run dev
 ```
 
-The `-d obsidian_posts` argument points Quartz at the Obsidian source folder;
-the notes remain the single source of truth and are not copied into another
-content tree.
+Open `http://localhost:4321`. Copy `.env.example` to `.env` only when testing the real Notion workspace; `.env` is ignored.
 
-## Publishing
+## Checks
 
-Commit and push a note with `publish: true` to `main`. GitHub Actions builds
-Quartz and deploys it to GitHub Pages at `https://jplepecki.tech`.
+```powershell
+npm run build
+npm run screenshots
+```
+
+The screenshot script expects a server at `http://localhost:4321` and writes the overnight review set to `review/v1-rebuild/`.

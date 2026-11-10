@@ -1,0 +1,100 @@
+---
+import { clampNumber, clampRotation, cleanHref } from './_shared';
+
+interface Props {
+  href?: string;
+  postCount: number;
+  rotation?: number;
+  width?: number;
+}
+
+const { href = '/posts', postCount, rotation = -2, width = 220 } = Astro.props;
+const safeHref = cleanHref(href);
+const safeCount =
+  typeof postCount === 'number' && Number.isFinite(postCount) && postCount >= 0
+    ? Math.floor(postCount)
+    : undefined;
+const safeRotation = clampRotation(rotation, -2);
+const safeWidth = clampNumber(width, 170, 380, 220);
+---
+
+{
+  safeHref && safeCount !== undefined && (
+    <a
+      class="notebook"
+      href={safeHref}
+      style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
+    >
+      <span class="notebook__cover">
+        <span class="notebook__elastic" aria-hidden="true"></span>
+        <span class="notebook__title">LAB NOTEBOOK</span>
+        <span class="notebook__count">{safeCount} {safeCount === 1 ? 'entry' : 'entries'}</span>
+      </span>
+      <span class="notebook__action">posts →</span>
+    </a>
+  )
+}
+
+<style>
+  .notebook {
+    display: block;
+    width: min(var(--object-width), 100%);
+    min-height: 44px;
+    text-decoration: none;
+    transform: rotate(var(--object-rotation));
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  .notebook:hover,
+  .notebook:focus-visible {
+    filter: drop-shadow(var(--shadow-lift));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .notebook__cover {
+    position: relative;
+    display: flex;
+    height: 250px;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 4px 10px 10px 4px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-object), var(--wear-cover);
+  }
+
+  .notebook__elastic {
+    position: absolute;
+    top: 0;
+    right: 26px;
+    bottom: 0;
+    width: 8px;
+    background: var(--chip);
+  }
+
+  .notebook__title,
+  .notebook__count,
+  .notebook__action {
+    font-family: var(--font-mono);
+  }
+
+  .notebook__title {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  .notebook__count {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .notebook__action {
+    display: block;
+    margin-top: 8px;
+    color: var(--text);
+    font-size: 12px;
+  }
+</style>

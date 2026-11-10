@@ -1,0 +1,632 @@
+---
+import boardWearUrl from '../../assets/textures/board-wear.svg?url';
+import matPatinaUrl from '../../assets/textures/mat-patina.svg?url';
+import paperGrainUrl from '../../assets/textures/paper-grain.svg?url';
+
+const terminalColumns = Array.from({ length: 30 }, (_, index) => 24 + index * 9.45);
+const terminalRows = [105, 115, 125, 135, 145, 164, 174, 184, 194, 204];
+const railColumns = [
+  ...Array.from({ length: 14 }, (_, index) => 24 + index * 9.1),
+  ...Array.from({ length: 14 }, (_, index) => 181 + index * 9.1),
+];
+const railRows = [68, 79, 229, 240];
+const breadboardNumbers = Array.from({ length: 6 }, (_, index) => ({
+  label: index === 0 ? '1' : String(index * 5),
+  x: 24 + index * 47.25,
+}));
+const meterDialTicks = Array.from({ length: 15 }, (_, index) => -126 + index * 18);
+const caliperTicks = Array.from({ length: 69 }, (_, index) => ({
+  x: 244 + index * 9.15,
+  long: index % 10 === 0,
+  medium: index % 5 === 0,
+  label: index % 10 === 0 ? index / 10 : undefined,
+}));
+const vernierTicks = Array.from({ length: 11 }, (_, index) => 425 + index * 9.2);
+const wheelTeeth = Array.from({ length: 18 }, (_, index) => index * 20);
+const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
+---
+
+<svg
+  class="bench-equipment"
+  viewBox="0 0 1200 860"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+>
+  <defs>
+    <clipPath id="bench-equipment-breadboard-clip">
+      <rect x="-18" y="41" width="344" height="214" rx="12" />
+    </clipPath>
+    <clipPath id="bench-equipment-meter-clip">
+      <path d="M25 2h166q17 0 21 18l7 31v160l-9 36q-4 15-20 15H26q-17 0-21-17l-7-35V52l8-34Q10 2 25 2Z" />
+    </clipPath>
+    <filter id="bench-equipment-edge-wear" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.024 0.09" numOctaves="2" seed="27" result="wear-noise" />
+      <feDisplacementMap in="SourceGraphic" in2="wear-noise" scale="0.85" xChannelSelector="R" yChannelSelector="B" />
+    </filter>
+  </defs>
+
+  <image
+    class="bench-equipment__mat-patina"
+    href={matPatinaUrl}
+    x="0"
+    y="0"
+    width="1200"
+    height="860"
+    preserveAspectRatio="xMidYMid slice"
+  />
+
+  <!-- Rainbow jumper bundle routed along the top edge and beneath the navigation board. -->
+  <g class="bench-equipment__wire-bundle">
+    <path class="wire-bundle__shadow" d="M221 73C293 30 347 41 415 53S554 62 637 41 752 28 830 43" />
+    <path class="wire wire--red" d="M222 70C283 16 349 24 416 36S551 42 625 20 740 8 804 22" />
+    <path class="wire wire--orange" d="M226 74C286 25 348 32 415 43S554 49 630 27 743 16 809 28" />
+    <path class="wire wire--yellow" d="M230 78C291 34 351 39 416 50S557 56 635 34 747 24 814 34" />
+    <path class="wire wire--green" d="M234 82C296 43 354 46 417 57S559 63 640 41 751 32 819 40" />
+    <path class="wire wire--blue" d="M238 86C301 52 357 53 418 64S562 70 645 48 755 40 824 46" />
+    <path class="wire wire--violet" d="M242 90C306 61 360 60 419 71S565 77 650 55 759 48 829 52" />
+
+    <g class="wire-bundle__tie" transform="translate(388 43) rotate(9)">
+      <rect x="-3" y="-9" width="7" height="33" rx="2" />
+      <path d="M-1-7h3M-1 20h3" />
+    </g>
+    <g class="wire-bundle__tie" transform="translate(660 31) rotate(-12)">
+      <rect x="-3" y="-8" width="7" height="34" rx="2" />
+      <path d="M-1-6h3M-1 21h3" />
+    </g>
+
+    <g class="dupont-bank" transform="translate(798 15) rotate(5)">
+      {[0, 1, 2, 3, 4, 5].map((index) => (
+        <g transform={`translate(${index * 8} ${index * 6})`}>
+          <rect x="0" y="0" width="11" height="22" rx="1.5" />
+          <rect class="dupont-bank__seam" x="2" y="4" width="7" height="10" rx="0.8" />
+          <path class="dupont-bank__pin" d="M5.5 22v8" />
+        </g>
+      ))}
+    </g>
+  </g>
+
+  <!-- Meter leads sit below the meter body and disappear under lower linked objects. -->
+  <g class="bench-equipment__probe-leads">
+    <path class="probe-lead probe-lead--black" d="M91 526C55 577 43 629 75 665s93 17 131 32 36 67 83 63" />
+    <path class="probe-lead probe-lead--red" d="M151 526c48 48 91 61 116 101s-7 72 23 106c18 21 47 18 70 7" />
+    <g class="probe probe--black" transform="translate(274 749) rotate(-12)">
+      <path class="probe__tip" d="M-40 0h34" />
+      <path class="probe__guard" d="M-8-7h11v14H-8Z" />
+      <path class="probe__handle" d="M2-6h72l18 6-18 6H2Z" />
+      <path class="probe__grip" d="M18-6v12m8-12v12m8-12v12" />
+    </g>
+    <g class="probe probe--red" transform="translate(347 733) rotate(-19)">
+      <path class="probe__tip" d="M-40 0h34" />
+      <path class="probe__guard" d="M-8-7h11v14H-8Z" />
+      <path class="probe__handle" d="M2-6h72l18 6-18 6H2Z" />
+      <path class="probe__grip" d="M18-6v12m8-12v12m8-12v12" />
+    </g>
+  </g>
+
+  <!-- Full-size solderless breadboard, clipped by the top-left mat edge. -->
+  <g class="bench-equipment__object bench-equipment__breadboard" transform="rotate(-1.6 154 148)">
+    <rect class="breadboard__underside" x="-22" y="46" width="348" height="214" rx="13" />
+    <rect class="breadboard__body" x="-18" y="41" width="344" height="214" rx="12" />
+    <path class="breadboard__edge-highlight" d="M-5 47H307q12 0 12 12M-10 247h318" />
+    <image
+      class="breadboard__grain"
+      href={paperGrainUrl}
+      x="-18"
+      y="41"
+      width="344"
+      height="214"
+      preserveAspectRatio="xMidYMid slice"
+      clip-path="url(#bench-equipment-breadboard-clip)"
+    />
+
+    <rect class="breadboard__rail-recess" x="12" y="57" width="302" height="34" rx="5" />
+    <rect class="breadboard__rail-recess" x="12" y="217" width="302" height="34" rx="5" />
+    <path class="breadboard__rail breadboard__rail--red" d="M24 62h119m38 0h119M24 223h119m38 0h119" />
+    <path class="breadboard__rail breadboard__rail--blue" d="M24 85h119m38 0h119M24 246h119m38 0h119" />
+    <rect class="breadboard__bus-break" x="153" y="56" width="20" height="35" rx="3" />
+    <rect class="breadboard__bus-break" x="153" y="216" width="20" height="35" rx="3" />
+    <path class="breadboard__bus-seam" d="M163 58v31m0 129v31" />
+
+    <rect class="breadboard__terminal-bed" x="14" y="97" width="298" height="114" rx="4" />
+    <rect class="breadboard__trench" x="14" y="150" width="298" height="10" rx="2" />
+    <path class="breadboard__trench-highlight" d="M16 150h294M16 160h294" />
+
+    <g class="breadboard__holes">
+      {terminalColumns.map((x) => terminalRows.map((y) => <circle cx={x} cy={y} r="2.15" />))}
+      {railColumns.map((x) => railRows.map((y) => <circle cx={x} cy={y} r="2.15" />))}
+    </g>
+
+    <g class="breadboard__legend">
+      {breadboardNumbers.map(({ label, x }) => (
+        <>
+          <text x={x} y="99" text-anchor="middle">{label}</text>
+          <text x={x} y="214" text-anchor="middle">{label}</text>
+        </>
+      ))}
+      <text x="6" y="109">a</text><text x="6" y="129">c</text><text x="6" y="148">e</text>
+      <text x="6" y="168">f</text><text x="6" y="188">h</text><text x="6" y="207">j</text>
+      <text class="breadboard__polarity breadboard__polarity--red" x="17" y="64">+</text>
+      <text class="breadboard__polarity breadboard__polarity--blue" x="17" y="87">−</text>
+      <text class="breadboard__polarity breadboard__polarity--red" x="306" y="226">+</text>
+      <text class="breadboard__polarity breadboard__polarity--blue" x="306" y="249">−</text>
+      <text class="breadboard__model" x="281" y="48">MB-102</text>
+    </g>
+
+    <g class="breadboard__jumpers">
+      <path class="jumper jumper--red" d="M52 105C52 91 48 83 43 79" />
+      <path class="jumper jumper--black" d="M90 194C116 181 130 168 147 145" />
+      <path class="jumper jumper--blue" d="M224 115C249 95 271 96 290 105" />
+      <g class="jumper__plug"><rect x="47" y="100" width="10" height="8" rx="1" /><rect x="38" y="75" width="10" height="8" rx="1" /></g>
+      <g class="jumper__plug"><rect x="85" y="190" width="10" height="8" rx="1" /><rect x="142" y="140" width="10" height="8" rx="1" /></g>
+      <g class="jumper__plug"><rect x="219" y="111" width="10" height="8" rx="1" /><rect x="285" y="101" width="10" height="8" rx="1" /></g>
+    </g>
+
+    <g class="breadboard__mounted-resistor" transform="translate(274 154) rotate(90)">
+      <path d="M-25 0h15M10 0h15" />
+      <rect x="-10" y="-4.5" width="20" height="9" rx="4" />
+      <path class="band band--brown" d="M-5-4v8" /><path class="band band--black" d="M0-4v8" /><path class="band band--orange" d="M5-4v8" />
+    </g>
+    <g class="breadboard__mounted-led" transform="translate(195 132)">
+      <path d="M-3 8v14m7-14v14" />
+      <path class="led-dome" d="M-7 7V1a8 8 0 0 1 16 0v6Z" />
+      <path class="led-highlight" d="M-3-3c3-2 6-1 7 1" />
+    </g>
+
+    <g class="breadboard__wear" filter="url(#bench-equipment-edge-wear)">
+      <path d="M-3 72l8-2m-11 122 12-3m296-72 9-1m-16 120 14-3" />
+      <path d="M116 48c14 2 28 2 40 0m35 199c18-3 35-3 49 0" />
+      <ellipse cx="52" cy="237" rx="14" ry="3" />
+      <ellipse cx="296" cy="69" rx="10" ry="2.5" />
+    </g>
+  </g>
+
+  <!-- Used handheld digital multimeter at left-middle. -->
+  <g class="bench-equipment__object bench-equipment__meter" transform="translate(18 296) rotate(-2.2 108 132)">
+    <path class="meter__shadow-pad" d="M25 5h166q17 0 21 18l7 31v160l-9 36q-4 15-20 15H26q-17 0-21-17l-7-35V54l8-34Q10 5 25 5Z" />
+    <path class="meter__boot" d="M25 2h166q17 0 21 18l7 31v160l-9 36q-4 15-20 15H26q-17 0-21-17l-7-35V52l8-34Q10 2 25 2Z" />
+    <path class="meter__side-grip" d="M10 60H1v34h9m0 74H1v33h9m198-141h9v34h-9m0 74h9v33h-9" />
+    <path class="meter__face" d="M30 15h156q12 0 14 13l5 27v150l-7 31q-2 12-15 12H32q-13 0-16-13l-5-30V55l6-29q2-11 13-11Z" />
+    <image
+      class="meter__grain"
+      href={boardWearUrl}
+      x="0"
+      y="0"
+      width="220"
+      height="264"
+      preserveAspectRatio="xMidYMid slice"
+      clip-path="url(#bench-equipment-meter-clip)"
+    />
+
+    <rect class="meter__screen-bezel" x="38" y="29" width="142" height="62" rx="4" />
+    <rect class="meter__screen" x="46" y="36" width="126" height="47" rx="1.5" />
+    <path class="meter__screen-shadow" d="M48 80V38h121" />
+    <text class="meter__lcd-small" x="53" y="48">AUTO</text>
+    <text class="meter__lcd-value" x="151" y="73" text-anchor="end">0.L</text>
+    <text class="meter__lcd-small" x="154" y="48">V</text>
+    <path class="meter__screen-scratch" d="M73 43l45 31m-18-34 26 15" />
+
+    <g class="meter__dial-ticks">
+      {meterDialTicks.map((angle, index) => (
+        <line
+          x1="108"
+          y1={index % 2 === 0 ? 96 : 99}
+          x2="108"
+          y2="104"
+          transform={`rotate(${angle} 108 151)`}
+        />
+      ))}
+    </g>
+    <text class="meter__mode" x="41" y="125">OFF</text>
+    <text class="meter__mode" x="52" y="109">V⎓</text>
+    <text class="meter__mode" x="76" y="100">V~</text>
+    <text class="meter__mode" x="132" y="100">mV</text>
+    <text class="meter__mode" x="160" y="111">Ω</text>
+    <text class="meter__mode" x="172" y="133">Hz</text>
+    <text class="meter__mode" x="164" y="171">A</text>
+    <text class="meter__mode" x="44" y="176">mA</text>
+
+    <circle class="meter__dial-well" cx="108" cy="151" r="43" />
+    <circle class="meter__dial" cx="108" cy="151" r="33" />
+    <circle class="meter__dial-cap" cx="108" cy="151" r="24" />
+    <path class="meter__dial-pointer" d="M103 151l5-27 5 27Z" transform="rotate(68 108 151)" />
+    <path class="meter__dial-wear" d="M93 132a28 28 0 0 1 29-2M89 161a26 26 0 0 0 10 12" />
+
+    <rect class="meter__button" x="42" y="194" width="48" height="15" rx="5" />
+    <rect class="meter__button" x="126" y="194" width="48" height="15" rx="5" />
+    <text class="meter__button-label" x="66" y="205" text-anchor="middle">HOLD</text>
+    <text class="meter__button-label" x="150" y="205" text-anchor="middle">RANGE</text>
+
+    <g class="meter__ports">
+      <circle class="meter__port meter__port--red" cx="50" cy="231" r="13" />
+      <circle class="meter__port meter__port--black" cx="108" cy="231" r="13" />
+      <circle class="meter__port meter__port--red" cx="166" cy="231" r="13" />
+      <circle class="meter__socket" cx="50" cy="231" r="5" />
+      <circle class="meter__socket" cx="108" cy="231" r="5" />
+      <circle class="meter__socket" cx="166" cy="231" r="5" />
+      <text x="50" y="216" text-anchor="middle">10A</text>
+      <text x="108" y="216" text-anchor="middle">COM</text>
+      <text x="166" y="216" text-anchor="middle">VΩ</text>
+    </g>
+
+    <g class="meter__wear" filter="url(#bench-equipment-edge-wear)">
+      <path d="M27 23l18-5m-25 91 11-3m152-85 12 6m-6 183 10-3" />
+      <path d="M72 102c13 3 27 3 40 0m-65 79 25-5m81 8 21-3" />
+      <ellipse cx="174" cy="185" rx="15" ry="3" />
+      <ellipse cx="31" cy="151" rx="10" ry="2.5" />
+    </g>
+  </g>
+
+  <!-- Loose bench components and trimmed wire ends. -->
+  <g class="bench-equipment__loose-parts">
+    <g class="loose-resistor" transform="translate(307 279) rotate(-14)">
+      <path d="M-41 0h27M14 0h27" />
+      <rect x="-14" y="-6" width="28" height="12" rx="5" />
+      <path class="band band--brown" d="M-7-5v10" /><path class="band band--black" d="M-1-5v10" /><path class="band band--orange" d="M6-5v10" />
+    </g>
+    <g class="loose-resistor loose-resistor--blue" transform="translate(1119 345) rotate(19)">
+      <path d="M-39 0h25M14 0h25" />
+      <rect x="-14" y="-6" width="28" height="12" rx="5" />
+      <path class="band band--brown" d="M-7-5v10" /><path class="band band--black" d="M0-5v10" /><path class="band band--red" d="M7-5v10" />
+    </g>
+
+    <g class="loose-led loose-led--red" transform="translate(304 493) rotate(12)">
+      <path d="M-4 8l-3 32m11-32 7 38" />
+      <path class="loose-led__dome" d="M-9 8V0a10 10 0 0 1 20 0v8Z" />
+      <path class="loose-led__rim" d="M-11 8h24" />
+      <path class="loose-led__highlight" d="M-4-5c4-2 7-1 9 2" />
+    </g>
+    <g class="loose-led loose-led--green" transform="translate(929 439) rotate(-17)">
+      <path d="M-4 8l-4 31m12-31 6 35" />
+      <path class="loose-led__dome" d="M-9 8V0a10 10 0 0 1 20 0v8Z" />
+      <path class="loose-led__rim" d="M-11 8h24" />
+      <path class="loose-led__highlight" d="M-4-5c4-2 7-1 9 2" />
+    </g>
+
+    <g class="loose-ic" transform="rotate(8 969 383)">
+      <path class="loose-ic__shadow" d="M939 367h60v34h-60Z" />
+      {dipPins.map((x) => (
+        <>
+          <path class="loose-ic__pin" d={`M${x} 362v7`} />
+          <path class="loose-ic__pin" d={`M${x} 400v7`} />
+        </>
+      ))}
+      <rect class="loose-ic__body" x="939" y="367" width="60" height="34" rx="4" />
+      <path class="loose-ic__notch" d="M962 367a7 7 0 0 0 14 0" />
+      <circle class="loose-ic__pin-one" cx="947" cy="375" r="2" />
+      <text x="969" y="386" text-anchor="middle">DIP-8</text>
+      <image href={boardWearUrl} x="941" y="369" width="56" height="30" preserveAspectRatio="xMidYMid slice" opacity="0.42" />
+    </g>
+
+    <g class="loose-transistor" transform="translate(899 662) rotate(-9)">
+      <path d="M-6 8l-9 31M0 9v32M6 8l10 29" />
+      <path class="loose-transistor__body" d="M-10 8V-4a10 10 0 0 1 20 0V8Z" />
+      <path class="loose-transistor__flat" d="M-10 8h20" />
+    </g>
+
+    <g class="wire-offcuts">
+      <g transform="translate(289 570) rotate(16)"><path class="offcut offcut--red" d="M-30 0c20-5 39-4 62 2" /><path class="offcut__copper" d="M-36 1l7-1m61 2 8 3" /></g>
+      <g transform="translate(320 590) rotate(-22)"><path class="offcut offcut--black" d="M-26 0c18 3 36 3 55-1" /><path class="offcut__copper" d="M-33-1l7 1m55-1 8-2" /></g>
+      <g transform="translate(1128 430) rotate(-8)"><path class="offcut offcut--blue" d="M-34 0c24-8 47-6 69 2" /><path class="offcut__copper" d="M-40 2l7-2m68 2 8 2" /></g>
+      <g transform="translate(940 687) rotate(27)"><path class="offcut offcut--yellow" d="M-27 0c17-3 37-1 55 3" /><path class="offcut__copper" d="M-34 1l7-1m55 3 7 3" /></g>
+    </g>
+
+    <g class="loose-hardware">
+      <g transform="translate(283 431)"><circle r="7" /><path d="M-4 0h8M0-4v8" /></g>
+      <g transform="translate(1137 516)"><circle r="6" /><path d="M-3.5 0h7M0-3.5v7" /></g>
+      <g transform="translate(887 498)"><circle r="4" /><path d="M-2.5 0h5M0-2.5v5" /></g>
+      <circle class="solder-drop" cx="321" cy="448" r="3.5" />
+      <circle class="solder-drop" cx="332" cy="455" r="2.2" />
+      <circle class="solder-drop" cx="1084" cy="403" r="3" />
+    </g>
+  </g>
+
+  <!-- Soldering iron enters from beyond the lower-right edge. -->
+  <g class="bench-equipment__solder-cable">
+    <path d="M1168 832c45-34 48-72 24-98s-18-59 26-77" />
+    <path class="solder-cable__highlight" d="M1168 832c45-34 48-72 24-98" />
+  </g>
+  <g class="bench-equipment__object bench-equipment__soldering-iron" transform="rotate(-2.2 1084 812)">
+    <path class="iron__tip" d="M891 812h58l30-7v14l-30-7" />
+    <path class="iron__tip-wear" d="M891 812h24" />
+    <rect class="iron__barrel" x="945" y="802" width="95" height="20" rx="4" />
+    <path class="iron__barrel-highlight" d="M956 806h69" />
+    <rect class="iron__collar" x="1029" y="796" width="27" height="32" rx="4" />
+    <path class="iron__handle" d="M1050 791h143q17 0 17 21t-17 21h-143q-13 0-13-21t13-21Z" />
+    <path class="iron__handle-panel" d="M1082 796h79q11 0 11 16t-11 16h-79Z" />
+    <g class="iron__vents">
+      <path d="M1065 799v26M1072 798v28M1179 799v26M1186 801v22" />
+    </g>
+    <path class="iron__wear" d="M1101 800l28 22m-9-25 25 22m39-18 13 9" filter="url(#bench-equipment-edge-wear)" />
+    <path class="iron__strain-relief" d="M1203 800h37m-37 7h39m-39 8h38m-38 8h34" />
+  </g>
+
+  <!-- Steel vernier calipers rest across the lower edge, partly off the mat. -->
+  <g class="bench-equipment__object bench-equipment__calipers" transform="rotate(1.1 575 796)">
+    <path class="caliper__shadow" d="M179 679h29v45h22v52h644q17 0 17 15t-17 15H548v22H407v-22H230v45h-31v-66h-20Z" />
+
+    <path class="caliper__fixed-jaw" d="M183 676h25v48h22v58h-22v-36h-26q-12 0-12-11v-45q0-14 13-14Zm-13 59h38" />
+    <path class="caliper__fixed-inner" d="M208 782v63h28v-42h18v-21Z" />
+    <rect class="caliper__beam" x="226" y="775" width="664" height="31" rx="2" />
+    <path class="caliper__beam-highlight" d="M233 779h650" />
+    <path class="caliper__beam-shadow" d="M233 801h650" />
+
+    <g class="caliper__scale">
+      {caliperTicks.map(({ x, long, medium, label }) => (
+        <>
+          <path d={`M${x} 777v${long ? 15 : medium ? 11 : 7}`} />
+          {label !== undefined && <text x={x + 2} y="800">{label}</text>}
+        </>
+      ))}
+      <text x="852" y="799">mm</text>
+    </g>
+
+    <path class="caliper__slider-jaw" d="M405 774v-84q0-14 13-14h23v47h-22v51Zm13-51h23" />
+    <path class="caliper__slider-inner" d="M405 806v42h28v-42h17v-32h-45Z" />
+    <rect class="caliper__slider" x="399" y="752" width="153" height="75" rx="4" />
+    <path class="caliper__slider-highlight" d="M406 757h139M406 822h139" />
+    <rect class="caliper__vernier-bed" x="416" y="762" width="111" height="34" rx="2" />
+    <g class="caliper__vernier-scale">
+      {vernierTicks.map((x, index) => <path d={`M${x} 763v${index % 5 === 0 ? 19 : 13}`} />)}
+      <text x="420" y="792">0</text><text x="466" y="792">5</text><text x="511" y="792">10</text>
+    </g>
+
+    <g class="caliper__lock" transform="translate(483 738)">
+      <path d="M0 17V2" />
+      <ellipse cx="0" cy="0" rx="15" ry="6" />
+      <path d="M-10-2v4m5-5v6M0-4v8m5-7v6m5-5v4" />
+    </g>
+    <g class="caliper__wheel" transform="translate(512 830)">
+      <circle r="22" />
+      <circle class="caliper__wheel-inner" r="14" />
+      {wheelTeeth.map((angle) => <path d="M0-24v7" transform={`rotate(${angle})`} />)}
+    </g>
+
+    <g class="caliper__wear" filter="url(#bench-equipment-edge-wear)">
+      <path d="M261 797l76-14m18 16 64-12m146 9 91-13m31 14 74-11" />
+      <path d="M428 809l83-15m-90 22 64-12m317-12 51-8" />
+      <path d="M187 700l15-8m-11 34 14-7m217-25 12-5" />
+    </g>
+  </g>
+</svg>
+
+<style>
+  .bench-equipment {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+    shape-rendering: geometricPrecision;
+  }
+
+  .bench-equipment__mat-patina {
+    opacity: 0.48;
+    mix-blend-mode: multiply;
+  }
+
+  .bench-equipment__object {
+    filter: drop-shadow(0 1.5px 1px rgba(4, 8, 6, 0.42)) drop-shadow(0 7px 9px rgba(4, 8, 6, 0.22));
+  }
+
+  .bench-equipment__wire-bundle,
+  .bench-equipment__probe-leads,
+  .bench-equipment__solder-cable {
+    fill: none;
+    filter: drop-shadow(0 2px 1.5px rgba(4, 8, 6, 0.42));
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .wire {
+    fill: none;
+    stroke-width: 4.2;
+  }
+
+  .wire--red { stroke: #9d4034; }
+  .wire--orange { stroke: #b56d38; }
+  .wire--yellow { stroke: #c4a442; }
+  .wire--green { stroke: #477c5c; }
+  .wire--blue { stroke: #426c91; }
+  .wire--violet { stroke: #70577b; }
+
+  .wire-bundle__shadow { display: none; }
+
+  .wire-bundle__tie rect,
+  .dupont-bank rect {
+    fill: #111413;
+    stroke: #353a38;
+    stroke-width: 0.7;
+  }
+
+  .wire-bundle__tie path {
+    stroke: #5b605e;
+    stroke-width: 0.7;
+  }
+
+  .dupont-bank__seam { fill: #202423; }
+  .dupont-bank__pin { stroke: #aeb4b2; stroke-width: 1.4; }
+
+  .probe-lead {
+    stroke-width: 5;
+  }
+
+  .probe-lead--black { stroke: #161918; }
+  .probe-lead--red { stroke: #982f27; }
+  .probe__tip { stroke: #bdc3c3; stroke-width: 2; }
+  .probe__guard { fill: #171a19; stroke: #313635; stroke-width: 0.8; }
+  .probe__handle { fill: #202423; stroke: #111312; stroke-width: 1; }
+  .probe--red .probe__guard,
+  .probe--red .probe__handle { fill: #8f2a24; stroke: #5d1f1b; }
+  .probe__grip { stroke: #555b58; stroke-width: 1; }
+  .probe--red .probe__grip { stroke: #b65047; }
+
+  .breadboard__underside { fill: #aeb0aa; }
+  .breadboard__body { fill: #e8e7e0; stroke: #d2d3cd; stroke-width: 0.7; }
+  .breadboard__edge-highlight { fill: none; stroke: #fbfaf6; stroke-width: 0.8; opacity: 0.5; }
+  .breadboard__grain { opacity: 0.76; }
+  .breadboard__rail-recess,
+  .breadboard__terminal-bed { fill: #ddddd6; stroke: #c7c8c2; stroke-width: 0.7; }
+  .breadboard__bus-break { fill: #d2d3cd; }
+  .breadboard__bus-seam { stroke: #b6b8b2; stroke-width: 0.8; }
+  .breadboard__rail { fill: none; stroke-width: 1; opacity: 0.78; }
+  .breadboard__rail--red { stroke: #a44a42; }
+  .breadboard__rail--blue { stroke: #4a7090; }
+  .breadboard__trench { fill: #c9cac4; }
+  .breadboard__trench-highlight { fill: none; stroke: #f6f5ef; stroke-width: 0.65; opacity: 0.7; }
+  .breadboard__holes circle { fill: #505654; stroke: #f5f4ed; stroke-width: 1.05; }
+
+  .breadboard__legend {
+    fill: #858983;
+    font: 4.6px/1 var(--font-mono);
+  }
+
+  .breadboard__polarity { font-size: 7px; }
+  .breadboard__polarity--red { fill: #9f4a42; }
+  .breadboard__polarity--blue { fill: #4c708c; }
+  .breadboard__model { fill: #989a94; font-size: 5.2px; letter-spacing: 0.5px; }
+
+  .breadboard__jumpers,
+  .breadboard__mounted-resistor,
+  .breadboard__mounted-led {
+    filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.32));
+  }
+
+  .jumper { fill: none; stroke-width: 2.4; stroke-linecap: round; }
+  .jumper--red { stroke: #983930; }
+  .jumper--black { stroke: #1a1d1c; }
+  .jumper--blue { stroke: #416d93; }
+  .jumper__plug rect { fill: #171a19; stroke: #3d4240; stroke-width: 0.6; }
+
+  .breadboard__mounted-resistor > path:first-child,
+  .loose-resistor > path:first-child {
+    fill: none;
+    stroke: #aeb3b2;
+    stroke-width: 1.3;
+  }
+
+  .breadboard__mounted-resistor rect,
+  .loose-resistor rect { fill: #d7bd8d; stroke: #a68e66; stroke-width: 0.7; }
+  .loose-resistor--blue rect { fill: #82a3ba; stroke: #627f92; }
+  .band { fill: none; stroke-width: 2.3; }
+  .band--brown { stroke: #6c4028; }
+  .band--black { stroke: #171918; }
+  .band--orange { stroke: #bd6b2e; }
+  .band--red { stroke: #9f3229; }
+
+  .breadboard__mounted-led > path:first-child { fill: none; stroke: #aab1b0; stroke-width: 1; }
+  .breadboard__mounted-led .led-dome { fill: #9d342d; stroke: #70241f; stroke-width: 0.8; opacity: 0.9; }
+  .breadboard__mounted-led .led-highlight { fill: none; stroke: #e0a49d; stroke-width: 1; opacity: 0.65; }
+  .breadboard__wear { fill: none; stroke: #898b85; stroke-width: 0.6; opacity: 0.14; stroke-linecap: round; }
+  .breadboard__wear ellipse { fill: #888a84; stroke: none; }
+
+  .meter__shadow-pad { display: none; }
+  .meter__boot { fill: #393e3b; stroke: #2b2f2d; stroke-width: 0.8; }
+  .meter__side-grip { fill: none; stroke: #252927; stroke-width: 7; stroke-linecap: round; }
+  .meter__face { fill: #252927; stroke: #343937; stroke-width: 0.8; }
+  .meter__grain { opacity: 0.72; }
+  .meter__screen-bezel { fill: #111413; stroke: #555c59; stroke-width: 1.2; }
+  .meter__screen { fill: #a8b3a6; stroke: #69736c; stroke-width: 0.8; }
+  .meter__screen-shadow { fill: none; stroke: #758178; stroke-width: 1.2; opacity: 0.7; }
+  .meter__lcd-small,
+  .meter__lcd-value { fill: #303b35; font-family: var(--font-mono); }
+  .meter__lcd-small { font-size: 7px; letter-spacing: 0.5px; }
+  .meter__lcd-value { font-size: 26px; letter-spacing: 2px; }
+  .meter__screen-scratch { fill: none; stroke: #e1e5df; stroke-width: 0.45; opacity: 0.14; }
+  .meter__dial-ticks line { stroke: #9ca39f; stroke-width: 1; }
+  .meter__mode { fill: #b8bfbb; font: 7px/1 var(--font-mono); }
+  .meter__dial-well { fill: #171a19; stroke: #5a605d; stroke-width: 1; }
+  .meter__dial { fill: #2e3331; stroke: #101312; stroke-width: 1.2; }
+  .meter__dial-cap { fill: #1a1e1c; stroke: #464c49; stroke-width: 0.8; }
+  .meter__dial-pointer { fill: #c2c7c4; stroke: #e0e3e1; stroke-width: 0.6; }
+  .meter__dial-wear { fill: none; stroke: #737a76; stroke-width: 0.6; opacity: 0.2; }
+  .meter__button { fill: #3e4441; stroke: #111413; stroke-width: 0.8; }
+  .meter__button-label { fill: #aeb5b1; font: 6px/1 var(--font-mono); }
+  .meter__ports text { fill: #9ca39f; font: 6px/1 var(--font-mono); }
+  .meter__port { stroke-width: 1.2; }
+  .meter__port--red { fill: #7f2c27; stroke: #aa4840; }
+  .meter__port--black { fill: #111413; stroke: #555b58; }
+  .meter__socket { fill: #060807; stroke: #858b88; stroke-width: 0.6; }
+  .meter__wear { fill: none; stroke: #afb5b1; stroke-width: 0.7; opacity: 0.11; stroke-linecap: round; }
+  .meter__wear ellipse { fill: #0f1211; stroke: none; }
+
+  .loose-resistor,
+  .loose-led,
+  .loose-ic,
+  .loose-transistor,
+  .loose-hardware {
+    filter: drop-shadow(0 1px 0.8px rgba(4, 8, 6, 0.45)) drop-shadow(0 3px 4px rgba(4, 8, 6, 0.18));
+  }
+
+  .loose-led > path:first-child,
+  .loose-transistor > path:first-child { fill: none; stroke: #b5bcbb; stroke-width: 1.4; }
+  .loose-led__dome { stroke-width: 0.9; opacity: 0.88; }
+  .loose-led--red .loose-led__dome { fill: #9d352e; stroke: #70231f; }
+  .loose-led--green .loose-led__dome { fill: #47795a; stroke: #294c37; }
+  .loose-led__rim { fill: none; stroke: #abb2af; stroke-width: 1; }
+  .loose-led__highlight { fill: none; stroke: #dce3df; stroke-width: 1; opacity: 0.54; }
+
+  .loose-ic__shadow { display: none; }
+  .loose-ic__pin { fill: none; stroke: #b8bdbc; stroke-width: 3; }
+  .loose-ic__body { fill: #111413; stroke: #4b504e; stroke-width: 1; }
+  .loose-ic__notch { fill: none; stroke: #555b58; stroke-width: 1; }
+  .loose-ic__pin-one { fill: #737976; }
+  .loose-ic text { fill: #7f8682; font: 6px/1 var(--font-mono); letter-spacing: 0.6px; }
+
+  .loose-transistor__body { fill: #171a19; stroke: #5b615e; stroke-width: 0.8; }
+  .loose-transistor__flat { fill: none; stroke: #838986; stroke-width: 0.8; }
+
+  .offcut { fill: none; stroke-width: 4; stroke-linecap: round; }
+  .offcut--red { stroke: #99382f; }
+  .offcut--black { stroke: #181b1a; }
+  .offcut--blue { stroke: #416d93; }
+  .offcut--yellow { stroke: #bf9f3b; }
+  .offcut__copper { fill: none; stroke: #c89b5c; stroke-width: 1.4; stroke-linecap: round; }
+
+  .loose-hardware circle:not(.solder-drop) { fill: #aeb5b4; stroke: #6f7775; stroke-width: 0.8; }
+  .loose-hardware path { fill: none; stroke: #505755; stroke-width: 1.2; }
+  .loose-hardware .solder-drop { fill: #bdc4c2; stroke: #737b78; stroke-width: 0.5; }
+
+  .bench-equipment__solder-cable path { stroke: #171a19; stroke-width: 7; }
+  .bench-equipment__solder-cable .solder-cable__highlight { stroke: #4b514e; stroke-width: 1; opacity: 0.58; }
+  .iron__tip { fill: #8e806c; stroke: #4e4940; stroke-width: 1; }
+  .iron__tip-wear { fill: none; stroke: #35302a; stroke-width: 4; opacity: 0.8; }
+  .iron__barrel { fill: #969e9d; stroke: #7a8281; stroke-width: 0.6; }
+  .iron__barrel-highlight { fill: none; stroke: #d0d5d4; stroke-width: 0.8; opacity: 0.38; }
+  .iron__collar { fill: #262a28; stroke: #59605d; stroke-width: 1; }
+  .iron__handle { fill: #252a28; stroke: #101312; stroke-width: 1.2; }
+  .iron__handle-panel { fill: #9a372f; stroke: #67241f; stroke-width: 0.8; }
+  .iron__vents { fill: none; stroke: #080a09; stroke-width: 2.4; }
+  .iron__wear { fill: none; stroke: #cf7770; stroke-width: 0.6; opacity: 0.14; }
+  .iron__strain-relief { fill: none; stroke: #343a37; stroke-width: 5; }
+
+  .caliper__shadow { display: none; }
+  .caliper__fixed-jaw,
+  .caliper__fixed-inner,
+  .caliper__slider-jaw,
+  .caliper__slider-inner { fill: #aeb5b5; stroke: #8b9393; stroke-width: 0.6; }
+  .caliper__beam { fill: #a4acad; stroke: #858d8d; stroke-width: 0.6; }
+  .caliper__beam-highlight { fill: none; stroke: #d8dddd; stroke-width: 0.8; opacity: 0.4; }
+  .caliper__beam-shadow { fill: none; stroke: #727b79; stroke-width: 1; }
+  .caliper__scale path { fill: none; stroke: #4c5553; stroke-width: 0.8; }
+  .caliper__scale text { fill: #444d4b; font: 6px/1 var(--font-mono); }
+  .caliper__slider { fill: #919a9a; stroke: #7a8282; stroke-width: 0.6; }
+  .caliper__slider-highlight { fill: none; stroke: #ced4d3; stroke-width: 0.7; opacity: 0.38; }
+  .caliper__vernier-bed { fill: #bbc1c1; stroke: #68716f; stroke-width: 0.7; }
+  .caliper__vernier-scale path { fill: none; stroke: #343d3b; stroke-width: 0.8; }
+  .caliper__vernier-scale text { fill: #333b3a; font: 5.5px/1 var(--font-mono); }
+  .caliper__lock path { fill: none; stroke: #646d6b; stroke-width: 3; }
+  .caliper__lock ellipse { fill: #949d9c; stroke: #565e5d; stroke-width: 0.8; }
+  .caliper__lock ellipse + path { stroke: #555d5b; stroke-width: 0.7; }
+  .caliper__wheel circle { fill: #747d7b; stroke: #444c4a; stroke-width: 1; }
+  .caliper__wheel .caliper__wheel-inner { fill: #a8afae; }
+  .caliper__wheel path { fill: none; stroke: #3f4745; stroke-width: 1.4; }
+  .caliper__wear { fill: none; stroke: #edf0ef; stroke-width: 0.6; opacity: 0.16; stroke-linecap: round; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bench-equipment { transform: none; }
+  }
+</style>

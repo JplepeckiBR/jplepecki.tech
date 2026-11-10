@@ -1,0 +1,117 @@
+---
+import { CAL_URL } from '../../config/site';
+
+interface Props {
+  current?: 'projects' | 'posts' | 'loop';
+}
+
+const { current } = Astro.props;
+const links = [
+  { label: 'projects', href: '/projects', key: 'projects' },
+  { label: 'posts', href: '/posts', key: 'posts' },
+  { label: 'how I work', href: '/loop', key: 'loop' },
+] as const;
+---
+
+<header class="site-header">
+  <a class="site-header__home" href="/" aria-label="Back to jplepecki.tech">← jplepecki.tech</a>
+
+  <nav class="site-header__desktop" aria-label="Main navigation">
+    {links.map((link) => (
+      <a class:list={{ current: current === link.key }} href={link.href} aria-current={current === link.key ? 'page' : undefined}>{link.label}</a>
+    ))}
+    {CAL_URL && <a class="site-header__call" href="/call">book a call</a>}
+  </nav>
+
+  <details class="site-header__mobile">
+    <summary>menu</summary>
+    <nav aria-label="Main navigation">
+      {links.map((link) => (
+        <a class:list={{ current: current === link.key }} href={link.href} aria-current={current === link.key ? 'page' : undefined}>{link.label}</a>
+      ))}
+      {CAL_URL && <a class="site-header__call" href="/call">book a call</a>}
+    </nav>
+  </details>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    min-height: 64px;
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #222826;
+    background: var(--ink);
+    font: 13px/1.2 var(--font-mono);
+  }
+
+  .site-header__home,
+  .site-header nav a {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .site-header__home { font-size: 13px; }
+  .site-header__desktop { display: none; }
+  .site-header__mobile { position: relative; }
+
+  .site-header__mobile summary {
+    display: flex;
+    min-width: 58px;
+    min-height: 44px;
+    padding: 0 11px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #4a4f4c;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .site-header__mobile summary::-webkit-details-marker { display: none; }
+
+  .site-header__mobile nav {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 8px);
+    right: 0;
+    display: grid;
+    width: min(78vw, 240px);
+    padding: 8px 14px 14px;
+    border: 1px solid var(--line);
+    background: var(--pcb);
+    box-shadow: var(--shadow-object);
+  }
+
+  .site-header__mobile nav a {
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .site-header nav .current { color: var(--accent); }
+
+  .site-header nav .site-header__call {
+    min-height: 44px;
+    padding: 0 12px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+
+  @media (min-width: 700px) {
+    .site-header {
+      min-height: 67px;
+      padding: 11px 24px;
+      font-size: 13px;
+    }
+
+    .site-header__home { font-size: 14px; }
+    .site-header__desktop { display: flex; align-items: center; gap: 18px; }
+    .site-header__mobile { display: none; }
+  }
+</style>

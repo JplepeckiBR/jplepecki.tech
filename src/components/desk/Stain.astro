@@ -1,0 +1,96 @@
+---
+interface Props {
+  variant?: 'normal' | 'mug';
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+}
+
+const { variant = 'normal', x = 50, y = 50 } = Astro.props;
+const clamp = (value: number, min: number, max: number, fallback: number) =>
+  Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const safeX = clamp(x, -10, 100, 50);
+const safeY = clamp(y, -10, 100, 50);
+const safeWidth = clamp(Astro.props.width ?? (variant === 'mug' ? 96 : 90), 20, 220, 90);
+const safeHeight = clamp(Astro.props.height ?? (variant === 'mug' ? 96 : 64), 20, 220, 64);
+---
+
+<span
+  class:list={['stain', { 'stain--mug': variant === 'mug' }]}
+  style={`--stain-x:${safeX}%;--stain-y:${safeY}%;--stain-width:${safeWidth}px;--stain-height:${safeHeight}px`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .stain {
+    position: absolute;
+    z-index: 1;
+    left: var(--stain-x);
+    top: var(--stain-y);
+    width: var(--stain-width);
+    height: var(--stain-height);
+    border: 1px solid rgba(103, 73, 27, 0.12);
+    border-radius: 61% 39% 54% 46% / 43% 57% 36% 64%;
+    background: radial-gradient(
+      ellipse at 37% 42%,
+      rgba(205, 155, 54, 0.16),
+      rgba(146, 103, 30, 0.11) 46%,
+      rgba(80, 57, 23, 0.05) 67%,
+      transparent 73%
+    );
+    filter: blur(0.2px);
+    transform: rotate(-7deg);
+    pointer-events: none;
+  }
+
+  .stain::before,
+  .stain::after {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(151, 104, 27, 0.08);
+    content: '';
+  }
+
+  .stain::before {
+    width: 15%;
+    height: 12%;
+    right: -9%;
+    bottom: 8%;
+  }
+
+  .stain::after {
+    width: 7%;
+    height: 8%;
+    right: -17%;
+    bottom: -3%;
+  }
+
+  .stain--mug {
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow:
+      inset 0 0 0 3px rgba(62, 39, 20, 0.19),
+      inset 1px -2px 0 5px rgba(87, 50, 21, 0.07);
+    filter: none;
+    transform: rotate(0);
+  }
+
+  .stain--mug::before {
+    inset: 6% 4% 2% 8%;
+    width: auto;
+    height: auto;
+    border: 1px solid rgba(93, 57, 26, 0.11);
+    border-radius: 48% 52% 46% 54%;
+    background: transparent;
+  }
+
+  .stain--mug::after {
+    width: 18%;
+    height: 12%;
+    right: -2%;
+    bottom: 2%;
+    background: rgba(74, 44, 23, 0.1);
+  }
+</style>

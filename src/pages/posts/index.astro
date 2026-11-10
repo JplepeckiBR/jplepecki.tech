@@ -1,0 +1,222 @@
+---
+import BurnMark from '../../components/desk/BurnMark.astro';
+import Stain from '../../components/desk/Stain.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import StatusTape from '../../components/paper/StatusTape.astro';
+import {
+  formatDate,
+  getSiteCollections,
+  loopMetrics,
+  loopNumber,
+  postSeriesLabel,
+  relatedProjectSlugs,
+} from '../../lib/content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const data = await getSiteCollections();
+const posts = data.posts;
+---
+
+<BaseLayout title="Posts" description="Build notes and project posts from João Pedro Lepecki.">
+  <SiteHeader current="posts" />
+
+  <main id="main" class="posts-main desk-mat">
+    <BurnMark x={8} y={21} width={30} height={22} />
+    <BurnMark variant="drag" x={80} y={82} width={110} height={14} />
+    <Stain x={88} y={38} width={72} height={52} />
+
+    <div class="posts-stack">
+      <header class="posts-heading">
+        <span>LAB NOTEBOOK</span>
+        <h1>Posts</h1>
+      </header>
+
+      {posts.length > 0 ? (
+        <ol class="post-list" data-post-list>
+          {posts.map((post) => {
+            const loop = data.loops.find((candidate) => post.data.loopIds.includes(candidate.data.notionId));
+            const metrics = loopMetrics(loop);
+            const number = loopNumber(loop, data.loops);
+            const series = postSeriesLabel(post);
+            const projectSlugs = relatedProjectSlugs(post, data.projects);
+            const date = formatDate(post.data.publishedDate, post.data.inProgress ? 'In progress' : undefined);
+            return (
+              <li data-projects={projectSlugs.join(' ')}>
+                <a class:list={['post-strip', { 'post-strip--progress': post.data.inProgress }]} href={`/posts/${post.data.slug}/`}>
+                  <StatusTape
+                    inProgress={post.data.inProgress}
+                    loopLabel={number ? `LOOP ${number.toString().padStart(2, '0')}` : undefined}
+                    day={metrics?.day}
+                    totalDays={metrics?.length}
+                  />
+                  <span class="post-strip__date">{date}</span>
+                  <span class="post-strip__title">{post.data.title}</span>
+                  {series && <span class="post-strip__series">{series}</span>}
+                  <span class="post-strip__arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <section class="empty-notebook" aria-label="Posts">
+          <p>The notebook is ready for the first published entry.</p>
+        </section>
+      )}
+      <p class="filter-note" data-filter-note hidden></p>
+    </div>
+  </main>
+
+  <script is:inline>
+    (() => {
+      const list = document.querySelector('[data-post-list]');
+      if (!(list instanceof HTMLOListElement)) return;
+      const project = new URLSearchParams(location.search).get('project');
+      if (!project || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project)) return;
+      const rows = [...list.children];
+      let visible = 0;
+      rows.forEach((row) => {
+        const projects = (row.getAttribute('data-projects') || '').split(/\s+/).filter(Boolean);
+        const matches = projects.includes(project);
+        row.toggleAttribute('hidden', !matches);
+        if (matches) visible += 1;
+      });
+      const note = document.querySelector('[data-filter-note]');
+      if (note instanceof HTMLParagraphElement) {
+        note.hidden = false;
+        note.textContent = visible ? `Showing ${visible} ${visible === 1 ? 'post' : 'posts'} for ${project.replaceAll('-', ' ')}.` : `No published posts are linked to ${project.replaceAll('-', ' ')}.`;
+        const clear = document.createElement('a');
+        clear.href = '/posts';
+        clear.textContent = 'Show all posts';
+        note.append(' ', clear);
+      }
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  .posts-main {
+    position: relative;
+    min-height: calc(100vh - 67px);
+    padding: 48px 24px 80px;
+    overflow: hidden;
+  }
+
+  .posts-stack {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 920px);
+    margin: 0 auto;
+  }
+
+  .posts-heading {
+    width: fit-content;
+    margin-bottom: 28px;
+    padding: 16px 20px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-object), var(--wear-cover);
+  }
+
+  .posts-heading span {
+    color: var(--copper);
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+
+  .posts-heading h1 {
+    margin: 2px 0 0;
+    font-size: 46px;
+    line-height: 1.05;
+  }
+
+  .post-list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    gap: 14px;
+    list-style: none;
+  }
+
+  .post-strip {
+    position: relative;
+    display: grid;
+    min-height: 88px;
+    padding: 18px 20px;
+    grid-template-columns: 124px minmax(0, 1fr) auto 28px;
+    gap: 16px;
+    align-items: center;
+    border: 1px solid var(--line);
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.28), var(--wear-cover);
+    text-decoration: none;
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .post-strip--progress { min-height: 112px; padding-top: 42px; }
+
+  .post-strip:hover,
+  .post-strip:focus-visible {
+    box-shadow: 0 14px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-3px);
+  }
+
+  .post-strip__date,
+  .post-strip__series,
+  .post-strip__arrow {
+    font-family: var(--font-mono);
+  }
+
+  .post-strip__date { color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+  .post-strip__title { min-width: 0; font-size: 22px; line-height: 1.2; }
+  .post-strip__series { color: var(--text-muted); font-size: 11px; text-align: right; text-transform: uppercase; }
+  .post-strip__arrow { color: var(--accent); font-size: 16px; }
+
+  .empty-notebook {
+    max-width: 620px;
+    padding: 32px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-object), var(--wear-cover);
+  }
+
+  .empty-notebook p { margin: 0; color: var(--text-body); font-size: 19px; }
+
+  .filter-note {
+    margin: 18px 0 0;
+    padding: 12px 16px;
+    background-color: var(--pcb);
+    background-image: var(--texture-dark);
+    color: var(--text-muted);
+    font: 12px/1.6 var(--font-mono);
+  }
+
+  .filter-note :global(a) { color: var(--accent); }
+
+  @media (max-width: 700px) {
+    .posts-main { padding: 30px 12px 56px; }
+    .posts-heading { margin-bottom: 20px; padding: 13px 16px; }
+    .posts-heading h1 { font-size: 36px; }
+    .post-list { gap: 11px; }
+    .post-strip,
+    .post-strip--progress {
+      min-height: 104px;
+      padding: 18px 16px;
+      grid-template-columns: minmax(0, 1fr) 24px;
+      gap: 7px 10px;
+    }
+    .post-strip--progress { min-height: 132px; padding-top: 43px; }
+    .post-strip__date,
+    .post-strip__series { grid-column: 1; text-align: left; }
+    .post-strip__title { grid-column: 1; grid-row: 2; font-size: 20px; }
+    .post-strip__series { grid-row: 3; }
+    .post-strip__arrow { grid-column: 2; grid-row: 1 / span 3; align-self: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-strip:hover,
+    .post-strip:focus-visible { transform: none; }
+  }
+</style>

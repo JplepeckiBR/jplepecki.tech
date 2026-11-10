@@ -1,0 +1,77 @@
+---
+interface Props {
+  svg?: string;
+  text?: string;
+  x?: number;
+  y?: number;
+  rotation?: number;
+  width?: number;
+  height?: number;
+}
+
+const noteAssets = import.meta.glob<string>('/src/assets/notes/*.svg', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+});
+
+const { svg, text, x = 0, y = 0, rotation = 0, width = 180, height = 72 } = Astro.props;
+const cleanText = (value: unknown) => {
+  if (typeof value !== 'string') return undefined;
+  const cleaned = value.trim();
+  if (!cleaned || /\[[^\]]*\]/.test(cleaned) || /TODO(?:\(JP\))?/i.test(cleaned)) return undefined;
+  return cleaned;
+};
+const clamp = (value: number, min: number, max: number, fallback: number) =>
+  Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const fileName = typeof svg === 'string' && /^[a-z0-9][a-z0-9._-]*\.svg$/i.test(svg) ? svg : undefined;
+const svgUrl = fileName ? noteAssets[`/src/assets/notes/${fileName}`] : undefined;
+const fallbackText = cleanText(text);
+const safeX = clamp(x, -5, 100, 0);
+const safeY = clamp(y, -5, 100, 0);
+const safeRotation = clamp(rotation, -3, 3, 0);
+const safeWidth = clamp(width, 24, 480, 180);
+const safeHeight = clamp(height, 16, 240, 72);
+---
+
+{
+  (svgUrl || fallbackText) && (
+    <span
+      class="pencil-note"
+      style={`--note-x:${safeX}%;--note-y:${safeY}%;--note-rotation:${safeRotation}deg;--note-width:${safeWidth}px;--note-height:${safeHeight}px`}
+      aria-hidden="true"
+    >
+      {svgUrl ? (
+        <img src={svgUrl} width={safeWidth} height={safeHeight} alt="" loading="eager" />
+      ) : (
+        <span>{fallbackText}</span>
+      )}
+    </span>
+  )
+}
+
+<style>
+  .pencil-note {
+    position: absolute;
+    z-index: 0;
+    left: var(--note-x);
+    top: var(--note-y);
+    display: block;
+    width: var(--note-width);
+    min-height: var(--note-height);
+    color: var(--pencil);
+    font: 13px/1.45 var(--font-mono);
+    white-space: pre-line;
+    transform: rotate(var(--note-rotation));
+    transform-origin: left top;
+    pointer-events: none;
+  }
+
+  .pencil-note img {
+    width: var(--note-width);
+    height: var(--note-height);
+    object-fit: contain;
+    object-position: left top;
+    opacity: 0.82;
+  }
+</style>

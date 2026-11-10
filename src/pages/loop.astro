@@ -1,0 +1,297 @@
+---
+import BurnMark from '../components/desk/BurnMark.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import LabLoopSchematic from '../components/loop/LabLoopSchematic.astro';
+import { getSiteCollections, loopMetrics, loopNumber, optionalVisitorText, projectPostHref } from '../lib/content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const data = await getSiteCollections();
+const currentLoop = data.loops.find((loop) => loop.data.isCurrent);
+const currentMetrics = loopMetrics(currentLoop);
+const currentNumber = loopNumber(currentLoop, data.loops);
+const readme = data.readme[0]?.data;
+// TODO(JP): Add the one-paragraph Lab Loop explanation to Notion; the current loop goal is project-specific and must not substitute for it.
+const intro: string | undefined = undefined;
+
+const revisionLabel = (index: number) => {
+  let label = '';
+  let cursor = index + 1;
+  while (cursor > 0) {
+    cursor -= 1;
+    label = String.fromCharCode(65 + (cursor % 26)) + label;
+    cursor = Math.floor(cursor / 26);
+  }
+  return label;
+};
+
+const loops = [...data.loops].sort((a, b) =>
+  (b.data.startDate ?? '').localeCompare(a.data.startDate ?? '') || a.data.name.localeCompare(b.data.name),
+);
+---
+
+<BaseLayout title="The Lab Loop" description={intro}>
+  <SiteHeader current="loop" />
+
+  <main
+    id="main"
+    class="loop-main desk-mat"
+    data-live-loop
+    data-loop-start={currentLoop?.data.startDate}
+    data-loop-end={currentLoop?.data.endDate}
+  >
+    <BurnMark x={91} y={5} width={34} height={24} />
+
+    <div class="loop-stack">
+      <header class="loop-intro">
+        <h1>The Lab Loop</h1>
+        {intro && <p>{intro}</p>}
+      </header>
+
+      <section class="schematic-sheet" aria-label="Lab Loop schematic and framework notes">
+        <span class="tape tape--left" aria-hidden="true"></span>
+        <span class="tape tape--right" aria-hidden="true"></span>
+        <LabLoopSchematic
+          loopLength={currentMetrics?.length}
+          loopNumber={currentNumber}
+          stage={currentLoop?.data.stage}
+          day={currentMetrics?.day}
+        />
+
+        {(readme?.loopNotes.length || readme?.changelog.length) && (
+          <div class="sheet-notes">
+            {readme.loopNotes.length > 0 && (
+              <section aria-labelledby="notes-title">
+                <h2 id="notes-title">Notes:</h2>
+                <ol>
+                  {readme.loopNotes.map((note) => <li>{note}</li>)}
+                </ol>
+              </section>
+            )}
+
+            {readme.changelog.length > 0 && (
+              <div class="revision-scroll" tabindex="0" role="region" aria-label="Scrollable Lab Loop revision history">
+                <table>
+                  <caption class="sr-only">Lab Loop revision history</caption>
+                  <thead><tr><th scope="col">REV</th><th scope="col">DATE</th><th scope="col">CHANGE</th></tr></thead>
+                  <tbody>
+                    {readme.changelog.map((entry, index) => (
+                      <tr><th scope="row">{revisionLabel(index)}</th><td>{entry.date ?? '—'}</td><td>{entry.change}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {loops.length > 0 && (
+        <section class="loops-so-far" aria-labelledby="loops-title">
+          <h2 id="loops-title">LOOPS SO FAR</h2>
+          <div class="loop-list">
+            {loops.map((loop) => {
+              const project = data.projects.find((candidate) => loop.data.projectIds.includes(candidate.data.notionId));
+              const metrics = loopMetrics(loop);
+              const number = loopNumber(loop, data.loops);
+              const href = project ? projectPostHref(project) : '/posts';
+              const status = optionalVisitorText(loop.data.status);
+              return (
+                <a
+                  class:list={['loop-row', { 'loop-row--current': loop.data.isCurrent }]}
+                  href={href}
+                  id={loop.data.isCurrent ? 'current-loop' : undefined}
+                >
+                  <span>{number ? `Loop ${number.toString().padStart(2, '0')} · ` : ''}{project?.data.name ?? loop.data.name}</span>
+                  {(status || metrics) && (
+                    <span class="loop-row__meta">
+                      {status}{status && metrics ? ' · ' : ''}{metrics && <span data-loop-day={loop.data.isCurrent ? 'current' : undefined}>{metrics.day}/{metrics.length}</span>}
+                    </span>
+                  )}
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </div>
+  </main>
+
+  <script is:inline>
+    (() => {
+      const root = document.querySelector('[data-live-loop]');
+      if (!(root instanceof HTMLElement)) return;
+      const start = root.dataset.loopStart;
+      const end = root.dataset.loopEnd;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(start || '') || !/^\d{4}-\d{2}-\d{2}$/.test(end || '')) return;
+      const parse = (value) => Date.parse(`${value}T00:00:00Z`);
+      const startMs = parse(start);
+      const endMs = parse(end);
+      const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+      const todayMs = parse(formatter.format(new Date()));
+      if (![startMs, endMs, todayMs].every(Number.isFinite) || endMs < startMs) return;
+      const length = Math.floor((endMs - startMs) / 86400000) + 1;
+      const day = Math.min(length, Math.max(1, Math.floor((todayMs - startMs) / 86400000) + 1));
+      root.querySelectorAll('[data-loop-day]').forEach((node) => { node.textContent = `${day}/${length}`; });
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  .loop-main {
+    position: relative;
+    min-height: calc(100vh - 67px);
+    padding: 48px 24px 80px;
+    overflow: hidden;
+  }
+
+  .loop-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    flex-direction: column;
+    gap: 36px;
+  }
+
+  .loop-intro {
+    max-width: 720px;
+  }
+
+  .loop-intro h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 46px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  .loop-intro p {
+    margin: 10px 0 0;
+    color: #eaf1ec;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+
+  .schematic-sheet {
+    position: relative;
+    min-width: 0;
+    padding: 28px;
+    background-color: var(--paper-bright);
+    background-image: var(--texture-paper);
+    box-shadow: 0 16px 28px rgba(0, 0, 0, 0.4), var(--wear-paper);
+    color: var(--text-on-paper);
+    transform: rotate(-0.4deg);
+  }
+
+  .tape {
+    position: absolute;
+    z-index: 2;
+    top: -12px;
+    width: 90px;
+    height: 24px;
+    background: var(--tape);
+  }
+
+  .tape--left { left: 40px; }
+  .tape--right { right: 40px; }
+
+  .sheet-notes {
+    display: grid;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 2px solid var(--text-on-paper);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .sheet-notes h2 {
+    margin: 0;
+    font: 600 13px/1.8 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .sheet-notes ol {
+    margin: 0;
+    padding-left: 2.3em;
+    font: 13px/1.8 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .revision-scroll { max-width: 100%; overflow-x: auto; }
+  .revision-scroll:focus-visible { outline: 3px solid var(--danger); outline-offset: 3px; }
+
+  table {
+    width: 100%;
+    min-width: 420px;
+    border: 2px solid var(--text-on-paper);
+    border-collapse: collapse;
+    font: 12px/1.45 var(--font-mono);
+  }
+
+  th,
+  td {
+    padding: 7px 8px;
+    border-right: 1px solid var(--text-on-paper);
+    border-bottom: 1px solid var(--text-on-paper);
+    text-align: left;
+  }
+
+  th:first-child { width: 60px; }
+  th:nth-child(2), td:nth-child(2) { width: 110px; }
+  tr:last-child > * { border-bottom: 0; }
+  tr > *:last-child { border-right: 0; }
+
+  .loops-so-far h2 {
+    margin: 0 0 12px;
+    color: #fff;
+    font: 13px/1.4 var(--font-mono);
+  }
+
+  .loop-list { display: flex; max-width: 720px; flex-direction: column; gap: 12px; }
+
+  .loop-row {
+    display: flex;
+    min-height: 58px;
+    padding: 14px 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background-color: var(--pcb);
+    background-image: var(--texture-dark);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.24), var(--wear-cover);
+    font-size: 19px;
+    text-decoration: none;
+  }
+
+  .loop-row:hover,
+  .loop-row:focus-visible { transform: translateY(-2px); }
+
+  .loop-row__meta {
+    flex: 0 0 auto;
+    color: var(--text-muted);
+    font: 12px/1.4 var(--font-mono);
+    text-transform: lowercase;
+  }
+
+  .loop-row--current .loop-row__meta { color: var(--accent); }
+
+  @media (max-width: 700px) {
+    .loop-main { padding: 32px 12px 56px; }
+    .loop-stack { gap: 26px; }
+    .loop-intro { padding-inline: 4px; }
+    .loop-intro h1 { font-size: 36px; }
+    .loop-intro p { font-size: 18px; }
+    .schematic-sheet { padding: 22px 14px; transform: none; }
+    .tape--left { left: 24px; }
+    .tape--right { right: 24px; }
+    .sheet-notes { grid-template-columns: 1fr; }
+    .loop-row { align-items: flex-start; flex-direction: column; gap: 5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .loop-row:hover,
+    .loop-row:focus-visible { transform: none; }
+  }
+</style>

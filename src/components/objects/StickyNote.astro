@@ -1,0 +1,53 @@
+---
+import { clampRotation, cleanText } from './_shared';
+
+interface Props {
+  loop?: string | number;
+  day?: number;
+  length?: number;
+  stage?: string;
+  rotation?: number;
+}
+
+const { loop, day, length, stage, rotation = -3 } = Astro.props;
+const safeLoop = cleanText(loop);
+const safeStage = cleanText(stage);
+const safeDay = typeof day === 'number' && Number.isFinite(day) && day >= 0 ? Math.floor(day) : undefined;
+const safeLength =
+  typeof length === 'number' && Number.isFinite(length) && length > 0 ? Math.floor(length) : undefined;
+const showDay = safeDay !== undefined && safeLength !== undefined;
+const safeRotation = clampRotation(rotation, -3);
+---
+
+{
+  (safeLoop || showDay || safeStage) && (
+    <span class="sticky-note" style={`--sticky-rotation:${safeRotation}deg`}>
+      {safeLoop && <span>LOOP {safeLoop}</span>}
+      {showDay && <span>day {safeDay}/{safeLength}</span>}
+      {safeStage && <span class="sticky-note__stage">{safeStage}</span>}
+    </span>
+  )
+}
+
+<style>
+  .sticky-note {
+    display: block;
+    width: 120px;
+    padding: 10px;
+    background-color: var(--sticky);
+    background-image: var(--texture-paper);
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.22), var(--wear-paper);
+    color: var(--text-on-paper);
+    font: 12px/1.5 var(--font-mono);
+    transform: rotate(var(--sticky-rotation));
+  }
+
+  .sticky-note > span {
+    display: block;
+    overflow-wrap: anywhere;
+  }
+
+  .sticky-note__stage {
+    text-transform: uppercase;
+  }
+</style>

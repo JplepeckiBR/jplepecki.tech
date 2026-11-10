@@ -1,0 +1,151 @@
+---
+import { cleanHref, cleanText } from './_shared';
+
+interface Part {
+  number: number;
+  name: string;
+  hint: string;
+  href?: string;
+  dnp?: boolean;
+  tooltip?: string;
+}
+
+interface Props {
+  items: Part[];
+}
+
+const { items } = Astro.props;
+const rows = Array.isArray(items)
+  ? items
+      .map((item) => {
+        const number =
+          typeof item.number === 'number' && Number.isFinite(item.number) && item.number > 0
+            ? Math.floor(item.number)
+            : undefined;
+        return {
+          number,
+          name: cleanText(item.name),
+          hint: cleanText(item.hint),
+          href: cleanHref(item.href),
+          dnp: item.dnp === true,
+          tooltip: cleanText(item.tooltip),
+        };
+      })
+      .filter((item) => item.number !== undefined && item.name && item.hint && (item.href || item.dnp))
+  : [];
+const dnpCount = rows.filter((item) => item.dnp).length;
+---
+
+{
+  rows.length > 0 && (
+    <section class="parts-list" aria-label="Desk parts list">
+      <header class="parts-list__header">
+        <span>PARTS LIST</span>
+        <span>QTY {rows.length} · {dnpCount} DNP</span>
+      </header>
+      <div>
+        {rows.map((item) =>
+          item.href && !item.dnp ? (
+            <a class="parts-list__row" href={item.href}>
+              <span class="parts-list__number">{item.number}</span>
+              <span class="parts-list__name">{item.name}</span>
+              <span class="parts-list__hint">{item.hint}</span>
+            </a>
+          ) : (
+            <div
+              class="parts-list__row parts-list__row--dnp"
+              role="note"
+              aria-label={`${item.name}, not populated`}
+              title={item.tooltip ?? `${item.name} · coming later`}
+            >
+              <span class="parts-list__number">{item.number}</span>
+              <span class="parts-list__name">{item.name}</span>
+              <span class="parts-list__hint">DNP · {item.hint}</span>
+            </div>
+          ),
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .parts-list {
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    background-color: var(--pcb);
+    background-image: var(--texture-dark);
+    color: var(--text);
+  }
+
+  .parts-list__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-muted);
+    font: 11px/1.4 var(--font-mono);
+  }
+
+  .parts-list__row {
+    display: grid;
+    min-height: 50px;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line-subtle);
+    text-decoration: none;
+  }
+
+  .parts-list__row:last-child {
+    border-bottom: 0;
+  }
+
+  a.parts-list__row:hover .parts-list__name,
+  a.parts-list__row:focus-visible .parts-list__name {
+    color: var(--accent);
+  }
+
+  .parts-list__number,
+  .parts-list__hint {
+    font-family: var(--font-mono);
+  }
+
+  .parts-list__number {
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .parts-list__name {
+    min-width: 0;
+    font-size: 17px;
+    overflow-wrap: anywhere;
+  }
+
+  .parts-list__hint {
+    color: var(--text-muted);
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .parts-list__row--dnp {
+    color: var(--text-muted);
+  }
+
+  .parts-list__row--dnp .parts-list__number {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 460px) {
+    .parts-list__row {
+      grid-template-columns: 24px minmax(0, 1fr);
+    }
+
+    .parts-list__hint {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+</style>

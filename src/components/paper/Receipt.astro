@@ -1,0 +1,165 @@
+---
+import { cleanText, isIsoDate } from './_shared';
+
+interface ReceiptLine {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  store: string;
+  date?: string;
+  dateTime?: string;
+  items: ReceiptLine[];
+  tax?: ReceiptLine;
+  total: ReceiptLine;
+  ariaLabel?: string;
+}
+
+const { store, date, dateTime, items = [], tax, total, ariaLabel } = Astro.props;
+const safeStore = cleanText(store);
+const safeDate = cleanText(date);
+const safeDateTime = isIsoDate(dateTime) ? dateTime : undefined;
+const safeItems = items
+  .map((item) => ({ label: cleanText(item?.label), value: cleanText(item?.value) }))
+  .filter((item): item is { label: string; value: string } => Boolean(item.label && item.value));
+const safeTax = tax
+  ? { label: cleanText(tax.label), value: cleanText(tax.value) }
+  : undefined;
+const safeTotal = total
+  ? { label: cleanText(total.label), value: cleanText(total.value) }
+  : undefined;
+const safeAriaLabel = cleanText(ariaLabel);
+const canRender = Boolean(safeStore && safeItems.length && safeTotal?.label && safeTotal.value);
+---
+
+{
+  canRender && safeStore && safeTotal?.label && safeTotal.value && (
+    <section class="receipt" aria-label={safeAriaLabel ?? `Receipt from ${safeStore}`}>
+      <header class="receipt__header">
+        <strong class="receipt__store">{safeStore}</strong>
+        {safeDate &&
+          (safeDateTime ? (
+            <time class="receipt__date" datetime={safeDateTime}>{safeDate}</time>
+          ) : (
+            <span class="receipt__date">{safeDate}</span>
+          ))}
+      </header>
+
+      <dl class="receipt__lines">
+        {safeItems.map((item) => (
+          <div class="receipt__line">
+            <dt>{item.label}</dt>
+            <dd>{item.value}</dd>
+          </div>
+        ))}
+        {safeTax?.label && safeTax.value && (
+          <div class="receipt__line receipt__line--tax">
+            <dt>{safeTax.label}</dt>
+            <dd>{safeTax.value}</dd>
+          </div>
+        )}
+      </dl>
+
+      <dl class="receipt__total">
+        <div class="receipt__line">
+          <dt>{safeTotal.label}</dt>
+          <dd>{safeTotal.value}</dd>
+        </div>
+      </dl>
+    </section>
+  )
+}
+
+<style>
+  .receipt {
+    width: 100%;
+    min-width: 0;
+    padding: 18px;
+    transform: rotate(1.5deg);
+    background-color: var(--paper-bright);
+    background-image: var(--texture-paper);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), var(--wear-paper);
+    color: var(--text-on-paper);
+    font: 12px/1.8 var(--font-mono);
+  }
+
+  .receipt__header {
+    text-align: center;
+  }
+
+  .receipt__store,
+  .receipt__date {
+    display: block;
+  }
+
+  .receipt__store {
+    font-weight: 600;
+  }
+
+  .receipt__date,
+  .receipt__line--tax {
+    color: #555b57;
+  }
+
+  .receipt__lines,
+  .receipt__total {
+    margin: 8px 0 0;
+    padding: 8px 0 0;
+    border-top: 1px dashed #8a908c;
+  }
+
+  .receipt__line {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+
+  .receipt__line dt,
+  .receipt__line dd {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .receipt__line dt {
+    overflow-wrap: anywhere;
+  }
+
+  .receipt__line dd {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .receipt__total {
+    font-weight: 600;
+  }
+
+  @media (max-width: 1099px) {
+    .receipt {
+      padding: 14px;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .receipt__store,
+    .receipt__date {
+      display: inline;
+    }
+
+    .receipt__date::before {
+      content: ' · ';
+    }
+
+    .receipt__lines,
+    .receipt__total {
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .receipt {
+      transition: none;
+    }
+  }
+</style>

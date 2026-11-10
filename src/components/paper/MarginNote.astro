@@ -1,0 +1,95 @@
+---
+import { clampRotation, cleanText, isLocalAssetPath } from './_shared';
+
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+  ariaLabel?: string;
+  rotation?: number;
+  loading?: 'eager' | 'lazy';
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  caption,
+  ariaLabel,
+  rotation = -1.5,
+  loading = 'lazy',
+} = Astro.props;
+const safeSrc = isLocalAssetPath(src) ? src.trim() : undefined;
+const safeAlt = cleanText(alt);
+const safeCaption = cleanText(caption);
+const safeAriaLabel = cleanText(ariaLabel);
+const safeWidth =
+  typeof width === 'number' && Number.isInteger(width) && width > 0 ? width : undefined;
+const safeHeight =
+  typeof height === 'number' && Number.isInteger(height) && height > 0 ? height : undefined;
+const safeRotation = clampRotation(rotation, -1.5);
+const canRender = Boolean(safeSrc && safeAlt && safeWidth && safeHeight);
+---
+
+{
+  canRender && safeSrc && safeAlt && safeWidth && safeHeight && (
+    <aside
+      class="margin-note"
+      aria-label={safeAriaLabel ?? 'Margin note'}
+      style={`--margin-note-rotation: ${safeRotation}deg`}
+    >
+      <figure>
+        <img
+          src={safeSrc}
+          alt={safeAlt}
+          width={safeWidth}
+          height={safeHeight}
+          loading={loading}
+          decoding="async"
+        />
+        {safeCaption && <figcaption>{safeCaption}</figcaption>}
+      </figure>
+    </aside>
+  )
+}
+
+<style>
+  .margin-note {
+    width: 100%;
+    min-width: 0;
+    transform: rotate(var(--margin-note-rotation));
+    color: var(--pencil);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    margin-top: 8px;
+    color: var(--pencil);
+    font: 11px/1.45 var(--font-mono);
+    text-align: center;
+  }
+
+  @media (max-width: 1099px) {
+    .margin-note {
+      max-width: 100%;
+      margin: 4px 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .margin-note {
+      transition: none;
+    }
+  }
+</style>

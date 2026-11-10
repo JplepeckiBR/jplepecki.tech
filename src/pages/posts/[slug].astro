@@ -1,0 +1,307 @@
+---
+import type { GetStaticPaths, ImageMetadata } from 'astro';
+import BurnMark from '../../components/desk/BurnMark.astro';
+import Stain from '../../components/desk/Stain.astro';
+import PostContent from '../../components/content/PostContent.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import Polaroid from '../../components/objects/Polaroid.astro';
+import ContentsCard from '../../components/paper/ContentsCard.astro';
+import MarginNote from '../../components/paper/MarginNote.astro';
+import StatusTape from '../../components/paper/StatusTape.astro';
+import {
+  formatDate,
+  getSiteCollections,
+  loopMetrics,
+  loopNumber,
+  optionalVisitorText,
+  postSeriesLabel,
+  readingMinutes,
+  seriesNeighbors,
+  type Post,
+} from '../../lib/content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+interface Props { post: Post }
+
+export const getStaticPaths = (async () => {
+  const data = await getSiteCollections();
+  return data.posts.map((post) => {
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.data.slug)) {
+      throw new Error(`Post slug "${post.data.slug}" must be URL-safe kebab case`);
+    }
+    return { params: { slug: post.data.slug }, props: { post } };
+  });
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const data = await getSiteCollections();
+const loop = data.loops.find((candidate) => post.data.loopIds.includes(candidate.data.notionId));
+const metrics = loopMetrics(loop);
+const number = loopNumber(loop, data.loops);
+const neighbors = seriesNeighbors(post, data.posts);
+const series = postSeriesLabel(post);
+const displayDate = formatDate(post.data.publishedDate);
+const minutes = readingMinutes(post);
+const excerpt = optionalVisitorText(post.data.excerpt);
+const hero = post.data.hero?.asset as ImageMetadata | undefined;
+const publishedTime = post.data.publishedDate ? new Date(`${post.data.publishedDate}T00:00:00Z`) : undefined;
+const marginNotes = post.data.blocks
+  .filter((block: any) => block.type === 'marginNote' && block.image?.asset)
+  .map((block: any) => ({ ...block.image, asset: block.image.asset as ImageMetadata }));
+const metadata = [series, displayDate, `${minutes} MIN READ`].filter(Boolean);
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={excerpt}
+  image={`/og/${post.data.slug}.png`}
+  type="article"
+  publishedTime={publishedTime}
+>
+  <SiteHeader current="posts" />
+
+  <main
+    id="main"
+    class="post-main desk-mat"
+    data-post-loop
+    data-loop-start={loop?.data.startDate}
+    data-loop-end={loop?.data.endDate}
+  >
+    <BurnMark x={8} y={12} width={30} height={22} />
+    <BurnMark variant="drag" x={88} y={58} width={110} height={14} />
+    <Stain x={12} y={72} width={80} height={58} />
+
+    <div class="post-grid">
+      <aside class="margin-column" aria-label="Margin notes">
+        {marginNotes.map((note, index) => (
+          <div style={`--note-offset:${index === 0 ? 300 : 220}px`}>
+            <MarginNote
+              src={note.asset.src}
+              alt={note.alt}
+              width={note.asset.width}
+              height={note.asset.height}
+              caption={note.caption}
+              rotation={index % 2 === 0 ? -3 : 2}
+            />
+          </div>
+        ))}
+      </aside>
+
+      <article class="article-page">
+        <StatusTape
+          inProgress={post.data.inProgress}
+          loopLabel={number ? `LOOP ${number.toString().padStart(2, '0')}` : undefined}
+          day={metrics?.day}
+          totalDays={metrics?.length}
+        />
+
+        {metadata.length > 0 && <p class:list={['article-meta', { 'article-meta--taped': post.data.inProgress }]}>{metadata.join(' · ')}</p>}
+        <h1>{post.data.title}</h1>
+        {excerpt && <p class="article-dek">{excerpt}</p>}
+
+        {post.data.contents.length > 0 && (
+          <div class="mobile-contents"><ContentsCard items={post.data.contents} /></div>
+        )}
+
+        {hero && post.data.hero && (
+          <figure class="hero-polaroid">
+            <Polaroid
+              href={hero.src}
+              image={hero}
+              alt={post.data.hero.alt}
+              linkLabel={`Open full-size hero image: ${post.data.hero.alt}`}
+              actionLabel={post.data.hero.caption}
+              rotation={-1}
+              width={480}
+            />
+          </figure>
+        )}
+
+        <div class="article-body">
+          <PostContent
+            blocks={post.data.blocks}
+            buildLog={post.data.buildLog}
+            buildLogSource={post.data.buildLogSource}
+          />
+        </div>
+
+        {(neighbors.previous || neighbors.next) && (
+          <nav class="series-nav" aria-label="More parts in this series">
+            {neighbors.previous && (
+              <a href={`/posts/${neighbors.previous.data.slug}/`}>
+                <span aria-hidden="true">←</span>
+                <span>previous · part {neighbors.previous.data.part}: {neighbors.previous.data.title}</span>
+              </a>
+            )}
+            {neighbors.next && (
+              <a class="series-nav__next" href={`/posts/${neighbors.next.data.slug}/`}>
+                <span>next · part {neighbors.next.data.part}: {neighbors.next.data.title}</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            )}
+          </nav>
+        )}
+      </article>
+
+      <aside class="contents-column" aria-label="Article contents">
+        {post.data.contents.length > 0 && <ContentsCard items={post.data.contents} />}
+      </aside>
+    </div>
+  </main>
+
+  {post.data.inProgress && loop?.data.startDate && loop.data.endDate && (
+    <script is:inline>
+      (() => {
+        const root = document.querySelector('[data-post-loop]');
+        if (!(root instanceof HTMLElement)) return;
+        const start = root.dataset.loopStart;
+        const end = root.dataset.loopEnd;
+        const parse = (value) => Date.parse(`${value}T00:00:00Z`);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(start || '') || !/^\d{4}-\d{2}-\d{2}$/.test(end || '')) return;
+        const startMs = parse(start);
+        const endMs = parse(end);
+        const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+        const todayMs = parse(formatter.format(new Date()));
+        if (![startMs, endMs, todayMs].every(Number.isFinite) || endMs < startMs) return;
+        const length = Math.floor((endMs - startMs) / 86400000) + 1;
+        const day = Math.min(length, Math.max(1, Math.floor((todayMs - startMs) / 86400000) + 1));
+        root.querySelectorAll('.status-tape span').forEach((node) => {
+          node.textContent = (node.textContent || '').replace(/DAY \d+\/\d+/, `DAY ${day}/${length}`);
+        });
+      })();
+    </script>
+  )}
+</BaseLayout>
+
+<style>
+  .post-main {
+    position: relative;
+    min-height: calc(100vh - 67px);
+    padding: 56px 24px 80px;
+    overflow: hidden;
+  }
+
+  .post-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 720px) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .margin-column {
+    display: flex;
+    min-width: 0;
+    padding-top: 60px;
+    flex-direction: column;
+  }
+
+  .margin-column > div + div { margin-top: var(--note-offset); }
+
+  .article-page {
+    position: relative;
+    min-width: 0;
+    padding: 56px 56px 64px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.45), var(--wear-cover);
+  }
+
+  .article-meta {
+    margin: 0 0 22px;
+    color: var(--text-muted);
+    font: 12px/1.5 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .article-meta--taped { margin-top: 18px; }
+
+  .article-page > h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 46px;
+    font-weight: 600;
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .article-dek {
+    margin: 18px 0 0;
+    color: #c9cec9;
+    font-size: 21px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .hero-polaroid {
+    display: flex;
+    margin: 30px 0;
+    justify-content: center;
+  }
+
+  .article-body { min-width: 0; }
+  .mobile-contents { display: none; }
+  .contents-column { min-width: 0; }
+  :global(.article-page .contents-card__link) { min-height: 44px !important; line-height: 44px !important; }
+
+  .series-nav {
+    display: flex;
+    margin-top: 38px;
+    padding-top: 20px;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .series-nav a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    font: 14px/1.5 var(--font-mono);
+    text-decoration: none;
+  }
+
+  .series-nav a:hover,
+  .series-nav a:focus-visible { color: var(--accent); }
+  .series-nav__next { text-align: right; }
+
+  @media (min-width: 1100px) {
+    .article-body :global(.margin-note-block) { display: none; }
+  }
+
+  @media (max-width: 1099px) {
+    .post-main {
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .post-grid {
+      display: block;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .margin-column,
+    .contents-column { display: none; }
+
+    .article-page {
+      padding: 40px 18px 34px;
+      box-shadow: none;
+    }
+
+    .article-page > h1 { font-size: 32px; line-height: 1.15; }
+    .article-meta { margin-bottom: 18px; font-size: 11px; }
+    .article-meta--taped { margin-top: 13px; }
+    .article-dek { margin-top: 14px; font-size: 18px; line-height: 1.55; }
+    .mobile-contents { display: block; margin: 22px 0; }
+    .hero-polaroid { margin: 24px 0; }
+    .series-nav { margin-top: 30px; }
+  }
+</style>

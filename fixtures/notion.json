@@ -1,0 +1,431 @@
+{
+  "version": 1,
+  "dataSources": {
+    "posts": {
+      "name": "Studies & Blog",
+      "properties": {
+        "Title": { "type": "title" },
+        "Slug": { "type": "rich_text" },
+        "Site status": { "type": "select" },
+        "Published date": { "type": "date" },
+        "Series": { "type": "select" },
+        "Part": { "type": "number" },
+        "Excerpt": { "type": "rich_text" },
+        "Hero": { "type": "files" },
+        "Status": { "type": "status" },
+        "Topics": { "type": "multi_select" },
+        "Projects": { "type": "relation" },
+        "Work": { "type": "relation" },
+        "Loop": { "type": "relation" }
+      },
+      "pages": [
+        {
+          "id": "fixture-post-planning-the-setup",
+          "properties": {
+            "Title": { "type": "title", "title": [{ "plain_text": "Planning the setup" }] },
+            "Slug": { "type": "rich_text", "rich_text": [{ "plain_text": "planning-the-setup" }] },
+            "Site status": { "type": "select", "select": { "name": "In progress" } },
+            "Published date": { "type": "date", "date": null },
+            "Series": { "type": "select", "select": { "name": "Smart Vivarium" } },
+            "Part": { "type": "number", "number": 1 },
+            "Excerpt": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture sample assembled from the archived Smart Vivarium research." }] },
+            "Hero": {
+              "type": "files",
+              "files": [{
+                "name": "vivarium-schematic.svg",
+                "type": "fixture",
+                "fixture": {
+                  "path": "src/assets/notion-fixtures/vivarium-schematic.svg",
+                  "alt": "Schematic fixture of a 60 by 45 by 90 centimetre vivarium enclosure with climate sensing points"
+                }
+              }]
+            },
+            "Status": { "type": "status", "status": { "name": "Planning" } },
+            "Topics": { "type": "multi_select", "multi_select": [{ "name": "vivarium" }, { "name": "embedded" }, { "name": "sensors" }] },
+            "Projects": { "type": "relation", "relation": [{ "id": "fixture-project-smart-vivarium" }] },
+            "Work": { "type": "relation", "relation": [] },
+            "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
+          },
+          "blocks": [
+            {
+              "id": "fixture-heading-planning",
+              "type": "heading_2",
+              "has_children": false,
+              "heading_2": { "rich_text": [{ "plain_text": "Planning the ecosystem" }] }
+            },
+            {
+              "id": "fixture-paragraph-enclosure",
+              "type": "paragraph",
+              "has_children": false,
+              "paragraph": {
+                "rich_text": [
+                  { "plain_text": "The archived plan specifies a ", "annotations": {} },
+                  { "plain_text": "60 × 45 × 90 cm", "annotations": { "bold": true } },
+                  { "plain_text": " enclosure and a remotely controlled climate system.", "annotations": {} }
+                ]
+              }
+            },
+            {
+              "id": "fixture-vivarium-image",
+              "type": "image",
+              "has_children": false,
+              "image": {
+                "type": "fixture",
+                "fixture": {
+                  "path": "src/assets/notion-fixtures/vivarium-schematic.svg",
+                  "alt": "Line schematic of the planned 60 by 45 by 90 centimetre vivarium enclosure"
+                },
+                "caption": [{ "plain_text": "Local schematic fixture, not a photograph" }]
+              }
+            },
+            {
+              "id": "fixture-receipt",
+              "type": "callout",
+              "has_children": false,
+              "callout": {
+                "icon": { "type": "emoji", "emoji": "🧾" },
+                "rich_text": [{ "plain_text": "Fixture sample purchase │ SAMPLE — VALUE UNKNOWN\nTOTAL │ SAMPLE — VALUE UNKNOWN" }]
+              }
+            },
+            {
+              "id": "fixture-plant-stakes",
+              "type": "callout",
+              "has_children": true,
+              "callout": {
+                "icon": { "type": "emoji", "emoji": "🏷️" },
+                "rich_text": [{ "plain_text": "Fixture sample plant labels" }]
+              },
+              "children": [
+                {
+                  "id": "fixture-plant-table",
+                  "type": "table",
+                  "has_children": true,
+                  "table": { "table_width": 4, "has_column_header": true },
+                  "children": [
+                    { "id": "fixture-plant-header", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Name" }], [{ "plain_text": "Role" }], [{ "plain_text": "Note" }], [{ "plain_text": "Price" }]] } },
+                    { "id": "fixture-plant-pothos", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Pothos" }], [{ "plain_text": "Nitrate absorber, cover" }], [{ "plain_text": "Canopy" }], [{ "plain_text": "SAMPLE — UNKNOWN" }]] } },
+                    { "id": "fixture-plant-hoya", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Hoya" }], [{ "plain_text": "Perch" }], [{ "plain_text": "Canopy" }], [{ "plain_text": "SAMPLE — UNKNOWN" }]] } },
+                    { "id": "fixture-plant-fern", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Lemon button fern" }], [{ "plain_text": "Ground cover, leaf litter" }], [{ "plain_text": "Ground layer" }], [{ "plain_text": "SAMPLE — UNKNOWN" }]] } }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "fixture-heading-conditions",
+              "type": "heading_3",
+              "has_children": false,
+              "heading_3": { "rich_text": [{ "plain_text": "Conditions from the archived research" }] }
+            },
+            {
+              "id": "fixture-conditions-table",
+              "type": "table",
+              "has_children": true,
+              "table": { "table_width": 3, "has_column_header": true },
+              "children": [
+                { "id": "fixture-condition-header", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Parameter" }], [{ "plain_text": "Range" }], [{ "plain_text": "Unit" }]] } },
+                { "id": "fixture-condition-day", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Gecko day temperature" }], [{ "plain_text": "22–26" }], [{ "plain_text": "°C" }]] } },
+                { "id": "fixture-condition-night", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Gecko night temperature" }], [{ "plain_text": "18–22" }], [{ "plain_text": "°C" }]] } },
+                { "id": "fixture-condition-max", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "MAX safe temperature" }], [{ "plain_text": "28" }], [{ "plain_text": "°C" }]] } }
+              ]
+            },
+            {
+              "id": "fixture-quote",
+              "type": "quote",
+              "has_children": false,
+              "quote": { "rich_text": [{ "plain_text": "Systemic pesticides from nurseries kill isopods and springtails." }] }
+            },
+            {
+              "id": "fixture-bulleted-one",
+              "type": "bulleted_list_item",
+              "has_children": false,
+              "bulleted_list_item": { "rich_text": [{ "plain_text": "Pothos for canopy cover" }] }
+            },
+            {
+              "id": "fixture-bulleted-two",
+              "type": "bulleted_list_item",
+              "has_children": false,
+              "bulleted_list_item": { "rich_text": [{ "plain_text": "Hoya for a perch" }] }
+            },
+            {
+              "id": "fixture-numbered-one",
+              "type": "numbered_list_item",
+              "has_children": false,
+              "numbered_list_item": { "rich_text": [{ "plain_text": "Wash roots" }] }
+            },
+            {
+              "id": "fixture-numbered-two",
+              "type": "numbered_list_item",
+              "has_children": false,
+              "numbered_list_item": { "rich_text": [{ "plain_text": "Repot and quarantine plants for 2–4 weeks" }] }
+            },
+            {
+              "id": "fixture-divider",
+              "type": "divider",
+              "has_children": false,
+              "divider": {}
+            },
+            {
+              "id": "fixture-code",
+              "type": "code",
+              "has_children": false,
+              "code": {
+                "language": "plain text",
+                "rich_text": [{ "plain_text": "DAY_TEMP_RANGE_C = 22..26\nMAX_SAFE_C = 28" }],
+                "caption": [{ "plain_text": "Research values represented as fixture pseudocode" }]
+              }
+            },
+            {
+              "id": "fixture-margin-note",
+              "type": "callout",
+              "has_children": true,
+              "callout": {
+                "icon": { "type": "emoji", "emoji": "✍️" },
+                "rich_text": [{ "plain_text": "Enclosure note" }]
+              },
+              "children": [
+                {
+                  "id": "fixture-margin-image",
+                  "type": "image",
+                  "has_children": false,
+                  "image": {
+                    "type": "fixture",
+                    "fixture": {
+                      "path": "src/assets/notion-fixtures/vivarium-schematic.svg",
+                      "alt": "Schematic note showing climate sensing points in the vivarium enclosure"
+                    },
+                    "caption": [{ "plain_text": "Fixture schematic note" }]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "fixture-toggle",
+              "type": "toggle",
+              "has_children": true,
+              "toggle": { "rich_text": [{ "plain_text": "Archived springtail range" }] },
+              "children": [
+                {
+                  "id": "fixture-toggle-paragraph",
+                  "type": "paragraph",
+                  "has_children": false,
+                  "paragraph": { "rich_text": [{ "plain_text": "Springtails: 18–26 °C, with 21–24 °C listed as optimal." }] }
+                }
+              ]
+            },
+            {
+              "id": "fixture-video",
+              "type": "video",
+              "has_children": false,
+              "video": {
+                "type": "external",
+                "external": { "url": "https://www.youtube.com/watch?v=00000000000" },
+                "caption": [{ "plain_text": "Fixture video facade" }]
+              }
+            },
+            {
+              "id": "fixture-unsupported",
+              "type": "bookmark",
+              "has_children": false,
+              "bookmark": { "url": "https://example.com/fixture" }
+            }
+          ]
+        },
+        {
+          "id": "fixture-post-published",
+          "properties": {
+            "Title": { "type": "title", "title": [{ "plain_text": "Fixture published post" }] },
+            "Slug": { "type": "rich_text", "rich_text": [{ "plain_text": "fixture-published-post" }] },
+            "Site status": { "type": "select", "select": { "name": "Published" } },
+            "Published date": { "type": "date", "date": { "start": "2020-01-03", "end": null } },
+            "Series": { "type": "select", "select": null },
+            "Part": { "type": "number", "number": null },
+            "Excerpt": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture-only published-state coverage." }] },
+            "Hero": { "type": "files", "files": [] },
+            "Status": { "type": "status", "status": null },
+            "Topics": { "type": "multi_select", "multi_select": [] },
+            "Projects": { "type": "relation", "relation": [] },
+            "Work": { "type": "relation", "relation": [] },
+            "Loop": { "type": "relation", "relation": [] }
+          },
+          "blocks": [{
+            "id": "fixture-published-paragraph",
+            "type": "paragraph",
+            "has_children": false,
+            "paragraph": { "rich_text": [{ "plain_text": "Fixture data for the Published filter path." }] }
+          }]
+        },
+        {
+          "id": "fixture-post-draft-sentinel",
+          "properties": {
+            "Title": { "type": "title", "title": [{ "plain_text": "Fixture draft filter sentinel" }] },
+            "Slug": { "type": "rich_text", "rich_text": [{ "plain_text": "fixture-draft-filter-sentinel" }] },
+            "Site status": { "type": "select", "select": { "name": "Draft" } },
+            "Published date": { "type": "date", "date": null },
+            "Series": { "type": "select", "select": null },
+            "Part": { "type": "number", "number": null },
+            "Excerpt": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture-only Draft filter coverage." }] },
+            "Hero": { "type": "files", "files": [] },
+            "Status": { "type": "status", "status": null },
+            "Topics": { "type": "multi_select", "multi_select": [] },
+            "Projects": { "type": "relation", "relation": [] },
+            "Work": { "type": "relation", "relation": [] },
+            "Loop": { "type": "relation", "relation": [] }
+          },
+          "blocks": []
+        }
+      ]
+    },
+    "loops": {
+      "name": "Loops",
+      "properties": {
+        "Name": { "type": "title" },
+        "Dates": { "type": "date" },
+        "Status": { "type": "status" },
+        "Stage": { "type": "select" },
+        "Goal": { "type": "rich_text" },
+        "Post target": { "type": "number" },
+        "Project": { "type": "relation" }
+      },
+      "pages": [{
+        "id": "fixture-loop-smart-vivarium",
+        "properties": {
+          "Name": { "type": "title", "title": [{ "plain_text": "Smart Vivarium" }] },
+          "Dates": { "type": "date", "date": { "start": "2026-11-09", "end": "2026-11-22" } },
+          "Status": { "type": "status", "status": { "name": "In progress" } },
+          "Stage": { "type": "select", "select": { "name": "Study" } },
+          "Goal": { "type": "rich_text", "rich_text": [] },
+          "Post target": { "type": "number", "number": 1 },
+          "Project": { "type": "relation", "relation": [{ "id": "fixture-project-smart-vivarium" }] }
+        }
+      }]
+    },
+    "dailyTargets": {
+      "name": "Daily targets",
+      "properties": {
+        "Task": { "type": "title" },
+        "Done": { "type": "checkbox" },
+        "Day": { "type": "number" },
+        "KPI": { "type": "rich_text" },
+        "Loop": { "type": "relation" }
+      },
+      "pages": [
+        {
+          "id": "fixture-target-one",
+          "properties": {
+            "Task": { "type": "title", "title": [{ "plain_text": "Fixture sample: review archived enclosure notes" }] },
+            "Done": { "type": "checkbox", "checkbox": true },
+            "Day": { "type": "number", "number": 1 },
+            "KPI": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture sample only" }] },
+            "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
+          }
+        },
+        {
+          "id": "fixture-target-two",
+          "properties": {
+            "Task": { "type": "title", "title": [{ "plain_text": "Fixture sample: map archived organism roles" }] },
+            "Done": { "type": "checkbox", "checkbox": true },
+            "Day": { "type": "number", "number": 2 },
+            "KPI": { "type": "rich_text", "rich_text": [{ "plain_text": "Fixture sample only" }] },
+            "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
+          }
+        }
+      ]
+    },
+    "projects": {
+      "name": "Projects",
+      "properties": {
+        "Name": { "type": "title" },
+        "Status": { "type": "status" },
+        "What it is": { "type": "rich_text" },
+        "Next action": { "type": "rich_text" }
+      },
+      "pages": [{
+        "id": "fixture-project-smart-vivarium",
+        "cover": {
+          "type": "fixture",
+          "fixture": {
+            "path": "src/assets/notion-fixtures/vivarium-schematic.svg",
+            "alt": "Schematic fixture for the Smart Vivarium project enclosure"
+          }
+        },
+        "properties": {
+          "Name": { "type": "title", "title": [{ "plain_text": "Smart Vivarium" }] },
+          "Status": { "type": "status", "status": { "name": "Planning" } },
+          "What it is": { "type": "rich_text", "rich_text": [{ "plain_text": "Remotely controled climate system for a crested gecko's vivarium." }] },
+          "Next action": { "type": "rich_text", "rich_text": [] }
+        }
+      }]
+    },
+    "content": {
+      "name": "Content",
+      "properties": {
+        "Title": { "type": "title" },
+        "Status": { "type": "status" },
+        "Format": { "type": "select" },
+        "Publish date": { "type": "date" },
+        "Loop": { "type": "relation" }
+      },
+      "pages": [{
+        "id": "fixture-content-entry",
+        "properties": {
+          "Title": { "type": "title", "title": [{ "plain_text": "Fixture sample content entry" }] },
+          "Status": { "type": "status", "status": { "name": "Fixture sample" } },
+          "Format": { "type": "select", "select": { "name": "Post" } },
+          "Publish date": { "type": "date", "date": { "start": "2020-01-03", "end": null } },
+          "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
+        }
+      }]
+    }
+  },
+  "readme": {
+    "id": "fixture-readme",
+    "blocks": [
+      {
+        "id": "fixture-readme-intro",
+        "type": "paragraph",
+        "has_children": false,
+        "paragraph": { "rich_text": [{ "plain_text": "Fixture data for README extraction." }] }
+      },
+      {
+        "id": "fixture-readme-loop-heading",
+        "type": "heading_2",
+        "has_children": false,
+        "heading_2": { "rich_text": [{ "plain_text": "The loop" }] }
+      },
+      {
+        "id": "fixture-readme-loop-one",
+        "type": "bulleted_list_item",
+        "has_children": false,
+        "bulleted_list_item": { "rich_text": [{ "plain_text": "Fixture sample: Ask, Study, Build, Ship." }] }
+      },
+      {
+        "id": "fixture-readme-loop-two",
+        "type": "bulleted_list_item",
+        "has_children": false,
+        "bulleted_list_item": { "rich_text": [{ "plain_text": "Fixture sample: feed one change into the next loop." }] }
+      },
+      {
+        "id": "fixture-readme-other-heading",
+        "type": "heading_2",
+        "has_children": false,
+        "heading_2": { "rich_text": [{ "plain_text": "Ignored fixture section" }] }
+      },
+      {
+        "id": "fixture-readme-changelog-heading",
+        "type": "heading_2",
+        "has_children": false,
+        "heading_2": { "rich_text": [{ "plain_text": "Framework changelog" }] }
+      },
+      {
+        "id": "fixture-readme-changelog-table",
+        "type": "table",
+        "has_children": true,
+        "table": { "table_width": 2, "has_column_header": true },
+        "children": [
+          { "id": "fixture-readme-changelog-header", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "Date" }], [{ "plain_text": "Change" }]] } },
+          { "id": "fixture-readme-changelog-row", "type": "table_row", "has_children": false, "table_row": { "cells": [[{ "plain_text": "FIXTURE SAMPLE" }], [{ "plain_text": "Fixture sample changelog row for extraction coverage." }]] } }
+        ]
+      }
+    ]
+  }
+}

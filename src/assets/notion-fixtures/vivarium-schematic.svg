@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Smart Vivarium enclosure schematic</title>
+  <desc id="desc">Line schematic of a 60 by 45 by 90 centimetre vivarium enclosure with climate sensing points.</desc>
+  <rect width="1200" height="900" fill="#151918"/>
+  <g fill="none" stroke="#c89b5c" stroke-width="8" stroke-linejoin="round">
+    <path d="M310 170h480l140 100v500H450L310 670z"/>
+    <path d="M310 170l140 100h480M450 270v500M790 170v500l140 100"/>
+    <path d="M385 220v500M865 220v500" stroke-dasharray="16 18" opacity=".5"/>
+  </g>
+  <g fill="#ece8de" font-family="monospace" font-size="32">
+    <text x="470" y="820">60 × 45 × 90 cm</text>
+    <text x="500" y="345">CLIMATE SENSOR</text>
+    <text x="500" y="635">SUBSTRATE SENSOR</text>
+  </g>
+  <g fill="#f5b841" stroke="#0d0f0e" stroke-width="6">
+    <circle cx="715" cy="360" r="24"/>
+    <circle cx="600" cy="650" r="24"/>
+  </g>
+  <path d="M715 385v70H590" fill="none" stroke="#9da6a1" stroke-width="5" stroke-dasharray="12 12"/>
+  <path d="M600 625v-70h-90" fill="none" stroke="#9da6a1" stroke-width="5" stroke-dasharray="12 12"/>
+</svg>

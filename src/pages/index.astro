@@ -1,0 +1,396 @@
+---
+import type { ImageMetadata } from 'astro';
+import BenchEquipment from '../components/desk/BenchEquipment.astro';
+import BurnMark from '../components/desk/BurnMark.astro';
+import KnifeScores from '../components/desk/KnifeScores.astro';
+import Mat from '../components/desk/Mat.astro';
+import PencilNote from '../components/desk/PencilNote.astro';
+import Stain from '../components/desk/Stain.astro';
+import HomeHeader from '../components/layout/HomeHeader.astro';
+import BusinessCard from '../components/objects/BusinessCard.astro';
+import CalloutMap from '../components/objects/CalloutMap.astro';
+import LoopCard from '../components/objects/LoopCard.astro';
+import Notebook from '../components/objects/Notebook.astro';
+import PartsList from '../components/objects/PartsList.astro';
+import PcbNav from '../components/objects/PcbNav.astro';
+import Polaroid from '../components/objects/Polaroid.astro';
+import ShadowSlot from '../components/objects/ShadowSlot.astro';
+import deskPositions from '../config/home-desk.json';
+import { CAL_URL, SITE_NAME, SITE_TAGLINE } from '../config/site';
+import { getHomeData, optionalVisitorText, projectPostHref } from '../lib/content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const data = await getHomeData();
+const { currentLoop, metrics, loopNumber, project, targets, shippedPosts, posts } = data;
+const projectHref = project ? projectPostHref(project) : undefined;
+const projectCover = project?.data.cover?.asset as ImageMetadata | undefined;
+const paddedLoopNumber = loopNumber?.toString().padStart(2, '0');
+const loopStage = optionalVisitorText(currentLoop?.data.stage)?.toLowerCase();
+const loopName = optionalVisitorText(currentLoop?.data.name);
+const projectName = optionalVisitorText(project?.data.name);
+const projectDescription = optionalVisitorText(project?.data.whatItIs);
+const loopStart = currentLoop?.data.startDate;
+const loopEnd = currentLoop?.data.endDate;
+const postTarget = currentLoop?.data.postTarget;
+
+const positionStyle = (position: Record<string, string | number>) =>
+  Object.entries(position)
+    .filter(([key]) => key !== 'rotation')
+    .map(([key, value]) => `${key}:${typeof value === 'number' ? `${value}px` : value}`)
+    .join(';');
+
+const parts = [
+  { number: 1, name: 'Projects', hint: 'the board', href: '/projects', x: 49, y: 7 },
+  project && projectHref
+    ? { number: 2, name: `On the bench: ${project.data.name}`, hint: metrics ? `${metrics.day}/${metrics.length}` : 'current loop', href: projectHref, x: 92, y: 7 }
+    : undefined,
+  { number: 3, name: 'Posts', hint: 'notebook', href: '/posts', x: 92, y: 61 },
+  { number: 4, name: 'How I work', hint: 'the loop', href: '/loop', x: 42, y: 65 },
+  CAL_URL ? { number: 5, name: 'Book a call', hint: 'card', href: '/call', x: 8, y: 63 } : undefined,
+  { number: 6, name: 'Talaria', hint: 'coming later', dnp: true, tooltip: 'Talaria · coming later', x: 63, y: 72 },
+].filter(Boolean) as Array<{ number: number; name: string; hint: string; href?: string; dnp?: boolean; tooltip?: string; x?: number; y?: number }>;
+
+const loopDescription = loopName && projectName && loopName !== projectName ? `${loopName} · ${projectName}` : loopName ?? projectName;
+---
+
+<BaseLayout title={SITE_NAME} description={SITE_TAGLINE}>
+  <HomeHeader />
+
+  <main
+    id="main"
+    class="home"
+    data-home-desk
+    data-loop-start={loopStart}
+    data-loop-end={loopEnd}
+    data-project-href={projectHref}
+  >
+    <section class="desktop-desk" aria-label="Maker's desk">
+      <Mat height={860} label="A maker's desk with navigation objects" class="home-mat">
+        <BurnMark x={22} y={58} width={34} height={26} />
+        <BurnMark x={67} y={41} width={22} height={18} />
+        <BurnMark x={88} y={90} width={46} height={30} />
+        <BurnMark x={12} y={33} width={16} height={14} />
+        <BurnMark variant="drag" x={45} y={50} />
+        <BurnMark x={81} y={46} width={28} height={22} />
+        <Stain x={24} y={47} width={90} height={64} />
+        <Stain x={70} y={80} width={60} height={44} />
+        <Stain variant="mug" x={87} y={41} />
+        <BenchEquipment />
+        <KnifeScores />
+        <PencilNote text={'fan ON > 85 %RH\nfan OFF < 70'} x={51} y={49} rotation={-3} width={185} />
+        <PencilNote text="R2 = 10k ?" x={33} y={56} rotation={3} width={110} />
+        <PencilNote text="28 °C MAX" x={63} y={58} rotation={3} width={120} />
+
+        <div class="desk-object home-pcb" style={positionStyle(deskPositions.pcb)}>
+          <PcbNav
+            currentProjectHref={projectHref}
+            loopNumber={loopNumber}
+            loopDay={metrics?.day}
+            loopLength={metrics?.length}
+            width={deskPositions.pcb.width}
+            rotation={deskPositions.pcb.rotation}
+          />
+        </div>
+
+        {project && projectHref && projectCover && (
+          <div class="desk-object current-polaroid" style={positionStyle(deskPositions.project)}>
+            <Polaroid
+              href={projectHref}
+              image={projectCover}
+              alt={project.data.cover?.alt}
+              linkLabel={`${project.data.name}, the current loop project`}
+              actionLabel="on the bench →"
+              sticky={{ loop: paddedLoopNumber, day: metrics?.day, length: metrics?.length, stage: loopStage, rotation: -3 }}
+              width={deskPositions.project.width}
+              rotation={deskPositions.project.rotation}
+            />
+          </div>
+        )}
+
+        <div class="desk-object" style={positionStyle(deskPositions.notebook)}>
+          <Notebook postCount={posts.length} width={deskPositions.notebook.width} rotation={deskPositions.notebook.rotation} />
+        </div>
+
+        {CAL_URL && (
+          <div class="desk-object" style={positionStyle(deskPositions.businessCard)}>
+            <BusinessCard width={deskPositions.businessCard.width} rotation={deskPositions.businessCard.rotation} />
+          </div>
+        )}
+
+        <div class="desk-object" style={positionStyle(deskPositions.loopCard)}>
+          <LoopCard width={deskPositions.loopCard.width} rotation={deskPositions.loopCard.rotation} />
+        </div>
+
+        <div class="desk-object" style={positionStyle(deskPositions.shadowSlot)}>
+          <ShadowSlot
+            width={deskPositions.shadowSlot.width}
+            height={deskPositions.shadowSlot.height}
+            rotation={deskPositions.shadowSlot.rotation}
+          />
+        </div>
+      </Mat>
+
+      <div class="desk-controls">
+        <div>
+          <span>dashed footprints mark parts not built yet</span>
+          {(loopDescription || metrics || Number.isFinite(postTarget)) && (
+            <p class="desk-readout">
+              {loopDescription && <strong>{loopDescription}</strong>}
+              {metrics && <span data-live-loop-day>{metrics.day}/{metrics.length}</span>}
+              {currentLoop?.data.stage && <span>{currentLoop.data.stage}</span>}
+              {Number.isFinite(postTarget) && <span>{shippedPosts}/{postTarget} posts shipped</span>}
+            </p>
+          )}
+          {targets.length > 0 && (
+            <ul class="target-list" aria-label="Today's targets">
+              {targets.map((target) => <li>{target.data.task}</li>)}
+            </ul>
+          )}
+        </div>
+        <button type="button" data-tidy-button aria-pressed="false">tidy the desk</button>
+      </div>
+    </section>
+
+    <section class="compact-desk" aria-label="Desk navigation">
+      <div class="organized-toolbar" data-organized-toolbar>
+        <span><strong>DESK ORGANIZED</strong><small>List view is active.</small></span>
+        <button type="button" data-restore-button>restore messy desk</button>
+      </div>
+      <CalloutMap items={parts} />
+      <PartsList items={parts} />
+      {(loopDescription || Number.isFinite(postTarget) || targets.length > 0) && (
+        <aside class="compact-readout" aria-label="Current loop status">
+          {loopDescription && <strong>{loopDescription}</strong>}
+          <p>
+            {metrics && <span data-live-loop-day>{metrics.day}/{metrics.length}</span>}
+            {currentLoop?.data.stage && <span>{currentLoop.data.stage}</span>}
+            {Number.isFinite(postTarget) && <span>{shippedPosts}/{postTarget} posts shipped</span>}
+          </p>
+          {projectDescription && <p class="compact-readout__description">{projectDescription}</p>}
+          {targets.length > 0 && <ul>{targets.map((target) => <li>{target.data.task}</li>)}</ul>}
+        </aside>
+      )}
+    </section>
+  </main>
+
+  <script is:inline>
+    (() => {
+      const root = document.querySelector('[data-home-desk]');
+      if (!(root instanceof HTMLElement)) return;
+
+      const tidyButton = root.querySelector('[data-tidy-button]');
+      const restoreButton = root.querySelector('[data-restore-button]');
+      const setTidy = (tidy) => {
+        root.dataset.tidy = tidy ? 'true' : 'false';
+        if (tidyButton instanceof HTMLButtonElement) {
+          tidyButton.setAttribute('aria-pressed', String(tidy));
+          tidyButton.textContent = tidy ? 'put it back' : 'tidy the desk';
+        }
+      };
+
+      try { setTidy(localStorage.getItem('jpl-desk-tidy') === 'true'); } catch { setTidy(false); }
+      tidyButton?.addEventListener('click', () => {
+        const next = root.dataset.tidy !== 'true';
+        setTidy(next);
+        try { localStorage.setItem('jpl-desk-tidy', String(next)); } catch {}
+      });
+      restoreButton?.addEventListener('click', () => {
+        setTidy(false);
+        try { localStorage.setItem('jpl-desk-tidy', 'false'); } catch {}
+        if (tidyButton instanceof HTMLButtonElement) tidyButton.focus();
+      });
+
+      const start = root.dataset.loopStart;
+      const end = root.dataset.loopEnd;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(start || '') || !/^\d{4}-\d{2}-\d{2}$/.test(end || '')) return;
+      const parse = (value) => Date.parse(`${value}T00:00:00Z`);
+      const startMs = parse(start);
+      const endMs = parse(end);
+      if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs < startMs) return;
+      const ny = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+      const todayMs = parse(ny.format(new Date()));
+      const length = Math.floor((endMs - startMs) / 86400000) + 1;
+      const day = Math.min(length, Math.max(1, Math.floor((todayMs - startMs) / 86400000) + 1));
+      root.querySelectorAll('[data-live-loop-day]').forEach((node) => { node.textContent = `${day}/${length}`; });
+      const stickyDay = root.querySelector('.current-polaroid .sticky-note > span:nth-child(2)');
+      if (stickyDay) stickyDay.textContent = `day ${day}/${length}`;
+      const pcbTexts = root.querySelectorAll('.home-pcb svg text');
+      pcbTexts.forEach((node) => { if (/^day \d+\/\d+$/.test(node.textContent || '')) node.textContent = `day ${day}/${length}`; });
+      const battery = root.querySelector('.home-pcb .pcb-nav__battery-fill');
+      if (battery) battery.setAttribute('width', String(Math.round(Math.min(1, day / length) * 146)));
+      const projectHref = root.dataset.projectHref;
+      if (projectHref) {
+        const projectPart = [...root.querySelectorAll('.parts-list__row')].find((row) => row.getAttribute('href') === projectHref);
+        const hint = projectPart?.querySelector('.parts-list__hint');
+        if (hint) hint.textContent = `${day}/${length}`;
+      }
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  .home { min-height: 760px; }
+
+  .desktop-desk {
+    display: none;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .compact-desk { display: block; }
+
+  .desk-object {
+    position: absolute;
+    z-index: 4;
+  }
+
+  :global(.home-pcb a[href='/loop'] rect) {
+    transform: scaleY(1.06);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .desk-controls {
+    display: flex;
+    min-height: 66px;
+    padding: 12px 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    color: #b9b3a6;
+    font: 12px/1.5 var(--font-mono);
+  }
+
+  .desk-controls > div { min-width: 0; }
+
+  .desk-controls button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #4a4f4c;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font: 12px/1 var(--font-mono);
+  }
+
+  .desk-controls button:hover,
+  .desk-controls button:focus-visible { border-color: var(--accent); color: var(--accent); }
+
+  .desk-readout {
+    display: flex;
+    margin: 7px 0 0;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    color: var(--text-muted);
+  }
+
+  .desk-readout strong { color: var(--text); font-weight: 400; }
+  .desk-readout span + span::before { content: '·'; margin-right: 14px; color: var(--copper); }
+
+  .target-list {
+    display: flex;
+    margin: 6px 0 0;
+    padding: 0;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    color: var(--text);
+    list-style-position: inside;
+  }
+
+  .organized-toolbar {
+    display: none;
+    min-height: 72px;
+    padding: 12px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid var(--line);
+    border-bottom: 0;
+    background-color: var(--pcb);
+    background-image: var(--texture-dark);
+  }
+
+  .organized-toolbar > span,
+  .organized-toolbar small {
+    display: block;
+  }
+
+  .organized-toolbar strong {
+    color: var(--accent);
+    font: 600 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .organized-toolbar small {
+    margin-top: 3px;
+    color: var(--text-muted);
+    font: 11px/1.4 var(--font-mono);
+  }
+
+  .organized-toolbar button {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: var(--ink);
+    cursor: pointer;
+    font: 600 12px/1.2 var(--font-mono);
+  }
+
+  .organized-toolbar button:hover,
+  .organized-toolbar button:focus-visible {
+    background: transparent;
+    color: var(--accent);
+  }
+
+  .compact-readout {
+    padding: 18px 16px 20px;
+    border-top: 1px solid var(--line);
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+  }
+
+  .compact-readout strong { display: block; font-size: 18px; font-weight: 600; }
+
+  .compact-readout p {
+    display: flex;
+    margin: 8px 0 0;
+    flex-wrap: wrap;
+    gap: 7px 14px;
+    color: var(--accent);
+    font: 11px/1.5 var(--font-mono);
+  }
+
+  .compact-readout .compact-readout__description {
+    display: block;
+    max-width: 56ch;
+    color: var(--text-body);
+    font: 17px/1.55 var(--font-serif);
+  }
+
+  .compact-readout p span + span::before { content: '·'; margin-right: 14px; color: var(--copper); }
+
+  .compact-readout ul {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    color: var(--text-body);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 1100px) {
+    .desktop-desk { display: block; }
+    .compact-desk { display: none; }
+    .home[data-tidy='true'] .desktop-desk { display: none; }
+    .home[data-tidy='true'] .compact-desk {
+      display: block;
+      max-width: 720px;
+      min-height: 650px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .home[data-tidy='true'] .organized-toolbar { display: flex; }
+  }
+</style>
