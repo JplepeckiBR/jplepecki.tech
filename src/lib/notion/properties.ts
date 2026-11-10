@@ -146,6 +146,10 @@ export async function pageCover(
   fallbackAlt: string,
   context: string,
 ): Promise<SerializedImage | undefined> {
+  // Notion's built-in gallery covers (gradients, stock art) are decorative, not project images,
+  // and Notion refuses to serve them to scripts. Treat them as "no cover".
+  const external = page.cover?.type === 'external' ? page.cover.external?.url : undefined;
+  if (typeof external === 'string' && /^https:\/\/(www\.)?notion\.so\/images\/page-cover\//.test(external)) return undefined;
   const reference = page.cover ? imageReference(page.cover, fallbackAlt) : undefined;
   return reference ? localizeImage(reference, context) : undefined;
 }

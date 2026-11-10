@@ -111,21 +111,37 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
     throw new Error(`Loops data source contains ${currentLoops.length} entries with Status "In progress"; expected at most one`);
   }
 
-  const dailyTargets: DailyTargetEntry[] = source.dataSources.dailyTargets.pages.map((page) => {
+  // "Day" may be a day number, or a calendar date counted from the linked loop's start (day 1 = start date).
+  const loopStarts = new Map(loops.map((loop) => [loop.notionId, loop.startDate]));
+  const dayNumber = (page: RawRecord, loopIds: string[]): number | undefined => {
+    const number = numberProperty(page, 'Day');
+    if (number !== undefined) return number;
+    const date = dateProperty(page, 'Day').start?.slice(0, 10);
+    const start = loopIds.map((id) => loopStarts.get(id)).find(Boolean)?.slice(0, 10);
+    if (!date || !start) return undefined;
+    return Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000) + 1;
+  };
+
+  const dailyTargets: DailyTargetEntry[] = [];
+  for (const page of source.dataSources.dailyTargets.pages) {
     const context = pageContext(source.dataSources.dailyTargets.name, page);
-    const day = numberProperty(page, 'Day');
+    const loopIds = relationProperty(page, 'Loop');
+    const day = dayNumber(page, loopIds);
     if (!Number.isInteger(day) || (day ?? 0) < 1) {
-      throw new Error(`${context} property "Day" must be a positive integer`);
+      // A target without a usable day (no date, no loop, or dated before the loop) is skipped, not fatal,
+      // so one incomplete Notion row cannot stop the hourly production rebuild.
+      logger.warn(`${context} skipped: "Day" is empty, unlinked to a loop, or before the loop start`);
+      continue;
     }
-    return {
+    dailyTargets.push({
       notionId: requiredText(page.id, `${context} id`),
       task: requiredText(titleProperty(page, 'Task'), `${context} property "Task"`),
       done: checkboxProperty(page, 'Done'),
       day: day as number,
-      kpi: textProperty(page, 'KPI'),
-      loopIds: relationProperty(page, 'Loop'),
-    };
-  });
+      kpi: textProperty(page, 'KPI') ?? selectProperty(page, 'KPI'),
+      loopIds,
+    });
+  }
 
   const projects: ProjectEntry[] = [];
   for (const page of source.dataSources.projects.pages) {
@@ -159,8 +175,9 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
   for (const page of source.dataSources.posts.pages) {
     const context = pageContext(source.dataSources.posts.name, page);
     const title = requiredText(titleProperty(page, 'Title'), `${context} property "Title"`);
-    const siteStatus = selectProperty(page, 'Site status');
-    if (!['Draft', 'In progress', 'Published'].includes(siteStatus ?? '')) {
+    // An empty "Site status" means the note was never marked for the site: treat it as a draft.
+    const siteStatus = selectProperty(page, 'Site status') ?? 'Draft';
+    if (!['Draft', 'In progress', 'Published'].includes(siteStatus)) {
       throw new Error(`${context} property "Site status" must be Draft, In progress, or Published`);
     }
     if (siteStatus === 'Draft' && !includeDrafts()) continue;

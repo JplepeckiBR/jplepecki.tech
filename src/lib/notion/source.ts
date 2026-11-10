@@ -56,8 +56,8 @@ const PROPERTY_REQUIREMENTS: Record<DataSourceKey, Record<string, string | strin
   dailyTargets: {
     Task: 'title',
     Done: 'checkbox',
-    Day: 'number',
-    KPI: 'rich_text',
+    Day: ['number', 'date'],
+    KPI: ['rich_text', 'select'],
     Loop: 'relation',
   },
   projects: {
