@@ -1,5 +1,4 @@
 ---
-import type { ImageMetadata } from 'astro';
 import BenchEquipment from '../components/desk/BenchEquipment.astro';
 import BurnMark from '../components/desk/BurnMark.astro';
 import KnifeScores from '../components/desk/KnifeScores.astro';
@@ -13,17 +12,17 @@ import LoopCard from '../components/objects/LoopCard.astro';
 import Notebook from '../components/objects/Notebook.astro';
 import PartsList from '../components/objects/PartsList.astro';
 import PcbNav from '../components/objects/PcbNav.astro';
-import Polaroid from '../components/objects/Polaroid.astro';
+import ProjectSpecimen from '../components/objects/ProjectSpecimen.astro';
+import { projectArt } from '../config/project-art';
 import ShadowSlot from '../components/objects/ShadowSlot.astro';
 import deskPositions from '../config/home-desk.json';
 import { CAL_URL, SITE_NAME, SITE_TAGLINE } from '../config/site';
-import { getHomeData, optionalVisitorText, projectPostHref } from '../lib/content';
+import { getHomeData, optionalVisitorText, projectPageHref, projectTransitionName } from '../lib/content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const data = await getHomeData();
 const { currentLoop, metrics, loopNumber, project, targets, shippedPosts, posts } = data;
-const projectHref = project ? projectPostHref(project) : undefined;
-const projectCover = project?.data.cover?.asset as ImageMetadata | undefined;
+const projectHref = project ? projectPageHref(project) : undefined;
 const paddedLoopNumber = loopNumber?.toString().padStart(2, '0');
 const loopStage = optionalVisitorText(currentLoop?.data.stage)?.toLowerCase();
 const loopName = optionalVisitorText(currentLoop?.data.name);
@@ -92,15 +91,18 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
           />
         </div>
 
-        {project && projectHref && projectCover && (
-          <div class="desk-object current-polaroid" style={positionStyle(deskPositions.project)}>
-            <Polaroid
+        {project && projectHref && (
+          <div class="desk-object current-project" style={positionStyle(deskPositions.project)}>
+            <ProjectSpecimen
               href={projectHref}
-              image={projectCover}
-              alt={project.data.cover?.alt}
-              linkLabel={`${project.data.name}, the current loop project`}
+              name={project.data.name}
+              art={projectArt(project.data.slug)}
+              loop={paddedLoopNumber}
+              day={metrics?.day}
+              length={metrics?.length}
+              stage={loopStage}
               actionLabel="on the bench →"
-              sticky={{ loop: paddedLoopNumber, day: metrics?.day, length: metrics?.length, stage: loopStage, rotation: -3 }}
+              transitionName={projectTransitionName(project)}
               width={deskPositions.project.width}
               rotation={deskPositions.project.rotation}
             />
@@ -212,8 +214,6 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
       const length = Math.floor((endMs - startMs) / 86400000) + 1;
       const day = Math.min(length, Math.max(1, Math.floor((todayMs - startMs) / 86400000) + 1));
       root.querySelectorAll('[data-live-loop-day]').forEach((node) => { node.textContent = `${day}/${length}`; });
-      const stickyDay = root.querySelector('.current-polaroid .sticky-note > span:nth-child(2)');
-      if (stickyDay) stickyDay.textContent = `day ${day}/${length}`;
       const pcbTexts = root.querySelectorAll('.home-pcb svg text');
       pcbTexts.forEach((node) => { if (/^day \d+\/\d+$/.test(node.textContent || '')) node.textContent = `day ${day}/${length}`; });
       const battery = root.querySelector('.home-pcb .pcb-nav__battery-fill');

@@ -2,7 +2,7 @@
 import BurnMark from '../components/desk/BurnMark.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import LabLoopSchematic from '../components/loop/LabLoopSchematic.astro';
-import { getSiteCollections, loopMetrics, loopNumber, optionalVisitorText, projectPostHref } from '../lib/content';
+import { getSiteCollections, loopMetrics, loopNumber, optionalVisitorText, projectPageHref } from '../lib/content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const data = await getSiteCollections();
@@ -93,7 +93,7 @@ const loops = [...data.loops].sort((a, b) =>
               const project = data.projects.find((candidate) => loop.data.projectIds.includes(candidate.data.notionId));
               const metrics = loopMetrics(loop);
               const number = loopNumber(loop, data.loops);
-              const href = project ? projectPostHref(project) : '/posts';
+              const href = project ? projectPageHref(project) : '/posts';
               const status = optionalVisitorText(loop.data.status);
               return (
                 <a

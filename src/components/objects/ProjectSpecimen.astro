@@ -1,0 +1,220 @@
+---
+/**
+ * A project as a physical object on the workbench, seen from above.
+ * Each project can have its own hand-drawn "art"; projects without one get a plain paper tag.
+ * The whole object is one link that expands (view transition) into the project's page.
+ */
+import boardWearUrl from '../../assets/textures/board-wear.svg?url';
+import paperGrainUrl from '../../assets/textures/paper-grain.svg?url';
+import { clampRotation, cleanHref, cleanText } from './_shared';
+
+export type ProjectArt = 'vivarium' | 'tag';
+
+interface Props {
+  href: string;
+  name: string;
+  art?: ProjectArt;
+  loop?: string;
+  day?: number;
+  length?: number;
+  stage?: string;
+  actionLabel?: string;
+  transitionName?: string;
+  rotation?: number;
+  width?: number;
+  /** Larger, non-link rendering for the project page header. */
+  asHeader?: boolean;
+}
+
+const {
+  href,
+  name,
+  art = 'tag',
+  loop,
+  day,
+  length,
+  stage,
+  actionLabel,
+  transitionName,
+  rotation = 1.5,
+  width = 260,
+  asHeader = false,
+} = Astro.props;
+
+const safeHref = cleanHref(href);
+const safeName = cleanText(name);
+const safeLoop = cleanText(loop);
+const safeStage = cleanText(stage)?.toUpperCase();
+const safeAction = cleanText(actionLabel);
+const showDay = Number.isInteger(day) && Number.isInteger(length) && (day ?? 0) > 0 && (length ?? 0) >= (day ?? 0);
+const safeRotation = clampRotation(rotation, 1.5);
+const safeTransition = typeof transitionName === 'string' && /^[a-z][a-z0-9-]*$/.test(transitionName) ? transitionName : undefined;
+const statusParts = [safeLoop ? `LOOP ${safeLoop}` : undefined, safeStage].filter(Boolean).join(' · ');
+const uid = `specimen-${(safeTransition ?? safeName ?? 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-')}${asHeader ? '-header' : ''}`;
+const Tag = asHeader ? 'div' : 'a';
+---
+
+{safeName && (asHeader || safeHref) && (
+  <Tag
+    class:list={['project-specimen', `project-specimen--${art}`, { 'project-specimen--header': asHeader }]}
+    href={asHeader ? undefined : safeHref}
+    aria-label={asHeader ? undefined : `${safeName}: open the project`}
+    style={`--object-width:${width}px;--object-rotation:${safeRotation}deg;${safeTransition ? `view-transition-name:${safeTransition};` : ''}`}
+  >
+    <svg class="project-specimen__art" viewBox="0 0 300 250" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id={`${uid}-paper`} patternUnits="userSpaceOnUse" width="120" height="120">
+          <image href={paperGrainUrl} width="120" height="120" />
+        </pattern>
+        <pattern id={`${uid}-board`} patternUnits="userSpaceOnUse" width="120" height="120">
+          <image href={boardWearUrl} width="120" height="120" />
+        </pattern>
+        <filter id={`${uid}-leaf-tissue`} x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.09 0.05" numOctaves="2" seed="4" result="tissue" />
+          <feColorMatrix in="tissue" values="0 0 0 0 0.86  0 0 0 0 0.9  0 0 0 0 0.6  1.6 0 0 0 -0.78" />
+          <feComposite in2="SourceGraphic" operator="in" />
+        </filter>
+      </defs>
+
+      {art === 'vivarium' && (
+        <Fragment>
+          <!-- Temp/humidity sensor module with its three-wire lead running off the edge. -->
+          <g class="specimen__lead">
+            <path class="lead lead--red" d="M226 147c4 30-6 52 14 74s30 22 64 24" />
+            <path class="lead lead--yellow" d="M233 147c3 28-4 49 15 70s31 23 60 23" />
+            <path class="lead lead--black" d="M240 147c2 26-2 46 16 66s30 22 56 22" />
+          </g>
+          <g class="specimen__part specimen__sensor" transform="rotate(2.5 233 92)">
+            <rect class="sensor__board" x="204" y="36" width="58" height="104" rx="3" />
+            <rect x="204" y="36" width="58" height="104" rx="3" fill={`url(#${uid}-board)`} />
+            <circle class="sensor__hole" cx="214" cy="46" r="3.6" />
+            <rect class="sensor__housing" x="211" y="54" width="44" height="62" rx="2.5" />
+            <g class="sensor__vents">
+              {Array.from({ length: 6 }, (_, row) =>
+                Array.from({ length: 4 }, (_, col) => (
+                  <rect x={216 + col * 9.6} y={60 + row * 9} width="6.4" height="5.4" rx="0.8" />
+                )),
+              )}
+            </g>
+            <text class="sensor__silk" x="214" y="128">T/H 1-WIRE</text>
+            <g class="sensor__pins">
+              <rect x="219" y="131" width="6" height="11" />
+              <rect x="230" y="131" width="6" height="11" />
+              <rect x="241" y="131" width="6" height="11" />
+            </g>
+          </g>
+
+          <!-- Golden pothos cutting: flat-lit leaf, veins, variegation streaks. -->
+          <g class="specimen__part specimen__leaf" transform="translate(46 84) rotate(-13)">
+            <path class="leaf__petiole" d="M8 2C-14 10-34 28-58 62" />
+            <path class="leaf__blade" d="M8 0C-6-20-4-50 30-60C70-72 118-42 160 2C120 40 72 70 32 60C-4 52-6 22 8 0Z" />
+            <path class="leaf__variegation" d="M34-8C56-24 84-34 104-30C86-22 60-14 34-8ZM40 14C62 26 86 30 108 24C88 20 64 18 40 14ZM96-6C112-12 128-10 140-4C126-2 110-2 96-6Z" />
+            <path class="leaf__tissue" d="M8 0C-6-20-4-50 30-60C70-72 118-42 160 2C120 40 72 70 32 60C-4 52-6 22 8 0Z" filter={`url(#${uid}-leaf-tissue)`} />
+            <path class="leaf__midrib" d="M8 0C60-2 110 0 158 2" />
+            <path class="leaf__vein" d="M30-1Q45-30 60-50M30 1Q45 30 58 50M66-1Q86-25 100-40M66 1Q86 24 98 40M102 0Q118-14 130-22M102 1Q118 14 130 22" />
+            <path class="leaf__edge-wear" d="M118-38q14 8 24 22M62 64q-14 0-24-4" />
+          </g>
+        </Fragment>
+      )}
+
+      <!-- Paper specimen tag with a string loop; carries the only text on the object. -->
+      <g class="specimen__part specimen__tag" transform={art === 'vivarium' ? 'translate(24 172) rotate(-2)' : 'translate(38 96) rotate(-2) scale(1.15)'}>
+        {art === 'vivarium' && <path class="tag__string" d="M8 29C-8 20-10-4 2-22S22-46 18-62" />}
+        <path class="tag__paper" d="M14 0H196V58H14L0 44V14Z" />
+        <path d="M14 0H196V58H14L0 44V14Z" fill={`url(#${uid}-paper)`} />
+        <circle class="tag__eyelet" cx="12" cy="29" r="5.2" />
+        <circle class="tag__hole" cx="12" cy="29" r="2.6" />
+        <text class="tag__name" x="26" y="24">{safeName.toUpperCase()}</text>
+        {(statusParts || showDay) && (
+          <text class="tag__status" x="26" y="42">
+            {statusParts}
+            {statusParts && showDay ? ' · ' : ''}
+            {showDay && <tspan>day <tspan data-live-loop-day>{day}/{length}</tspan></tspan>}
+          </text>
+        )}
+        {showDay && <circle class="tag__now" cx="186" cy="12" r="3.2" />}
+      </g>
+    </svg>
+    {!asHeader && safeAction && <span class="project-specimen__action">{safeAction}</span>}
+  </Tag>
+)}
+
+<style>
+  .project-specimen {
+    display: block;
+    width: min(var(--object-width), 100%);
+    min-height: 44px;
+    color: var(--text);
+    text-decoration: none;
+    transform: rotate(var(--object-rotation));
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  a.project-specimen:hover,
+  a.project-specimen:focus-visible {
+    filter: drop-shadow(var(--shadow-lift));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .project-specimen__art {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .project-specimen__action {
+    display: block;
+    margin-top: 2px;
+    padding-left: 30px;
+    color: var(--text);
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .specimen__part {
+    filter: drop-shadow(0 1.5px 1px rgba(4, 8, 6, 0.42)) drop-shadow(0 6px 8px rgba(4, 8, 6, 0.2));
+  }
+
+  .specimen__lead {
+    fill: none;
+    stroke-linecap: round;
+    filter: drop-shadow(0 1px 0.8px rgba(4, 8, 6, 0.42));
+  }
+
+  .lead { stroke-width: 3.4; }
+  .lead--red { stroke: #9d4034; }
+  .lead--yellow { stroke: #c4a442; }
+  .lead--black { stroke: #161918; }
+
+  .sensor__board { fill: var(--pcb); stroke: #2b312e; stroke-width: 0.6; }
+  .sensor__hole { fill: #0b0d0c; stroke: var(--copper); stroke-width: 1.4; opacity: 0.85; }
+  .sensor__housing { fill: #e6e4dc; stroke: #cfcdc5; stroke-width: 0.6; }
+  .sensor__vents rect { fill: #3a3e3c; }
+  .sensor__silk { fill: #b9bfbb; font: 5.6px/1 var(--font-mono); letter-spacing: 0.4px; }
+  .sensor__pins rect { fill: #b8bdbc; stroke: #8b908f; stroke-width: 0.4; }
+
+  .leaf__petiole { fill: none; stroke: #6a8a3a; stroke-width: 4.2; stroke-linecap: round; }
+  .leaf__blade { fill: #46703a; stroke: #375c2c; stroke-width: 0.8; }
+  .leaf__variegation { fill: #c9c48a; opacity: 0.16; }
+  .leaf__tissue { opacity: 0.22; }
+  .leaf__midrib { fill: none; stroke: #8fae66; stroke-width: 1.4; stroke-linecap: round; opacity: 0.6; }
+  .leaf__vein { fill: none; stroke: #86a660; stroke-width: 0.75; stroke-linecap: round; opacity: 0.4; }
+  .leaf__edge-wear { fill: none; stroke: #8b7a45; stroke-width: 1.2; stroke-linecap: round; opacity: 0.35; }
+
+  .tag__string { fill: none; stroke: #d8cfb4; stroke-width: 1.2; stroke-linecap: round; }
+  .tag__paper { fill: var(--paper); }
+  .tag__eyelet { fill: none; stroke: #b9a77a; stroke-width: 2.4; }
+  .tag__hole { fill: #23302a; }
+  .tag__name { fill: var(--text-on-paper); font: 600 11px/1 var(--font-mono); letter-spacing: 0.6px; }
+  .tag__status { fill: #4a504c; font: 8.5px/1 var(--font-mono); letter-spacing: 0.4px; }
+  .tag__now { fill: var(--accent); }
+
+  .project-specimen--header {
+    transform: rotate(var(--object-rotation));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a.project-specimen:hover,
+    a.project-specimen:focus-visible { transform: rotate(var(--object-rotation)); }
+  }
+</style>

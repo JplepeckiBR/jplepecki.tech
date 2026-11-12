@@ -146,6 +146,8 @@ const projects = defineCollection({
     whatItIs: optionalText,
     nextAction: optionalText,
     cover: z.object({ asset: image(), alt: z.string().trim().min(1), caption: optionalText }).optional(),
+    onSite: z.boolean(),
+    loopIds: relationIds,
   }),
 });
 
@@ -158,6 +160,8 @@ const content = defineCollection({
     format: optionalText,
     publishDate: isoDate.optional(),
     loopIds: relationIds,
+    projectIds: relationIds,
+    link: z.string().url().startsWith('https://').optional(),
   }),
 });
 
