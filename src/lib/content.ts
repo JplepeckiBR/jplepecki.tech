@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { deriveBuildLog } from './notion/build-log';
 
 export type Post = CollectionEntry<'posts'>;
 export type Loop = CollectionEntry<'loops'>;
@@ -168,6 +169,53 @@ export function postSeriesLabel(post: Post): string | undefined {
 
 export function projectPostHref(project: Project): string {
   return `/posts?project=${encodeURIComponent(project.data.slug)}`;
+}
+
+/** The project's own page: the expanded view of its object on the workbench. */
+export function projectPageHref(project: Project): string {
+  return `/projects/${project.data.slug}/`;
+}
+
+/** Shared view-transition name so the desk object morphs into the project page header. */
+export function projectTransitionName(project: Project): string {
+  return `project-${project.data.slug}`;
+}
+
+const VIDEO_FORMAT = /video/i;
+const POSTED_STATUS = /^(posted|published|shipped)$/i;
+
+/** Everything public that relates to one project, gathered from Notion relations in both directions. */
+export async function getProjectPageData(project: Project) {
+  const data = await getSiteCollections();
+  const id = project.data.notionId;
+  const loops = data.loops
+    .filter((loop) => loop.data.projectIds.includes(id) || project.data.loopIds.includes(loop.data.notionId))
+    .sort((a, b) => dateValue(b.data.startDate) - dateValue(a.data.startDate));
+  const currentLoop = loops.find((loop) => loop.data.isCurrent) ?? loops[0];
+  const loopIds = new Set(loops.map((loop) => loop.data.notionId));
+  const posts = data.posts.filter(
+    (post) => post.data.projectIds.includes(id) || post.data.loopIds.some((loopId) => loopIds.has(loopId)),
+  );
+  // Only content that has actually gone out and has a public link is shown.
+  const shipped = data.content.filter(
+    (entry) => entry.data.projectIds.includes(id) && entry.data.link && POSTED_STATUS.test(entry.data.status ?? ''),
+  );
+  const buildLog = currentLoop
+    ? deriveBuildLog(currentLoop.data, data.dailyTargets.map((target) => target.data))
+    : [];
+  const photos = posts.flatMap((post) => (post.data.hero ? [{ post, image: post.data.hero }] : []));
+
+  return {
+    loops,
+    currentLoop,
+    metrics: loopMetrics(currentLoop),
+    loopNumber: loopNumber(currentLoop, data.loops),
+    posts,
+    videos: shipped.filter((entry) => VIDEO_FORMAT.test(entry.data.format ?? '')),
+    links: shipped.filter((entry) => !VIDEO_FORMAT.test(entry.data.format ?? '')),
+    buildLog,
+    photos,
+  };
 }
 
 function projectForLoop(loop: Loop | undefined, projects: Project[]): Project | undefined {

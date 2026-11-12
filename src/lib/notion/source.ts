@@ -65,6 +65,8 @@ const PROPERTY_REQUIREMENTS: Record<DataSourceKey, Record<string, string | strin
     Status: ['status', 'select'],
     'What it is': 'rich_text',
     'Next action': 'rich_text',
+    'On site': 'checkbox',
+    Loops: 'relation',
   },
   content: {
     Title: 'title',
@@ -72,6 +74,8 @@ const PROPERTY_REQUIREMENTS: Record<DataSourceKey, Record<string, string | strin
     Format: 'select',
     'Publish date': 'date',
     Loop: 'relation',
+    Project: 'relation',
+    Link: 'url',
   },
 };
 

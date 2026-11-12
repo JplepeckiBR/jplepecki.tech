@@ -1,40 +1,34 @@
 // Overnight visual review helper adapted from the archived portfolio script.
 import { chromium } from '@playwright/test';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 
 const BASE = process.env.BASE_URL ?? 'http://localhost:4321';
 const OUT = process.env.SCREENSHOT_OUT ?? 'review/v1-rebuild';
 
-async function fixturePostPath() {
+// Discover real routes from the running site so this works with fixtures and live Notion alike.
+async function firstLink(browser, listPath, prefix) {
+  const page = await browser.newPage();
   try {
-    const fixture = JSON.parse(await readFile('fixtures/notion.json', 'utf8'));
-    const normalizedPost = fixture.posts?.find?.((entry) => entry.slug);
-    if (normalizedPost?.slug) return `/posts/${normalizedPost.slug}`;
-
-    const pages = fixture.dataSources?.posts?.pages;
-    if (!Array.isArray(pages)) return null;
-    for (const page of pages) {
-      const status = page.properties?.['Site status']?.select?.name;
-      if (status !== 'Published' && status !== 'In progress') continue;
-      const slug = page.properties?.Slug?.rich_text
-        ?.map((item) => item.plain_text ?? item.text?.content ?? '')
-        .join('')
-        .trim();
-      if (slug) return `/posts/${slug}`;
-    }
-    return null;
-  } catch {
-    return null;
+    await page.goto(BASE + listPath, { waitUntil: 'networkidle' });
+    const hrefs = await page.$$eval('a[href]', (links) => links.map((link) => link.getAttribute('href')));
+    return hrefs.find((href) => href?.startsWith(prefix) && href.replace(/\/$/, '') !== prefix.replace(/\/$/, '')) ?? null;
+  } finally {
+    await page.close();
   }
 }
 
-const postPath = await fixturePostPath();
+const discoveryBrowser = await chromium.launch();
+const postPath = await firstLink(discoveryBrowser, '/posts', '/posts/');
+const projectPath = await firstLink(discoveryBrowser, '/projects', '/projects/');
+await discoveryBrowser.close();
+
 const routes = [
   ['home', '/'],
   ['posts', '/posts'],
   ...(postPath ? [['post', postPath]] : []),
   ['loop', '/loop'],
   ['projects', '/projects'],
+  ...(projectPath ? [['project', projectPath]] : []),
   ['styleguide', '/styleguide'],
 ];
 const viewports = [
