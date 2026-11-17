@@ -2,7 +2,7 @@
   "portrait": { "left": "3%", "top": "6%", "width": 250, "rotation": -2 },
   "pcb": { "left": "29%", "top": "7%", "width": 460, "rotation": 0 },
   "sketch": { "left": "3%", "top": "39%", "width": 210, "rotation": -3 },
-  "project": { "right": "3%", "top": "5%", "width": 250, "rotation": 2.5 },
+  "project": { "right": "2%", "top": "4%", "width": 290, "rotation": 1.5 },
   "notebook": { "right": "4%", "top": "55%", "width": 220, "rotation": -2 },
   "businessCard": { "left": "4%", "top": "64%", "width": 220, "rotation": 1.5 },
   "loopCard": { "left": "33%", "top": "63%", "width": 230, "rotation": -1 },

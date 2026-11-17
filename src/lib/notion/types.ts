@@ -125,6 +125,8 @@ export interface ProjectEntry {
   whatItIs?: string;
   nextAction?: string;
   cover?: SerializedImage;
+  onSite: boolean;
+  loopIds: string[];
 }
 
 export interface ShippedContentEntry {
@@ -134,6 +136,8 @@ export interface ShippedContentEntry {
   format?: string;
   publishDate?: string;
   loopIds: string[];
+  projectIds: string[];
+  link?: string;
 }
 
 export interface ReadmeEntry {

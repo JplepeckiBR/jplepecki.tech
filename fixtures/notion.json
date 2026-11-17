@@ -337,7 +337,9 @@
         "Name": { "type": "title" },
         "Status": { "type": "status" },
         "What it is": { "type": "rich_text" },
-        "Next action": { "type": "rich_text" }
+        "Next action": { "type": "rich_text" },
+        "On site": { "type": "checkbox" },
+        "Loops": { "type": "relation" }
       },
       "pages": [{
         "id": "fixture-project-smart-vivarium",
@@ -352,7 +354,9 @@
           "Name": { "type": "title", "title": [{ "plain_text": "Smart Vivarium" }] },
           "Status": { "type": "status", "status": { "name": "Planning" } },
           "What it is": { "type": "rich_text", "rich_text": [{ "plain_text": "Remotely controled climate system for a crested gecko's vivarium." }] },
-          "Next action": { "type": "rich_text", "rich_text": [] }
+          "Next action": { "type": "rich_text", "rich_text": [] },
+          "On site": { "type": "checkbox", "checkbox": true },
+          "Loops": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
         }
       }]
     },
@@ -363,7 +367,9 @@
         "Status": { "type": "status" },
         "Format": { "type": "select" },
         "Publish date": { "type": "date" },
-        "Loop": { "type": "relation" }
+        "Loop": { "type": "relation" },
+        "Project": { "type": "relation" },
+        "Link": { "type": "url" }
       },
       "pages": [{
         "id": "fixture-content-entry",
@@ -372,7 +378,9 @@
           "Status": { "type": "status", "status": { "name": "Fixture sample" } },
           "Format": { "type": "select", "select": { "name": "Post" } },
           "Publish date": { "type": "date", "date": { "start": "2020-01-03", "end": null } },
-          "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] }
+          "Loop": { "type": "relation", "relation": [{ "id": "fixture-loop-smart-vivarium" }] },
+          "Project": { "type": "relation", "relation": [{ "id": "fixture-project-smart-vivarium" }] },
+          "Link": { "type": "url", "url": null }
         }
       }]
     }

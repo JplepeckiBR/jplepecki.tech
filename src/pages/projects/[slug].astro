@@ -1,0 +1,434 @@
+---
+import type { GetStaticPaths, ImageMetadata } from 'astro';
+import BurnMark from '../../components/desk/BurnMark.astro';
+import Stain from '../../components/desk/Stain.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import Polaroid from '../../components/objects/Polaroid.astro';
+import ProjectSpecimen from '../../components/objects/ProjectSpecimen.astro';
+import BuildLog from '../../components/paper/BuildLog.astro';
+import StatusTape from '../../components/paper/StatusTape.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import { projectArt } from '../../config/project-art';
+import {
+  formatDate,
+  getProjectPageData,
+  getSiteCollections,
+  optionalVisitorText,
+  projectPageHref,
+  projectPostHref,
+  projectTransitionName,
+  type Project,
+} from '../../lib/content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export const getStaticPaths = (async () => {
+  const data = await getSiteCollections();
+  return data.projects
+    .filter((project) => optionalVisitorText(project.data.name))
+    .map((project) => ({ params: { slug: project.data.slug }, props: { project } }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props as { project: Project };
+const page = await getProjectPageData(project);
+const name = project.data.name;
+const whatItIs = optionalVisitorText(project.data.whatItIs);
+const nextAction = optionalVisitorText(project.data.nextAction);
+const status = optionalVisitorText(project.data.status);
+const loopLabel = page.loopNumber ? page.loopNumber.toString().padStart(2, '0') : undefined;
+const currentLoop = page.currentLoop?.data.isCurrent ? page.currentLoop : undefined;
+const stage = optionalVisitorText(currentLoop?.data.stage)?.toLowerCase();
+const cover = project.data.cover?.asset as ImageMetadata | undefined;
+
+function videoProvider(url: string): 'youtube' | 'vimeo' | undefined {
+  const host = new URL(url).hostname.replace(/^www\./, '');
+  if (/^(youtube\.com|m\.youtube\.com|youtu\.be)$/.test(host)) return 'youtube';
+  if (/^(vimeo\.com|player\.vimeo\.com)$/.test(host)) return 'vimeo';
+  return undefined;
+}
+
+const embeddableVideos = page.videos.flatMap((video) => {
+  const provider = videoProvider(video.data.link!);
+  return provider ? [{ video, provider }] : [];
+});
+const externalLinks = [
+  ...page.links,
+  ...page.videos.filter((video) => !videoProvider(video.data.link!)),
+];
+const metaParts = [status, page.loops.length > 0 ? `${page.loops.length} loop${page.loops.length === 1 ? '' : 's'}` : undefined].filter(Boolean);
+---
+
+<BaseLayout title={name} description={whatItIs}>
+  <SiteHeader current="projects" />
+
+  <main
+    id="main"
+    class="project-main desk-mat"
+    data-post-loop
+    data-loop-start={currentLoop?.data.startDate}
+    data-loop-end={currentLoop?.data.endDate}
+  >
+    <BurnMark x={10} y={70} width={28} height={20} />
+    <Stain variant="mug" x={90} y={14} width={84} height={84} />
+
+    <div class="project-grid">
+      <aside class="project-object" aria-hidden="true">
+        <ProjectSpecimen
+          href={projectPageHref(project)}
+          name={name}
+          art={projectArt(project.data.slug)}
+          loop={currentLoop ? loopLabel : undefined}
+          day={currentLoop ? page.metrics?.day : undefined}
+          length={currentLoop ? page.metrics?.length : undefined}
+          stage={stage}
+          transitionName={projectTransitionName(project)}
+          rotation={-1.5}
+          width={360}
+          asHeader
+        />
+      </aside>
+
+      <article class="project-page">
+        {currentLoop && (
+          <StatusTape
+            inProgress
+            loopLabel={loopLabel ? `LOOP ${loopLabel}` : undefined}
+            day={page.metrics?.day}
+            totalDays={page.metrics?.length}
+          />
+        )}
+
+        {metaParts.length > 0 && <p class:list={['project-meta', { 'project-meta--taped': currentLoop }]}>{metaParts.join(' · ')}</p>}
+        <h1>{name}</h1>
+        {whatItIs && <p class="project-dek">{whatItIs}</p>}
+
+        {nextAction && (
+          <p class="next-slip">
+            <span class="next-slip__label">next on the bench</span>
+            <span>{nextAction}</span>
+          </p>
+        )}
+
+        {cover && project.data.cover && (
+          <figure class="project-cover">
+            <Polaroid href={cover.src} image={cover} alt={project.data.cover.alt} linkLabel={`Open full-size image: ${project.data.cover.alt}`} rotation={-1} width={480} />
+          </figure>
+        )}
+
+        {page.posts.length > 0 && (
+          <section class="project-section" aria-labelledby="project-posts">
+            <h2 id="project-posts">Posts &amp; documentation</h2>
+            <ul class="post-list">
+              {page.posts.map((post) => {
+                const date = formatDate(post.data.publishedDate);
+                const excerpt = optionalVisitorText(post.data.excerpt);
+                return (
+                  <li>
+                    <a href={`/posts/${post.data.slug}/`}>
+                      <span class="post-list__meta">{[post.data.inProgress ? 'in progress' : undefined, date].filter(Boolean).join(' · ')}</span>
+                      <span class="post-list__title">{post.data.title}</span>
+                      {excerpt && <span class="post-list__excerpt">{excerpt}</span>}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {page.photos.length > 0 && (
+          <section class="project-section" aria-labelledby="project-photos">
+            <h2 id="project-photos">Photos</h2>
+            <div class="photo-bench">
+              {page.photos.map(({ post, image }, index) => (
+                <Polaroid
+                  href={`/posts/${post.data.slug}/`}
+                  image={image.asset as unknown as ImageMetadata}
+                  alt={image.alt}
+                  linkLabel={`${image.alt}, from ${post.data.title}`}
+                  actionLabel={post.data.title}
+                  rotation={index % 2 === 0 ? -1.5 : 1.5}
+                  width={260}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {embeddableVideos.length > 0 && (
+          <section class="project-section" aria-labelledby="project-videos">
+            <h2 id="project-videos">Videos</h2>
+            {embeddableVideos.map(({ video, provider }) => (
+              <div class="video-slot">
+                <VideoEmbed provider={provider} url={video.data.link} title={video.data.title} />
+              </div>
+            ))}
+          </section>
+        )}
+
+        {externalLinks.length > 0 && (
+          <section class="project-section" aria-labelledby="project-elsewhere">
+            <h2 id="project-elsewhere">Elsewhere</h2>
+            <ul class="link-list">
+              {externalLinks.map((entry) => (
+                <li>
+                  <a href={entry.data.link} rel="noopener" target="_blank">
+                    <span class="link-list__format">{optionalVisitorText(entry.data.format)?.toLowerCase() ?? 'link'}</span>
+                    <span>{entry.data.title}</span>
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {page.buildLog.length > 0 && (
+          <section class="project-section" aria-labelledby="project-log">
+            <h2 id="project-log">Build log</h2>
+            <BuildLog entries={page.buildLog} sourceNote="daily targets from Lab Loop HQ" />
+          </section>
+        )}
+
+        {page.loops.length > 0 && (
+          <section class="project-section" aria-labelledby="project-loops">
+            <h2 id="project-loops">Loops</h2>
+            <ul class="loop-list">
+              {page.loops.map((loop) => {
+                const dates = [formatDate(loop.data.startDate), formatDate(loop.data.endDate)].filter(Boolean).join(' – ');
+                const loopStage = optionalVisitorText(loop.data.stage);
+                return (
+                  <li class:list={{ 'loop-list__current': loop.data.isCurrent }}>
+                    <span class="loop-list__name">{loop.data.name}</span>
+                    <span class="loop-list__meta">
+                      {[loop.data.isCurrent ? 'in progress' : optionalVisitorText(loop.data.status)?.toLowerCase(), loopStage?.toLowerCase(), dates].filter(Boolean).join(' · ')}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        <nav class="project-nav" aria-label="Project navigation">
+          <a href="/projects/"><span aria-hidden="true">←</span> all projects</a>
+          {page.posts.length > 0 && <a href={projectPostHref(project)}>posts about {name} <span aria-hidden="true">→</span></a>}
+        </nav>
+      </article>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Keep the "day x/y" on the tag and tape current between hourly rebuilds.
+  (() => {
+    const root = document.querySelector<HTMLElement>('[data-post-loop]');
+    const start = root?.dataset.loopStart;
+    const end = root?.dataset.loopEnd;
+    if (!root || !/^\d{4}-\d{2}-\d{2}$/.test(start || '') || !/^\d{4}-\d{2}-\d{2}$/.test(end || '')) return;
+    const parse = (value: string) => Date.parse(`${value}T00:00:00Z`);
+    const ny = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+    const length = Math.floor((parse(end!) - parse(start!)) / 86400000) + 1;
+    const day = Math.min(length, Math.max(1, Math.floor((parse(ny.format(new Date())) - parse(start!)) / 86400000) + 1));
+    root.querySelectorAll('[data-live-loop-day]').forEach((node) => { node.textContent = `${day}/${length}`; });
+  })();
+</script>
+
+<style>
+  .project-main {
+    position: relative;
+    min-height: calc(100vh - 67px);
+    padding: 56px 24px 80px;
+    overflow: hidden;
+  }
+
+  .project-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    grid-template-columns: minmax(0, 380px) minmax(0, 720px);
+    gap: 40px;
+    align-items: start;
+    justify-content: center;
+  }
+
+  .project-object {
+    position: sticky;
+    top: 40px;
+    padding-top: 24px;
+  }
+
+  .project-page {
+    position: relative;
+    min-width: 0;
+    padding: 56px 56px 48px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-page), var(--wear-cover);
+  }
+
+  .project-meta {
+    margin: 0 0 22px;
+    color: var(--text-muted);
+    font: 12px/1.5 var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .project-meta--taped { margin-top: 18px; }
+
+  .project-page > h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 46px;
+    font-weight: 600;
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  .project-dek {
+    margin: 18px 0 0;
+    color: #c9cec9;
+    font-size: 21px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .next-slip {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    margin: 30px 0 0;
+    padding: 12px 16px 13px;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--paper);
+    background-image: var(--texture-paper);
+    box-shadow: var(--shadow-object), var(--wear-paper);
+    color: var(--text-on-paper);
+    font-size: 18px;
+    line-height: 1.45;
+    transform: rotate(-0.8deg);
+  }
+
+  .next-slip__label {
+    color: #4a504c;
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-cover {
+    display: flex;
+    margin: 34px 0 0;
+    justify-content: center;
+  }
+
+  .project-section {
+    margin-top: 44px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+
+  .project-section h2 {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+    font: 12px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .post-list,
+  .link-list,
+  .loop-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post-list li + li { margin-top: 6px; }
+
+  .post-list a {
+    display: flex;
+    min-height: 44px;
+    padding: 10px 0;
+    flex-direction: column;
+    gap: 3px;
+    text-decoration: none;
+  }
+
+  .post-list__meta { color: var(--text-muted); font: 11px/1.4 var(--font-mono); text-transform: uppercase; }
+  .post-list__title { color: var(--text); font-size: 22px; line-height: 1.3; }
+  .post-list__excerpt { color: var(--text-body); font-size: 17px; line-height: 1.5; }
+  .post-list a:hover .post-list__title,
+  .post-list a:focus-visible .post-list__title { color: var(--accent); }
+
+  .photo-bench {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px 32px;
+  }
+
+  .video-slot + .video-slot { margin-top: 24px; }
+
+  .link-list a {
+    display: grid;
+    min-height: 44px;
+    grid-template-columns: 130px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .link-list__format { color: var(--text-muted); font: 11px/1.4 var(--font-mono); text-transform: uppercase; }
+  .link-list a:hover,
+  .link-list a:focus-visible { color: var(--accent); }
+
+  .loop-list li {
+    display: flex;
+    min-height: 44px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-subtle);
+  }
+
+  .loop-list__name { color: var(--text); font-size: 19px; }
+  .loop-list__meta { color: var(--text-muted); font: 12px/1.4 var(--font-mono); text-align: right; }
+  .loop-list__current .loop-list__meta { color: var(--accent); }
+
+  .project-nav {
+    display: flex;
+    margin-top: 44px;
+    padding-top: 20px;
+    justify-content: space-between;
+    gap: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .project-nav a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    font: 14px/1.5 var(--font-mono);
+    text-decoration: none;
+  }
+
+  .project-nav a:hover,
+  .project-nav a:focus-visible { color: var(--accent); }
+
+  @media (max-width: 1099px) {
+    .project-main { padding: 12px; }
+    .project-grid { display: block; max-width: 760px; }
+    .project-object { position: static; width: min(100%, 340px); margin: 8px auto 4px; padding: 0; }
+    .project-page { padding: 40px 18px 34px; }
+    .project-page > h1 { font-size: 36px; }
+    .project-dek { font-size: 19px; }
+    .link-list a { grid-template-columns: 1fr auto; }
+    .link-list__format { grid-column: 1 / -1; }
+  }
+</style>

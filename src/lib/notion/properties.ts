@@ -89,6 +89,15 @@ export function dateProperty(page: RawRecord, name: string): { start?: string; e
   };
 }
 
+/** Only public https links survive; anything else (including Notion-hosted URLs) is dropped. */
+export function urlProperty(page: RawRecord, name: string): string | undefined {
+  const value = property(page, name);
+  const url = value?.type === 'url' && typeof value.url === 'string' ? value.url.trim() : '';
+  if (!/^https:\/\//i.test(url)) return undefined;
+  if (/(?:notion\.so|notion\.site|notionusercontent|notion-static|prod-files-secure)/i.test(url)) return undefined;
+  return url;
+}
+
 export function relationProperty(page: RawRecord, name: string): string[] {
   const value = property(page, name);
   if (value?.type !== 'relation' || !Array.isArray(value.relation)) return [];

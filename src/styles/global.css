@@ -152,3 +152,24 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Project objects expand into their page: the desk object and the page header share a view-transition-name. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(*) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}

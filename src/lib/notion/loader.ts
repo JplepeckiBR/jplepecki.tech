@@ -9,6 +9,7 @@ import {
   numberProperty,
   pageCover,
   relationProperty,
+  urlProperty,
   selectProperty,
   textProperty,
   titleProperty,
@@ -155,6 +156,8 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
       whatItIs: textProperty(page, 'What it is'),
       nextAction: textProperty(page, 'Next action'),
       cover: await pageCover(page, `${name} project cover`, `${context} cover`),
+      onSite: checkboxProperty(page, 'On site'),
+      loopIds: relationProperty(page, 'Loops'),
     });
   }
 
@@ -167,6 +170,8 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
       format: selectProperty(page, 'Format'),
       publishDate: dateProperty(page, 'Publish date').start,
       loopIds: relationProperty(page, 'Loop'),
+      projectIds: relationProperty(page, 'Project'),
+      link: urlProperty(page, 'Link'),
     };
   });
 
@@ -220,13 +225,10 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
     });
   }
 
-  const publicProjectIds = new Set([
-    ...loops.flatMap((loop) => loop.projectIds),
-    ...posts.flatMap((post) => post.projectIds),
-  ]);
-  const publicProjects = projects.filter((project) => publicProjectIds.has(project.notionId));
+  // Only projects explicitly ticked "On site" in Notion are public.
+  const publicProjects = projects.filter((project) => project.onSite);
   if (publicProjects.length < projects.length) {
-    logger.info(`Omitted ${projects.length - publicProjects.length} project(s) not linked from a loop or included post`);
+    logger.info(`Omitted ${projects.length - publicProjects.length} project(s) without "On site" ticked`);
   }
 
   const dataset: NotionDataset = {
