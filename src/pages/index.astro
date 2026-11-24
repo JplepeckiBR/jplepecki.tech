@@ -12,8 +12,8 @@ import LoopCard from '../components/objects/LoopCard.astro';
 import Notebook from '../components/objects/Notebook.astro';
 import PartsList from '../components/objects/PartsList.astro';
 import PcbNav from '../components/objects/PcbNav.astro';
-import PortraitLightbox from '../components/objects/PortraitLightbox.astro';
-import PortraitProfile from '../components/objects/PortraitProfile.astro';
+import NotebookSpread from '../components/objects/NotebookSpread.astro';
+import SocialPads from '../components/objects/SocialPads.astro';
 import ProjectSpecimen from '../components/objects/ProjectSpecimen.astro';
 import { projectArt } from '../config/project-art';
 import ShadowSlot from '../components/objects/ShadowSlot.astro';
@@ -81,10 +81,6 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         <PencilNote text={'fan ON > 85 %RH\nfan OFF < 70'} x={51} y={49} rotation={-3} width={185} />
         <PencilNote text="R2 = 10k ?" x={33} y={56} rotation={3} width={110} />
         <PencilNote text="28 °C MAX" x={63} y={58} rotation={3} width={120} />
-
-        <div class="desk-object desk-object--profile" style={positionStyle(deskPositions.portrait)}>
-          <PortraitProfile width={deskPositions.portrait.width} rotation={deskPositions.portrait.rotation} />
-        </div>
 
         <div class="desk-object home-pcb" style={positionStyle(deskPositions.pcb)}>
           <PcbNav
@@ -164,7 +160,13 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         <span><strong>DESK ORGANIZED</strong><small>List view is active.</small></span>
         <button type="button" data-restore-button>restore messy desk</button>
       </div>
-      <PortraitProfile variant="compact" />
+      <section class="compact-profile" aria-label="About JP">
+        <a class="compact-profile__notebook" href="/posts" data-notebook-open aria-label="Open the lab notebook: about JP and posts">
+          <img src="/portraits/jp-sticker-360.png" srcset="/portraits/jp-sticker-360.png 390w, /portraits/jp-sticker-720.png 776w" sizes="120px" width="390" height="320" alt="" loading="eager" />
+          <span>LAB NOTEBOOK<br /><strong>open ↗</strong></span>
+        </a>
+        <SocialPads size="sm" />
+      </section>
       <CalloutMap items={parts} />
       <PartsList items={parts} />
       {(loopDescription || Number.isFinite(postTarget) || targets.length > 0) && (
@@ -182,7 +184,15 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
     </section>
   </main>
 
-  <PortraitLightbox />
+  <NotebookSpread
+    entries={posts.map((post) => ({
+      title: post.data.title,
+      href: `/posts/${post.data.slug}`,
+      date: post.data.publishedDate,
+      excerpt: post.data.excerpt,
+      inProgress: post.data.inProgress,
+    }))}
+  />
 
   <script is:inline>
     (() => {
@@ -254,7 +264,41 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
     z-index: 4;
   }
 
-  .desk-object--profile { z-index: 5; }
+  .compact-profile {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--line);
+    background-color: var(--mat);
+    background-image: var(--texture-mat);
+  }
+
+  .compact-profile__notebook {
+    display: flex;
+    min-height: 44px;
+    padding: 12px 16px 12px 12px;
+    align-items: center;
+    gap: 14px;
+    border-radius: 3px 8px 8px 3px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-object), var(--wear-cover);
+    color: var(--text-muted);
+    font: 11px/1.5 var(--font-mono);
+    text-decoration: none;
+  }
+
+  .compact-profile__notebook img {
+    width: 120px;
+    height: auto;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.55));
+    transform: rotate(3deg);
+  }
+
+  .compact-profile__notebook strong { color: var(--accent); font-weight: 600; }
 
   :global(.home-pcb a[href='/loop'] rect) {
     transform: scaleY(1.06);

@@ -67,6 +67,22 @@ const image = block.image?.asset as ImageMetadata | undefined;
   </figure>
 )}
 
+{block.type === 'imageGroup' && (
+  <div class:list={['photo-group', `photo-group--${Math.min(block.images.length, 4)}`]}>
+    {block.images.map((img: any, index: number) => img.asset && (
+      <Polaroid
+        href={img.asset.src}
+        image={img.asset}
+        alt={img.alt}
+        linkLabel={`Open full-size image: ${img.alt}`}
+        actionLabel={img.caption}
+        rotation={[-1.6, 1.2, -0.6, 1.8][index % 4]}
+        width={block.images.length === 2 ? 300 : 230}
+      />
+    ))}
+  </div>
+)}
+
 {block.type === 'table' && (
   <div class="paper-object">
     <TapedSheet
@@ -211,6 +227,27 @@ const image = block.image?.asset as ImageMetadata | undefined;
   .article-polaroid {
     display: flex;
     justify-content: center;
+  }
+
+  /* 2-4 photos for one topic, laid out like prints taped across the page. */
+  .photo-group {
+    display: grid;
+    margin: 2rem 0;
+    gap: 18px 14px;
+    align-items: start;
+    justify-items: center;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .photo-group--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .photo-group--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .photo-group > :global(*) { max-width: 100%; }
+  .photo-group > :global(:nth-child(even)) { margin-top: 18px; }
+
+  @media (max-width: 560px) {
+    .photo-group,
+    .photo-group--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .photo-group > :global(:nth-child(even)) { margin-top: 10px; }
   }
 
   .receipt-block {

@@ -141,6 +141,24 @@ async function convertBlock(
       const image = await localizeBlockImage(block, pageTitle, `${pageTitle}, image block ${id}`);
       return image ? { id, type: 'image', image } : undefined;
     }
+    case 'column_list': {
+      // Notion columns of images become one taped photo group (posts use 2-4 photos per topic).
+      const images: SerializedImage[] = [];
+      for (const column of await childrenFor(source, block)) {
+        for (const child of await childrenFor(source, column)) {
+          if (child.type !== 'image') {
+            logger.warn(`Skipping non-image block inside columns on "${pageTitle}": ${String(child.type)} (${String(child.id)})`);
+            continue;
+          }
+          const image = await localizeBlockImage(child, pageTitle, `${pageTitle}, image block ${String(child.id)}`);
+          if (image) images.push(image);
+        }
+      }
+      if (images.length === 0) return undefined;
+      if (images.length === 1) return { id, type: 'image', image: images[0] };
+      if (images.length > 4) logger.warn(`"${pageTitle}" has ${images.length} photos in one group; 2-4 reads best`);
+      return { id, type: 'imageGroup', images };
+    }
     case 'table': {
       const children = await childrenFor(source, block);
       return normalizeTable(id, tableRows(children), `${pageTitle} data table`);

@@ -1,0 +1,313 @@
+---
+// The lab notebook, opened. Left page: who JP is (the one portrait on the site,
+// socials, short bio, how the sticker was made). Right page: the entries.
+// Opened by any element with [data-notebook-open]; without JavaScript those
+// elements are plain links to /posts.
+import {
+  CAL_URL,
+  PORTRAIT_POST_HREF,
+  PROFILE_BIO,
+  SITE_NAME,
+} from '../../config/site';
+import SocialPads from './SocialPads.astro';
+
+interface Entry {
+  title: string;
+  href: string;
+  date?: string;
+  excerpt?: string;
+  inProgress?: boolean;
+}
+
+interface Props {
+  entries: Entry[];
+}
+
+const { entries } = Astro.props;
+const shown = entries.slice(0, 5);
+const formatDate = (iso?: string) => {
+  if (!iso || !/^\d{4}-\d{2}-\d{2}/.test(iso)) return undefined;
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  const month = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][m - 1];
+  return `${String(d).padStart(2, '0')} ${month} ${y}`;
+};
+---
+
+<dialog class="spread" data-notebook-dialog aria-labelledby="spread-name">
+  <div class="spread__cover">
+    <button class="spread__close" type="button" data-notebook-close aria-label="Close the notebook">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+
+    <div class="spread__pages">
+      <section class="page page--left" aria-label="About JP">
+        <p class="page__folio">p. 0 · about the maker</p>
+        <a class="sticker" href={PORTRAIT_POST_HREF}>
+          <img
+            src="/portraits/jp-sticker-360.png"
+            srcset="/portraits/jp-sticker-360.png 390w, /portraits/jp-sticker-720.png 776w"
+            sizes="(max-width: 640px) 60vw, 230px"
+            width="390"
+            height="320"
+            alt="JP pulling a face, printed as a two-colour riso sticker"
+            loading="lazy"
+          />
+        </a>
+        <h2 id="spread-name">{SITE_NAME}</h2>
+        {PROFILE_BIO.map((line) => <p class="page__bio">{line}</p>)}
+        <SocialPads size="sm" />
+        <div class="page__links">
+          {CAL_URL && <a class="page__call" href="/call">book a 20-min call →</a>}
+          <a class="page__code" href={PORTRAIT_POST_HREF}>
+            <span class="page__code-strike">this is a filter</span> this is code →
+          </a>
+        </div>
+      </section>
+
+      <section class="page page--right" aria-labelledby="spread-entries">
+        <p class="page__folio">p. 1 · index</p>
+        <h2 id="spread-entries">Entries</h2>
+        {shown.length > 0 ? (
+          <ol class="entries">
+            {shown.map((entry) => (
+              <li>
+                <a href={entry.href}>
+                  <span class="entries__meta">
+                    {formatDate(entry.date) ?? 'undated'}
+                    {entry.inProgress && <span class="entries__wip">in progress</span>}
+                  </span>
+                  <span class="entries__title">{entry.title}</span>
+                  {entry.excerpt && <span class="entries__excerpt">{entry.excerpt}</span>}
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p class="page__bio">The first entry is being written.</p>
+        )}
+        <a class="page__all" href="/posts">all entries →</a>
+      </section>
+    </div>
+  </div>
+</dialog>
+
+<script is:inline>
+  (() => {
+    const dialog = document.querySelector('[data-notebook-dialog]');
+    if (!(dialog instanceof HTMLDialogElement) || typeof dialog.showModal !== 'function') return;
+    let opener = null;
+    document.querySelectorAll('[data-notebook-open]').forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        opener = trigger;
+        dialog.showModal();
+        dialog.querySelector('[data-notebook-close]')?.focus();
+      });
+    });
+    dialog.querySelector('[data-notebook-close]')?.addEventListener('click', () => dialog.close());
+    // A click on the dimmed backdrop lands on the dialog element itself.
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('close', () => { if (opener instanceof HTMLElement) opener.focus(); });
+  })();
+</script>
+
+<style>
+  .spread {
+    width: min(1000px, calc(100vw - 20px));
+    max-height: calc(100dvh - 20px);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    border: 0;
+    background: transparent;
+    color: var(--text-on-paper);
+  }
+
+  .spread::backdrop { background: rgba(8, 10, 9, 0.8); }
+  .spread[open] .spread__pages { animation: spread-open 260ms ease-out; transform-origin: center; }
+
+  @keyframes spread-open {
+    from { opacity: 0; transform: scaleX(0.55); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Black bookcloth cover peeking out around the pages. */
+  .spread__cover {
+    position: relative;
+    padding: 14px;
+    border-radius: 6px 12px 12px 6px;
+    background-color: var(--page);
+    background-image: var(--texture-dark);
+    box-shadow: var(--shadow-page), var(--wear-cover);
+  }
+
+  .spread__close {
+    position: absolute;
+    z-index: 3;
+    top: 18px;
+    right: 18px;
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--text-on-paper);
+    cursor: pointer;
+  }
+
+  .spread__close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 1.8; }
+  .spread__close:hover,
+  .spread__close:focus-visible { color: var(--danger); }
+
+  .spread__pages {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .page {
+    position: relative;
+    min-height: 520px;
+    padding: 30px 34px 32px;
+    background-color: var(--paper);
+    background-image: var(--texture-paper);
+    /* Faint dot grid, like a lab notebook page. */
+    background-size: auto;
+  }
+
+  /* The gutter: each page darkens toward the spine (shadow, not a gradient fill). */
+  .page--left { box-shadow: inset -18px 0 22px -18px rgba(60, 45, 20, 0.35), var(--wear-paper); }
+  .page--right { box-shadow: inset 18px 0 22px -18px rgba(60, 45, 20, 0.35), var(--wear-paper); }
+
+  .page__folio {
+    margin: 0 0 18px;
+    color: #4a4d49;
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+  }
+
+  .sticker {
+    display: block;
+    width: 230px;
+    margin: 0 0 18px -6px;
+    transform: rotate(-3deg);
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.18));
+    transition: transform 160ms ease;
+  }
+
+  .sticker img { display: block; width: 100%; height: auto; }
+  .sticker:hover,
+  .sticker:focus-visible { transform: rotate(-1deg) scale(1.02); }
+
+  .page h2 {
+    margin: 0 0 10px;
+    font: 600 28px/1.1 var(--font-serif);
+  }
+
+  .page__bio {
+    max-width: 44ch;
+    margin: 0 0 10px;
+    color: #2e2c28;
+    font: 17px/1.5 var(--font-serif);
+  }
+
+  .page--left :global(.social-pads) { margin: 14px 0 6px -4px; }
+
+  .page__links {
+    display: flex;
+    margin-top: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .page__call,
+  .page__code,
+  .page__all {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-on-paper);
+    font: 600 13px/1.3 var(--font-mono);
+    text-decoration: none;
+  }
+
+  .page__call { padding: 0 14px; background: var(--text-on-paper); color: var(--paper); }
+  .page__call:hover,
+  .page__call:focus-visible { background: var(--danger); }
+
+  .page__code-strike {
+    color: #6a6a64;
+    font-weight: 400;
+    text-decoration: line-through;
+    text-decoration-color: var(--danger);
+    text-decoration-thickness: 2px;
+  }
+
+  .page__code:hover,
+  .page__code:focus-visible,
+  .page__all:hover,
+  .page__all:focus-visible { color: var(--danger); }
+
+  .entries {
+    margin: 0 0 12px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .entries li + li { border-top: 1px dashed #b9b2a2; }
+
+  .entries a {
+    display: block;
+    padding: 14px 0;
+    color: var(--text-on-paper);
+    text-decoration: none;
+  }
+
+  .entries__meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #4a4d49;
+    font: 11px/1.4 var(--font-mono);
+  }
+
+  .entries__wip {
+    padding: 1px 6px;
+    background: var(--sticky);
+    color: var(--ink);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .entries__title {
+    display: block;
+    margin-top: 4px;
+    font: 600 20px/1.25 var(--font-serif);
+  }
+
+  .entries__excerpt {
+    display: block;
+    margin-top: 4px;
+    color: #3b3934;
+    font: 15px/1.45 var(--font-serif);
+  }
+
+  .entries a:hover .entries__title,
+  .entries a:focus-visible .entries__title { color: var(--danger); }
+
+  @media (max-width: 720px) {
+    .spread__pages { grid-template-columns: minmax(0, 1fr); }
+    .page { min-height: 0; padding: 24px 20px; }
+    .page--left { box-shadow: inset 0 -14px 18px -16px rgba(60, 45, 20, 0.35), var(--wear-paper); }
+    .page--right { box-shadow: inset 0 14px 18px -16px rgba(60, 45, 20, 0.35), var(--wear-paper); }
+    .sticker { width: min(230px, 62vw); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spread[open] .spread__pages { animation: none; }
+    .sticker { transition: none; }
+  }
+</style>
