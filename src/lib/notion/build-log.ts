@@ -10,7 +10,7 @@ function addDays(isoDate: string, dayOffset: number): string | undefined {
   return date.toISOString().slice(0, 10);
 }
 
-function newYorkToday(now = new Date()): string {
+export function newYorkToday(now = new Date()): string {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/New_York',
     year: 'numeric',

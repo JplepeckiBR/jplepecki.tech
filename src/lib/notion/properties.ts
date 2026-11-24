@@ -89,6 +89,13 @@ export function dateProperty(page: RawRecord, name: string): { start?: string; e
   };
 }
 
+/** A date property's start exactly as set: "YYYY-MM-DD", or a full date-time when "Include time" is on. */
+export function dateTimeProperty(page: RawRecord, name: string): string | undefined {
+  const value = property(page, name);
+  if (value?.type !== 'date' || typeof value.date?.start !== 'string') return undefined;
+  return value.date.start;
+}
+
 /** Only public https links survive; anything else (including Notion-hosted URLs) is dropped. */
 export function urlProperty(page: RawRecord, name: string): string | undefined {
   const value = property(page, name);

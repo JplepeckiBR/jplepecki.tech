@@ -200,6 +200,12 @@ export async function getProjectPageData(project: Project) {
   const shipped = data.content.filter(
     (entry) => entry.data.projectIds.includes(id) && entry.data.link && POSTED_STATUS.test(entry.data.status ?? ''),
   );
+  // Every daily target of the current loop, in plan order, for the checklist on the project page.
+  const checklist = currentLoop
+    ? data.dailyTargets
+        .filter((target) => target.data.loopIds.includes(currentLoop.data.notionId))
+        .sort((a, b) => a.data.day - b.data.day || (a.data.done === b.data.done ? 0 : a.data.done ? -1 : 1))
+    : [];
   const buildLog = currentLoop
     ? deriveBuildLog(currentLoop.data, data.dailyTargets.map((target) => target.data))
     : [];
@@ -214,6 +220,7 @@ export async function getProjectPageData(project: Project) {
     videos: shipped.filter((entry) => VIDEO_FORMAT.test(entry.data.format ?? '')),
     links: shipped.filter((entry) => !VIDEO_FORMAT.test(entry.data.format ?? '')),
     buildLog,
+    checklist,
     photos,
   };
 }

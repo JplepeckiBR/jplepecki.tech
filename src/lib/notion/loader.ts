@@ -4,6 +4,7 @@ import { normalizePageBlocks, tableOfContents } from './blocks';
 import {
   checkboxProperty,
   dateProperty,
+  dateTimeProperty,
   filesProperty,
   multiSelectProperty,
   numberProperty,
@@ -123,6 +124,16 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
     return Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000) + 1;
   };
 
+  const plannedDate = (page: RawRecord, loopIds: string[], day: number): string | undefined => {
+    const date = dateProperty(page, 'Day').start?.slice(0, 10);
+    if (date) return date;
+    const start = loopIds.map((id) => loopStarts.get(id)).find(Boolean)?.slice(0, 10);
+    if (!start) return undefined;
+    const d = new Date(`${start}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + day - 1);
+    return d.toISOString().slice(0, 10);
+  };
+
   const dailyTargets: DailyTargetEntry[] = [];
   for (const page of source.dataSources.dailyTargets.pages) {
     const context = pageContext(source.dataSources.dailyTargets.name, page);
@@ -139,6 +150,8 @@ async function buildDataset(logger: PipelineLogger): Promise<NotionDataset> {
       task: requiredText(titleProperty(page, 'Task'), `${context} property "Task"`),
       done: checkboxProperty(page, 'Done'),
       day: day as number,
+      plannedDate: plannedDate(page, loopIds, day as number),
+      doneAt: dateTimeProperty(page, 'Done at'),
       kpi: textProperty(page, 'KPI') ?? selectProperty(page, 'KPI'),
       loopIds,
     });

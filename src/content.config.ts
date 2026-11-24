@@ -132,6 +132,8 @@ const dailyTargets = defineCollection({
     task: z.string().trim().min(1),
     done: z.boolean(),
     day: z.number().int().positive(),
+    plannedDate: isoDate.optional(),
+    doneAt: z.string().regex(/^\d{4}-\d{2}-\d{2}(T[\d:.]+(Z|[+-]\d{2}:\d{2})?)?$/).optional(),
     kpi: optionalText,
     loopIds: relationIds,
   }),

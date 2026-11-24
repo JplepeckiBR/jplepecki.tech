@@ -1,0 +1,289 @@
+---
+// The current loop's daily targets as a clipped paper checklist.
+// Source: Lab Loop HQ → Daily targets. "Done" ticks the box; "Done at" (any date/time JP sets) is printed beside it.
+import { newYorkToday } from '../../lib/notion/build-log';
+
+interface Target {
+  task: string;
+  done: boolean;
+  day: number;
+  plannedDate?: string;
+  doneAt?: string;
+  kpi?: string;
+}
+
+interface Props {
+  targets: Target[];
+  loopLabel?: string;
+  loopLength?: number;
+}
+
+const { targets, loopLabel, loopLength } = Astro.props;
+const today = newYorkToday();
+const TZ = 'America/New_York';
+
+const dayLabel = (iso?: string) => {
+  if (!iso) return undefined;
+  const date = new Date(`${iso}T12:00:00Z`);
+  return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(date);
+};
+
+const doneLabel = (value?: string) => {
+  if (!value) return undefined;
+  const hasTime = value.includes('T');
+  const date = new Date(hasTime ? value : `${value}T12:00:00Z`);
+  if (Number.isNaN(date.valueOf())) return undefined;
+  const options: Intl.DateTimeFormatOptions = hasTime
+    ? { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: TZ }
+    : { month: 'short', day: 'numeric', timeZone: 'UTC' };
+  return new Intl.DateTimeFormat('en-US', options).format(date).replace(' AM', ' am').replace(' PM', ' pm');
+};
+
+const groups = new Map<number, Target[]>();
+for (const target of targets) groups.set(target.day, [...(groups.get(target.day) ?? []), target]);
+const days = [...groups.entries()].sort(([a], [b]) => a - b).map(([day, items]) => {
+  const date = items.find((item) => item.plannedDate)?.plannedDate;
+  const when = !date ? 'planned' : date === today ? 'today' : date < today ? 'past' : 'planned';
+  return { day, date, when, items };
+});
+
+const doneCount = targets.filter((target) => target.done).length;
+const percent = targets.length ? Math.round((doneCount / targets.length) * 100) : 0;
+---
+
+{
+  targets.length > 0 && (
+    <div class="checklist">
+      <span class="checklist__clip" aria-hidden="true"></span>
+      <header class="checklist__head">
+        <span>{loopLabel ? `loop ${loopLabel}` : "this loop"}</span>
+        <span class="checklist__count">
+          <strong>{doneCount}</strong>/{targets.length} done
+        </span>
+      </header>
+      <div
+        class="checklist__bar"
+        role="progressbar"
+        aria-label="Daily targets done"
+        aria-valuemin="0"
+        aria-valuemax={targets.length}
+        aria-valuenow={doneCount}
+      >
+        <span style={`width:${percent}%`}></span>
+      </div>
+
+      <ol class="checklist__days">
+        {days.map(({ day, date, when, items }) => (
+          <li class:list={['checklist__day', `checklist__day--${when}`]}>
+            <p class="checklist__date">
+              <span>
+                DAY {String(day).padStart(2, '0')}
+                {loopLength && <span class="checklist__of">/{loopLength}</span>}
+              </span>
+              {date && <time datetime={date}>{dayLabel(date)}</time>}
+              {when === 'today' && <span class="checklist__today">today</span>}
+            </p>
+            <ul class="checklist__items">
+              {items.map((item) => {
+                const stamp = item.done ? doneLabel(item.doneAt) : undefined;
+                return (
+                  <li class:list={['checklist__item', { 'checklist__item--done': item.done }]}>
+                    <span class="checklist__box" aria-hidden="true">
+                      {item.done && (
+                        <svg viewBox="0 0 20 20">
+                          <path d="M4 10.5 8.2 14.6 16.5 4.8" />
+                        </svg>
+                      )}
+                    </span>
+                    <span class="checklist__task">
+                      <span class="visually-hidden">{item.done ? 'Done: ' : 'Not done: '}</span>
+                      {item.task}
+                    </span>
+                    <span class="checklist__meta">
+                      {stamp && <time datetime={item.doneAt}>✓ {stamp}</time>}
+                      {item.kpi && <span class="checklist__kpi">{item.kpi.toLowerCase()}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <p class="checklist__source">ticked in Lab Loop HQ · updates hourly</p>
+    </div>
+  )
+}
+
+<style>
+  .checklist {
+    position: relative;
+    margin-top: 6px;
+    padding: 26px 22px 16px;
+    background-color: var(--paper);
+    background-image: var(--texture-paper);
+    box-shadow: var(--shadow-object), var(--wear-paper);
+    color: var(--text-on-paper);
+    transform: rotate(-0.4deg);
+  }
+
+  /* Bulldog clip holding the sheet. */
+  .checklist__clip {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: 86px;
+    height: 22px;
+    border-radius: 3px 3px 6px 6px;
+    background: #2b2f2d;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.45), inset 0 -3px 0 rgba(0, 0, 0, 0.35);
+    transform: translateX(-50%);
+  }
+
+  .checklist__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #4a504c;
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .checklist__count strong {
+    color: var(--text-on-paper);
+    font-size: 14px;
+  }
+
+  .checklist__bar {
+    height: 6px;
+    margin: 8px 0 14px;
+    background: rgba(30, 34, 32, 0.12);
+  }
+
+  .checklist__bar span {
+    display: block;
+    height: 100%;
+    background: var(--copper);
+  }
+
+  .checklist__days,
+  .checklist__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .checklist__day {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 4px 14px;
+    padding: 10px 0;
+    border-top: 1px solid rgba(60, 90, 140, 0.22);
+  }
+
+  .checklist__day--planned { opacity: 0.62; }
+
+  /* Today gets a flat highlighter band. */
+  .checklist__day--today {
+    margin: 0 -10px;
+    padding: 10px;
+    background: rgba(245, 184, 65, 0.3);
+    border-top-color: transparent;
+  }
+
+  .checklist__date {
+    display: flex;
+    margin: 2px 0 0;
+    flex-direction: column;
+    gap: 1px;
+    color: #4a504c;
+    font: 11px/1.35 var(--font-mono);
+  }
+
+  .checklist__date > span:first-child { color: var(--text-on-paper); font-weight: 600; }
+  .checklist__of { color: #6a6f6b; font-weight: 400; }
+
+  .checklist__today {
+    width: fit-content;
+    margin-top: 3px;
+    padding: 1px 6px;
+    background: var(--danger);
+    color: var(--paper);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .checklist__item {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 0 10px;
+    padding: 3px 0;
+  }
+
+  .checklist__box {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    border: 1.6px solid var(--text-on-paper);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .checklist__box svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin: -5px 0 0 -1px;
+    fill: none;
+    stroke: var(--danger);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.6;
+  }
+
+  .checklist__task {
+    font: 16px/1.45 var(--font-serif);
+  }
+
+  .checklist__item--done .checklist__task { color: #4a4f4c; }
+
+  .checklist__meta {
+    display: flex;
+    grid-column: 2;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: #5a5f5b;
+    font: 11px/1.5 var(--font-mono);
+  }
+
+  .checklist__meta time { color: #7a2014; }
+
+  .checklist__kpi {
+    color: #6a6f6b;
+  }
+
+  .checklist__source {
+    margin: 12px 0 0;
+    color: #6a6f6b;
+    font: 10px/1.4 var(--font-mono);
+    text-align: right;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 560px) {
+    .checklist { padding: 24px 14px 14px; transform: none; }
+    .checklist__day { grid-template-columns: 1fr; }
+    .checklist__date { flex-direction: row; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+    .checklist__today { margin-top: 0; }
+  }
+</style>
