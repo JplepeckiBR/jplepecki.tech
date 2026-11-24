@@ -13,9 +13,9 @@ export const PORTRAIT_POST_HREF = '/posts/how-a-photo-becomes-a-riso-print';
 export const PORTRAIT_REPO_URL = 'https://github.com/JplepeckiBR/portrait-filters';
 
 // Shown on the left page of the open lab notebook. JP: rewrite in your own words.
+// The "Right now" line under it is built from the current lab loop in Notion, not from here.
 export const PROFILE_BIO = [
   'Brazilian maker based in Boston. I build at the edge of embedded hardware and data, and I write up everything I learn along the way.',
-  'Right now: a smart vivarium for my two crested geckos, run in two-week lab loops.',
 ];
 
 // Recurring Notion Calendar scheduling link (conflicts with JP's calendars are blocked automatically).
