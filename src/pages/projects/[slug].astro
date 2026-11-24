@@ -5,7 +5,7 @@ import Stain from '../../components/desk/Stain.astro';
 import SiteHeader from '../../components/layout/SiteHeader.astro';
 import Polaroid from '../../components/objects/Polaroid.astro';
 import ProjectSpecimen from '../../components/objects/ProjectSpecimen.astro';
-import BuildLog from '../../components/paper/BuildLog.astro';
+import DailyChecklist from '../../components/paper/DailyChecklist.astro';
 import StatusTape from '../../components/paper/StatusTape.astro';
 import VideoEmbed from '../../components/VideoEmbed.astro';
 import { projectArt } from '../../config/project-art';
@@ -108,6 +108,17 @@ const metaParts = [status, page.loops.length > 0 ? `${page.loops.length} loop${p
           </p>
         )}
 
+        {page.checklist.length > 0 && (
+          <section class="project-section project-section--checklist" aria-labelledby="project-targets">
+            <h2 id="project-targets">Daily targets</h2>
+            <DailyChecklist
+              targets={page.checklist.map((target) => target.data)}
+              loopLabel={loopLabel}
+              loopLength={page.metrics?.length}
+            />
+          </section>
+        )}
+
         {cover && project.data.cover && (
           <figure class="project-cover">
             <Polaroid href={cover.src} image={cover} alt={project.data.cover.alt} linkLabel={`Open full-size image: ${project.data.cover.alt}`} rotation={-1} width={480} />
@@ -179,13 +190,6 @@ const metaParts = [status, page.loops.length > 0 ? `${page.loops.length} loop${p
                 </li>
               ))}
             </ul>
-          </section>
-        )}
-
-        {page.buildLog.length > 0 && (
-          <section class="project-section" aria-labelledby="project-log">
-            <h2 id="project-log">Build log</h2>
-            <BuildLog entries={page.buildLog} sourceNote="daily targets from Lab Loop HQ" />
           </section>
         )}
 

@@ -114,6 +114,10 @@ export interface DailyTargetEntry {
   task: string;
   done: boolean;
   day: number;
+  /** YYYY-MM-DD the target is planned for (from "Day", or loop start + day - 1). */
+  plannedDate?: string;
+  /** "Done at" exactly as set in Notion: a date, or a date-time with offset. */
+  doneAt?: string;
   kpi?: string;
   loopIds: string[];
 }

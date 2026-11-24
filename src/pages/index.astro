@@ -188,6 +188,17 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
   </main>
 
   <NotebookSpread
+    now={project && projectHref && projectName
+      ? {
+          name: projectName,
+          href: projectHref,
+          description: projectDescription,
+          loop: paddedLoopNumber,
+          day: metrics?.day,
+          length: metrics?.length,
+          stage: currentLoop?.data.stage,
+        }
+      : undefined}
     entries={posts.map((post) => ({
       title: post.data.title,
       href: `/posts/${post.data.slug}`,
