@@ -1,0 +1,229 @@
+---
+// Opens when a portrait print is clicked. Without JavaScript the prints are plain
+// links to the post, so nothing is lost.
+import { PORTRAIT_POST_HREF, PORTRAIT_REPO_URL } from '../../config/site';
+---
+
+<dialog class="lightbox" data-portrait-dialog aria-labelledby="lightbox-title">
+  <div class="lightbox__sheet">
+    <button class="lightbox__close" type="button" data-portrait-close aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+
+    <div class="lightbox__prints">
+      <figure class="lightbox__print lightbox__print--riso" data-print="riso">
+        <img
+          src="/portraits/jp-riso-880.png"
+          width="880"
+          height="1100"
+          alt="JP's portrait as a two-colour risograph: green shadows and orange mid-tones in a fine dot pattern"
+          loading="lazy"
+        />
+        <figcaption>Riso · two inks, Bayer-dithered, 3 px off-register</figcaption>
+      </figure>
+      <figure class="lightbox__print lightbox__print--copper" data-print="copper">
+        <img
+          src="/portraits/jp-copper-840.jpg"
+          width="840"
+          height="1050"
+          alt="The same portrait as copper dots on a dark circuit board, one dot per 9×9 pixel cell"
+          loading="lazy"
+        />
+        <figcaption>Copper halftone · one dot per 9×9 cell</figcaption>
+      </figure>
+    </div>
+
+    <div class="lightbox__text">
+      <p class="lightbox__kicker">FIG. 1 · THE MAKER</p>
+      <h2 id="lightbox-title">These are code, not a filter.</h2>
+      <p>
+        One photo, two print processes simulated in Python: RGB to brightness, a few 3×3 kernels, a Bayer
+        matrix for the riso and a grid of copper dots for the board.
+      </p>
+      <div class="lightbox__links">
+        <a class="lightbox__cta" href={PORTRAIT_POST_HREF}>read how it's made →</a>
+        <a class="lightbox__repo" href={PORTRAIT_REPO_URL} target="_blank" rel="noopener">source on GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script is:inline>
+  (() => {
+    const dialog = document.querySelector('[data-portrait-dialog]');
+    if (!(dialog instanceof HTMLDialogElement) || typeof dialog.showModal !== 'function') return;
+    let opener = null;
+
+    document.querySelectorAll('[data-portrait-open]').forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        opener = trigger;
+        dialog.dataset.focus = trigger.getAttribute('data-portrait-open') || 'riso';
+        dialog.showModal();
+        dialog.querySelector('[data-portrait-close]')?.focus();
+      });
+    });
+
+    const close = () => dialog.close();
+    dialog.querySelector('[data-portrait-close]')?.addEventListener('click', close);
+    // A click on the dimmed backdrop lands on the dialog element itself.
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) close(); });
+    dialog.addEventListener('close', () => { if (opener instanceof HTMLElement) opener.focus(); });
+  })();
+</script>
+
+<style>
+  .lightbox {
+    width: min(980px, calc(100vw - 24px));
+    max-height: calc(100dvh - 24px);
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    border: 0;
+    background: transparent;
+    color: var(--text-on-paper);
+  }
+
+  .lightbox::backdrop {
+    background: rgba(8, 10, 9, 0.78);
+  }
+
+  .lightbox[open] { animation: lightbox-in 180ms ease-out; }
+
+  @keyframes lightbox-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .lightbox__sheet {
+    position: relative;
+    display: grid;
+    padding: 28px;
+    gap: 24px;
+    background-color: var(--paper);
+    background-image: var(--texture-paper);
+    box-shadow: var(--shadow-page), var(--wear-paper);
+  }
+
+  .lightbox__close {
+    position: absolute;
+    z-index: 2;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    color: var(--text-on-paper);
+    cursor: pointer;
+  }
+
+  .lightbox__close svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1.8;
+  }
+
+  .lightbox__close:hover,
+  .lightbox__close:focus-visible { color: var(--danger); }
+
+  .lightbox__prints {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: start;
+  }
+
+  .lightbox__print { margin: 0; }
+
+  .lightbox__print img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .lightbox__print--riso img { background: #ece8de; box-shadow: 0 0 0 1px rgba(30, 34, 32, 0.12); }
+  .lightbox__print--copper img { border-radius: 3px; }
+
+  .lightbox__print figcaption {
+    margin-top: 8px;
+    color: #4a4d49;
+    font: 11px/1.4 var(--font-mono);
+  }
+
+  /* The print that was clicked comes first on narrow screens. */
+  .lightbox[data-focus='copper'] .lightbox__print--copper { order: -1; }
+
+  .lightbox__text { max-width: 60ch; }
+
+  .lightbox__kicker {
+    margin: 0;
+    color: #4a4d49;
+    font: 11px/1.4 var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+
+  .lightbox h2 {
+    margin: 6px 0 10px;
+    font: 600 30px/1.1 var(--font-serif);
+  }
+
+  .lightbox__text > p:not(.lightbox__kicker) {
+    margin: 0;
+    color: #2e2c28;
+    font: 18px/1.5 var(--font-serif);
+  }
+
+  .lightbox__links {
+    display: flex;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    align-items: center;
+  }
+
+  .lightbox__cta {
+    display: inline-flex;
+    min-height: 48px;
+    padding: 0 18px;
+    align-items: center;
+    background: var(--text-on-paper);
+    color: var(--paper);
+    font: 600 13px/1 var(--font-mono);
+    text-decoration: none;
+  }
+
+  .lightbox__cta:hover,
+  .lightbox__cta:focus-visible { background: var(--danger); }
+
+  .lightbox__repo {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--text-on-paper);
+    font: 13px/1 var(--font-mono);
+  }
+
+  .lightbox__repo:hover,
+  .lightbox__repo:focus-visible { color: var(--danger); }
+
+  @media (min-width: 900px) {
+    .lightbox__sheet { padding: 36px; }
+  }
+
+  @media (max-width: 640px) {
+    .lightbox__sheet { padding: 20px 16px; }
+    .lightbox__prints { grid-template-columns: minmax(0, 1fr); }
+    .lightbox h2 { font-size: 25px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox[open] { animation: none; }
+  }
+</style>

@@ -12,6 +12,8 @@ import LoopCard from '../components/objects/LoopCard.astro';
 import Notebook from '../components/objects/Notebook.astro';
 import PartsList from '../components/objects/PartsList.astro';
 import PcbNav from '../components/objects/PcbNav.astro';
+import PortraitLightbox from '../components/objects/PortraitLightbox.astro';
+import PortraitProfile from '../components/objects/PortraitProfile.astro';
 import ProjectSpecimen from '../components/objects/ProjectSpecimen.astro';
 import { projectArt } from '../config/project-art';
 import ShadowSlot from '../components/objects/ShadowSlot.astro';
@@ -79,6 +81,10 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         <PencilNote text={'fan ON > 85 %RH\nfan OFF < 70'} x={51} y={49} rotation={-3} width={185} />
         <PencilNote text="R2 = 10k ?" x={33} y={56} rotation={3} width={110} />
         <PencilNote text="28 °C MAX" x={63} y={58} rotation={3} width={120} />
+
+        <div class="desk-object desk-object--profile" style={positionStyle(deskPositions.portrait)}>
+          <PortraitProfile width={deskPositions.portrait.width} rotation={deskPositions.portrait.rotation} />
+        </div>
 
         <div class="desk-object home-pcb" style={positionStyle(deskPositions.pcb)}>
           <PcbNav
@@ -158,6 +164,7 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
         <span><strong>DESK ORGANIZED</strong><small>List view is active.</small></span>
         <button type="button" data-restore-button>restore messy desk</button>
       </div>
+      <PortraitProfile variant="compact" />
       <CalloutMap items={parts} />
       <PartsList items={parts} />
       {(loopDescription || Number.isFinite(postTarget) || targets.length > 0) && (
@@ -174,6 +181,8 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
       )}
     </section>
   </main>
+
+  <PortraitLightbox />
 
   <script is:inline>
     (() => {
@@ -244,6 +253,8 @@ const loopDescription = loopName && projectName && loopName !== projectName ? `$
     position: absolute;
     z-index: 4;
   }
+
+  .desk-object--profile { z-index: 5; }
 
   :global(.home-pcb a[href='/loop'] rect) {
     transform: scaleY(1.06);
