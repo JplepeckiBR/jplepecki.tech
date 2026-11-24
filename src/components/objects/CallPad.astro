@@ -1,0 +1,197 @@
+---
+// A small spiral call pad that sits against the lab notebook.
+// The handset and the 20-minute clock wedge say "book a call" before any text does.
+import { clampNumber, clampRotation, cleanHref } from './_shared';
+
+interface Props {
+  href?: string;
+  rotation?: number;
+  width?: number;
+  /** compact = smaller pad for the mobile profile strip, no label under it */
+  compact?: boolean;
+}
+
+const { href = '/call', rotation = 2.5, width = 150, compact = false } = Astro.props;
+const safeHref = cleanHref(href);
+const safeRotation = clampRotation(rotation, 2.5);
+const safeWidth = clampNumber(width, 96, 220, 150);
+const rings = compact ? 5 : 7;
+---
+
+{
+  safeHref && (
+    <a
+      class:list={['call-pad', { 'call-pad--compact': compact }]}
+      href={safeHref}
+      aria-label="Book a 20-minute call with JP"
+      style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
+    >
+      <span class="call-pad__paper">
+        <span class="call-pad__rings" aria-hidden="true">
+          {Array.from({ length: rings }, () => <span />)}
+        </span>
+        <span class="call-pad__header">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path
+              d="M5 4h3.2l1.8 4.6-2.3 1.4a11 11 0 0 0 6.3 6.3l1.4-2.3 4.6 1.8V19a1.8 1.8 0 0 1-1.9 1.8A16.5 16.5 0 0 1 3.2 5.9 1.8 1.8 0 0 1 5 4Z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>CALLS</span>
+        </span>
+        <span class="call-pad__body" aria-hidden="true">
+          <svg class="call-pad__clock" viewBox="0 0 60 60">
+            <path d="M30 30 L30 6 A24 24 0 0 1 50.8 42 Z" class="call-pad__wedge" />
+            <circle cx="30" cy="30" r="24" class="call-pad__face" />
+            {Array.from({ length: 12 }, (_, i) => {
+              const a = (i * Math.PI) / 6;
+              const r1 = i % 3 === 0 ? 18.5 : 20.5;
+              return (
+                <line
+                  x1={30 + Math.sin(a) * r1}
+                  y1={30 - Math.cos(a) * r1}
+                  x2={30 + Math.sin(a) * 22.5}
+                  y2={30 - Math.cos(a) * 22.5}
+                  class="call-pad__tick"
+                />
+              );
+            })}
+            <line x1="30" y1="30" x2="30" y2="14" class="call-pad__hand" />
+            <line x1="30" y1="30" x2="46" y2="39.2" class="call-pad__hand" />
+            <circle cx="30" cy="30" r="2.2" class="call-pad__pin" />
+          </svg>
+          <span class="call-pad__minutes"><strong>20</strong>min</span>
+        </span>
+        {!compact && (
+          <span class="call-pad__lines" aria-hidden="true">
+            <span>video · free</span>
+            <span />
+          </span>
+        )}
+      </span>
+      {!compact && <span class="call-pad__action">book a call →</span>}
+    </a>
+  )
+}
+
+<style>
+  .call-pad {
+    display: block;
+    width: min(var(--object-width), 100%);
+    min-height: 44px;
+    color: var(--text-on-paper);
+    text-decoration: none;
+    transform: rotate(var(--object-rotation));
+    transition: filter 160ms ease, transform 160ms ease;
+  }
+
+  .call-pad:hover,
+  .call-pad:focus-visible {
+    filter: drop-shadow(var(--shadow-lift));
+    transform: translateY(-4px) rotate(0);
+  }
+
+  .call-pad__paper {
+    position: relative;
+    display: block;
+    padding: 14px 0 12px;
+    border-radius: 2px;
+    background-color: var(--paper);
+    background-image: var(--texture-paper);
+    box-shadow: var(--shadow-object), var(--wear-paper);
+  }
+
+  /* Wire binding: dark loops that bite over the top edge. */
+  .call-pad__rings {
+    position: absolute;
+    top: -7px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .call-pad__rings span {
+    width: 6px;
+    height: 15px;
+    border: 2px solid #3a3d3b;
+    border-radius: 3px;
+    background: var(--paper);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  }
+
+  .call-pad__header {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 4px;
+    padding: 6px 12px;
+    background: var(--danger);
+    color: var(--paper);
+    font: 600 11px/1 var(--font-mono);
+    letter-spacing: 0.12em;
+  }
+
+  .call-pad__header svg { flex: none; }
+
+  .call-pad__body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px 4px;
+  }
+
+  .call-pad__clock {
+    width: 58px;
+    height: 58px;
+    flex: none;
+    transform: rotate(-4deg);
+  }
+
+  .call-pad__wedge { fill: #c47a3a; opacity: 0.85; }
+  .call-pad__face { fill: none; stroke: var(--text-on-paper); stroke-width: 2; }
+  .call-pad__tick { stroke: var(--text-on-paper); stroke-width: 1.4; stroke-linecap: round; }
+  .call-pad__hand { stroke: var(--text-on-paper); stroke-width: 2.2; stroke-linecap: round; }
+  .call-pad__pin { fill: var(--danger); }
+
+  .call-pad__minutes {
+    display: flex;
+    flex-direction: column;
+    font: 11px/1 var(--font-mono);
+  }
+
+  .call-pad__minutes strong {
+    font: 600 28px/1 var(--font-serif);
+  }
+
+  .call-pad__lines {
+    display: block;
+    padding: 2px 12px 0;
+    font: 11px/1 var(--font-mono);
+    color: #4a4f4c;
+  }
+
+  .call-pad__lines span {
+    display: block;
+    height: 18px;
+    padding-top: 4px;
+    border-bottom: 1px solid rgba(60, 90, 140, 0.28);
+  }
+
+  .call-pad__action {
+    display: block;
+    margin-top: 8px;
+    color: var(--accent);
+    font: 12px/1.4 var(--font-mono);
+  }
+
+  .call-pad--compact .call-pad__paper { padding: 12px 0 8px; }
+  .call-pad--compact .call-pad__header { padding: 5px 9px; font-size: 10px; gap: 5px; }
+  .call-pad--compact .call-pad__body { padding: 8px 9px 2px; gap: 5px; }
+  .call-pad--compact .call-pad__clock { width: 42px; height: 42px; }
+  .call-pad--compact .call-pad__minutes strong { font-size: 22px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .call-pad { transition: none; }
+  }
+</style>
