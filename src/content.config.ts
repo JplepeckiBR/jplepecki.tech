@@ -60,6 +60,7 @@ const posts = defineCollection({
       z.object({ id: notionId, type: z.literal('divider') }),
       z.object({ id: notionId, type: z.literal('code'), code: z.string().min(1), language: optionalText, caption: optionalText }),
       z.object({ id: notionId, type: z.literal('image'), image: localizedImage }),
+      z.object({ id: notionId, type: z.literal('imageGroup'), images: z.array(localizedImage).min(2) }),
       z.object({
         id: notionId,
         type: z.literal('table'),

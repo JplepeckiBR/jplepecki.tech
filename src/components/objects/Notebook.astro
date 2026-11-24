@@ -23,14 +23,26 @@ const safeWidth = clampNumber(width, 170, 380, 220);
     <a
       class="notebook"
       href={safeHref}
+      data-notebook-open
+      aria-label={`Open the lab notebook: about JP and ${safeCount} ${safeCount === 1 ? 'post' : 'posts'}`}
       style={`--object-rotation:${safeRotation}deg;--object-width:${safeWidth}px`}
     >
       <span class="notebook__cover">
         <span class="notebook__elastic" aria-hidden="true"></span>
         <span class="notebook__title">LAB NOTEBOOK</span>
+        <img
+          class="notebook__sticker"
+          src="/portraits/jp-sticker-360.png"
+          srcset="/portraits/jp-sticker-360.png 390w, /portraits/jp-sticker-720.png 776w"
+          sizes="150px"
+          width="390"
+          height="320"
+          alt=""
+          loading="eager"
+        />
         <span class="notebook__count">{safeCount} {safeCount === 1 ? 'entry' : 'entries'}</span>
       </span>
-      <span class="notebook__action">posts →</span>
+      <span class="notebook__action">open ↗</span>
     </a>
   )
 }
@@ -45,10 +57,35 @@ const safeWidth = clampNumber(width, 170, 380, 220);
     transition: filter 160ms ease, transform 160ms ease;
   }
 
+  .notebook { cursor: pointer; }
+
   .notebook:hover,
   .notebook:focus-visible {
     filter: drop-shadow(var(--shadow-lift));
     transform: translateY(-4px) rotate(0);
+  }
+
+  /* A die-cut sticker slapped on the cover: slightly crooked, peeling shadow. */
+  .notebook__sticker {
+    position: absolute;
+    z-index: 1;
+    left: 22px;
+    top: 74px;
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.55)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+    transform: rotate(3deg);
+    transition: transform 160ms ease;
+  }
+
+  .notebook:hover .notebook__sticker,
+  .notebook:focus-visible .notebook__sticker { transform: rotate(1deg) scale(1.03); }
+
+  .notebook__count { position: relative; z-index: 2; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notebook,
+    .notebook__sticker { transition: none; }
   }
 
   .notebook__cover {

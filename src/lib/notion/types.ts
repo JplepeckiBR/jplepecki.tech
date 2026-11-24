@@ -46,6 +46,7 @@ export type ContentBlock =
   | { id: string; type: 'divider' }
   | { id: string; type: 'code'; code: string; language?: string; caption?: string }
   | { id: string; type: 'image'; image: SerializedImage }
+  | { id: string; type: 'imageGroup'; images: SerializedImage[] }
   | {
       id: string;
       type: 'table';
