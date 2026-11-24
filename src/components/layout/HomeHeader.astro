@@ -1,5 +1,6 @@
 ---
-import { CAL_URL, SITE_NAME, SITE_TAGLINE, SOCIAL_LINKS } from '../../config/site';
+import { CAL_URL, SITE_NAME, SITE_TAGLINE } from '../../config/site';
+import SocialPads from '../objects/SocialPads.astro';
 ---
 
 <header class="home-header">
@@ -9,7 +10,7 @@ import { CAL_URL, SITE_NAME, SITE_TAGLINE, SOCIAL_LINKS } from '../../config/sit
   </div>
   <nav class="home-header__nav" aria-label="Social links and contact">
     <span class="home-header__socials">
-      {SOCIAL_LINKS.map((link) => <a href={link.href}>{link.label.toLowerCase()}</a>)}
+      <SocialPads tone="bare" size="sm" />
     </span>
     {CAL_URL && <a class="home-header__call" href="/call"><span class="desktop-label">book a call</span><span class="phone-label">call</span></a>}
   </nav>

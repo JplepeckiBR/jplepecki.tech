@@ -87,7 +87,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   </g>
 
   <!-- Meter leads sit below the meter body and disappear under lower linked objects. -->
-  <g class="bench-equipment__probe-leads">
+  <g class="bench-equipment__probe-leads" transform="translate(0 210)">
     <path class="probe-lead probe-lead--black" d="M91 526C55 577 43 629 75 665s93 17 131 32 36 67 83 63" />
     <path class="probe-lead probe-lead--red" d="M151 526c48 48 91 61 116 101s-7 72 23 106c18 21 47 18 70 7" />
     <g class="probe probe--black" transform="translate(274 749) rotate(-12)">
@@ -104,8 +104,8 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
     </g>
   </g>
 
-  <!-- Full-size solderless breadboard, clipped by the top-left mat edge. -->
-  <g class="bench-equipment__object bench-equipment__breadboard" transform="rotate(-1.6 154 148)">
+  <!-- Full-size solderless breadboard, slid under the portrait print in the top-left corner. -->
+  <g class="bench-equipment__object bench-equipment__breadboard" transform="translate(-120 0) rotate(-1.6 154 148)">
     <rect class="breadboard__underside" x="-22" y="46" width="348" height="214" rx="13" />
     <rect class="breadboard__body" x="-18" y="41" width="344" height="214" rx="12" />
     <path class="breadboard__edge-highlight" d="M-5 47H307q12 0 12 12M-10 247h318" />
@@ -182,7 +182,7 @@ const dipPins = Array.from({ length: 4 }, (_, index) => 948 + index * 13);
   </g>
 
   <!-- Used handheld digital multimeter at left-middle. -->
-  <g class="bench-equipment__object bench-equipment__meter" transform="translate(18 296) rotate(-2.2 108 132)">
+  <g class="bench-equipment__object bench-equipment__meter" transform="translate(18 506) rotate(-2.2 108 132)">
     <path class="meter__shadow-pad" d="M25 5h166q17 0 21 18l7 31v160l-9 36q-4 15-20 15H26q-17 0-21-17l-7-35V54l8-34Q10 5 25 5Z" />
     <path class="meter__boot" d="M25 2h166q17 0 21 18l7 31v160l-9 36q-4 15-20 15H26q-17 0-21-17l-7-35V52l8-34Q10 2 25 2Z" />
     <path class="meter__side-grip" d="M10 60H1v34h9m0 74H1v33h9m198-141h9v34h-9m0 74h9v33h-9" />

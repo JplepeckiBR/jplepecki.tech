@@ -1,11 +1,12 @@
 ---
-import { SITE_NAME, SOCIAL_LINKS } from '../../config/site';
+import { SITE_NAME } from '../../config/site';
+import SocialPads from '../objects/SocialPads.astro';
 ---
 
 <footer class="site-footer">
   <span>{SITE_NAME}</span>
   <nav aria-label="Social links">
-    {SOCIAL_LINKS.map((link) => <a href={link.href}>{link.label}</a>)}
+    <SocialPads size="sm" />
   </nav>
 </footer>
 
